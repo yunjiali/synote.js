@@ -292,7 +292,7 @@ describe('MultimediaController', function() {
     });
 
     //TODO: get multimedia
-    describe.only('GET /multimedia/get', function(){
+    describe('GET /multimedia/get', function(){
         var agent;
         before(function(done){
             agent = request.agent(sails.hooks.http.app);

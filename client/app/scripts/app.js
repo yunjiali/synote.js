@@ -17,6 +17,7 @@ var app = angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
+    'pascalprecht.translate',
     'ngTouch',
     'config',
     'LocalStorageModule',
@@ -29,7 +30,7 @@ var app = angular
     //leave ui-route for synoteplayer
   ]);
 //app config
-app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', function ($routeProvider ,localStorageServiceProvider,$httpProvider) {
+app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$translateProvider', function ($routeProvider ,localStorageServiceProvider,$httpProvider,$translateProvider) {
   $routeProvider
     .when('/', {
       templateUrl: 'views/home.html',
@@ -49,6 +50,13 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', fu
       templateUrl: 'views/login.html',
       controller: 'LoginCtrl'
     })
+    .when('/register',{
+      templateUrl:'views/register.html',
+      controller:'RegisterCtrl'
+    })
+    .when('/termsandconditions',{
+      templateUrl:'views/termsandconditions.html'
+    })
     .when('/multimedia.create', {
       templateUrl: 'views/multimedia.create.html',
       controller: 'MultimediaCreateCtrl',
@@ -65,6 +73,26 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', fu
     .otherwise({
       redirectTo: '/'
     });
+
+  $translateProvider.translations('en',{
+    LOGIN_NAV_LINK:'Login',
+    HOME_NAV_LINK:'Home',
+    BROWSE_NAV_LINK:'Browse',
+    TC_ERR:'You must agree on our terms and conditions.',
+    PASSWORD_REG_NOTMATCH:"Password and Confirmed password don't match.",
+    CREATE_NAV_LINK:"Create",
+    REG_NAV_LINK:"Register",
+    REG_SUBMIT_BTN:"Register",
+    REG_RESET_BTN:"Reset",
+    REG_SUCCESS_TEXT:"You have been successfully registered.",
+    CREDENTIAL_ERR_TEXT:'Wrong username or password.'
+  });
+
+  $translateProvider.determinePreferredLanguage(function () {
+    // define a function to determine the language
+    // and return a language key
+    return 'en';
+  });
 
   localStorageServiceProvider
     .setPrefix('synoteClient');

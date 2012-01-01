@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+    <div>
+      <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+    </div>
+    <form name="registrationForm" role="form" ng-submit="processForm()" novalidate>
+      <h2>Sign Up to Synote</h2>
+      <hr class="colorgraph">
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6">
+          <div class="form-group">
+            <input type="text" name="firstname" id="first_name_input" class="form-control input-lg" placeholder="First Name" ng-model="formdata.firstname" tabindex="1" required>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6">
+          <div class="form-group">
+            <input type="text" name="lastname" id="last_name_input" class="form-control input-lg" placeholder="Last Name" ng-model="formdata.lastname" tabindex="2" required>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <input type="text" name="username" id="username_input" class="form-control input-lg" placeholder="Display Name" ng-model="formdata.username" tabindex="3" required>
+      </div>
+      <div class="form-group">
+        <input type="email" name="email" id="email" class="form-control input-lg" placeholder="Email Address" ng-model="formdata.email" tabindex="4" required>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6">
+          <div class="form-group">
+            <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password, 8 characters minimum" ng-model="formdata.password" tabindex="5" ng-minlength="8" required>
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6">
+          <div class="form-group">
+            <input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-lg" ng-model="confirmpassword" placeholder="Confirm Password" tabindex="6" ng-minlength="8" required>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+          <label class="checkbox" for="t_c">
+            <input type="checkbox" ng-model="t_c" id="t_c_input" name="t_c" ng-model="t_c">
+            I agree to the <a href="#/termsandconditions">Terms and Conditions </a>set out by Synote, including our Cookie Use.
+          </label>
+        </div>
+      </div>
+      <hr class="colorgraph">
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <input type="submit" value="Register" class="btn btn-primary btn-block btn-lg" tabindex="7" translate="REG_SUBMIT_BTN">
+        </div>
+        <div class="col-xs-12 col-md-6"><input type="Reset" value="Reset" class="btn btn-danger btn-block btn-lg" tabindex="8" translate="REG_RESET_BTN"></div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -9,7 +9,7 @@ var async = require('async');
 
 describe('UsersController', function() {
 
-    describe('POST /user/create', function() {
+    describe.only('POST /user/create', function() {
 
         it('should register normal user successfully and logout', function (done) {
 
@@ -30,6 +30,29 @@ describe('UsersController', function() {
                     done();
                 });
         });
+
+        /*it('should not register user as the password is shorter than 8 characters', function (done) {
+
+            request(sails.hooks.http.app)
+                .post('/user/create')
+                .send({
+                    username: 'test102384ljshdflashdfj',
+                    password: 'ddd',
+                    firstname: 'test',
+                    lastname: 'eighteight',
+                    email: 'test88@synote.com'
+                })
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) return done(err);
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(false);
+                    User.findOne({username:'test102384ljshdflashdfj'}).exec(function(errUser, user){
+                        should.not.exist(user);
+                        done();
+                    })
+                });
+        });*/
 
 
         it('should register admin user successfully and logout', function (done) {
@@ -83,7 +106,7 @@ describe('UsersController', function() {
                         .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
                         .expect(200)
                         .end(function(err,res){
-                            console.log(res);
+                            //console.log(res);
                             callback(err, res)
                         });
                 },

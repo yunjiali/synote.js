@@ -39,12 +39,10 @@ angular.module('synoteClient')
 
             $scope.config = {
               autoHide: false,
-              autoHideTime: 3000,
               autoPlay: true,
               loop: false,
               preload: "auto",
               transclude: true,
-              controls: undefined,
               theme: {
                 url: "bower_components/videogular-themes-default/videogular.min.css"
               }

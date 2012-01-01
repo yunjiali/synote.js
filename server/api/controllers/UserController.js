@@ -76,7 +76,13 @@ module.exports = require('waterlock').actions.user({
           waterlock.engine.attachAuthToUser(auth, user, function (err) {
             if (err) {
               waterlock.logger.debug(err);
-              return res.send({success:false, message:err});
+              User.destroy({id:user.id}).exec(function(errDelete, users){
+                if(errDelete)
+                  return res.send({success:false, message:errDelete});
+                else
+                  return res.send({success:false, message:err});
+              });
+
             }
             //user.online = true;
             user.save(function (err, user) {

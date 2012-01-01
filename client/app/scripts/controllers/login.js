@@ -8,15 +8,19 @@
  * Controller of the synoteClient
  */
 angular.module('synoteClient')
-  .controller('LoginCtrl',  ['$scope', '$location', '$window', 'authenticationService', function ($scope, $location, $window, authenticationService) {
+  .controller('LoginCtrl',  ['$scope', '$location', '$window', '$filter', 'authenticationService', function ($scope, $location, $window, $filter, authenticationService) {
     $scope.userInfo = null;
+    $scope.alerts = [];
+    var $translate = $filter('translate');
+
     $scope.login = function () {
+      $scope.alerts = [];
       authenticationService.login($scope.email, $scope.password)
         .then(function (result) {
           $scope.userInfo = result;
           $location.path('/');
         }, function (error) {
-          $window.alert('Invalid credentials');
+          $scope.alert.push({type:'danger',msg:$translate('CREDENTIAL_ERR_TEXT')});
           console.log(error);
         });
     };
@@ -25,4 +29,9 @@ angular.module('synoteClient')
       $scope.userName = '';
       $scope.password = '';
     };
+
+    $scope.closeAlert = function(index) {
+      $scope.alerts.splice(index, 1);
+    };
+
   }]);

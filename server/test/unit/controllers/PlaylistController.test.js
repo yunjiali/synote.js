@@ -9,8 +9,10 @@ var should = require('should');
 
 
 describe('PlaylistController', function() {
-
-    describe('POST /playlist/create, /playlist/:plid/add/:mmid', function(){
+    console.log("1234");
+    var agent = request.agent(sails.hooks.http.app);
+    console.log("1234444");
+    /*describe('POST /playlist/create, /playlist/:plid/add/:mmid', function(){
         var accessToken = "";
         var mmid= global.bootstrap.multimedia.mmid1;
         var plid= global.bootstrap.playlist.plid1;
@@ -113,7 +115,7 @@ describe('PlaylistController', function() {
         });
     });
 
-    describe.only('POST /playlist/get/:plid ', function(){
+    describe('POST /playlist/get/:plid ', function(){
         var accessToken = "";
         var mmid= global.bootstrap.multimedia.mmid1;
         var plid= global.bootstrap.playlist.plid1;
@@ -156,7 +158,7 @@ describe('PlaylistController', function() {
                     done();
                 })
         });
-    });
+    });*/
 
 });
 

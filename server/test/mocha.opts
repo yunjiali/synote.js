@@ -1,1 +1,3 @@
+-R spec
+-b
 --timeout 90000

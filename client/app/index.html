@@ -21,18 +21,23 @@
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse-01">
       <ul class="nav navbar-nav navbar-left">
-        <li ng-class="{active: isActive('#/')}"><a href="#/">Home</a></li>
-        <li ng-class="{active: isActive('#/browse')}"><a href="#/browse">Browse</a></li>
+        <li ng-class="{active: isActive('#/')}"><a href="#/">{{'HOME_NAV_LINK' | translate}}</a></li>
+        <li ng-class="{active: isActive('#/browse')}"><a href="#/browse">{{'BROWSE_NAV_LINK' | translate}}</a></li>
       </ul>
       <ul ng-cloak ng-if="!isLoggedIn()" class="nav navbar-nav navbar-right">
-        <li ng-class="{active: isActive('#/login')}"><a href="#/login">Login</a></li>
+        <li><a href="#/login">{{'LOGIN_NAV_LINK' | translate}}</a></li>
+        <li><a href="#/register">{{'REG_NAV_LINK' | translate}}</a></li>
       </ul>
       <ul ng-cloak ng-if="isLoggedIn()" class="nav navbar-nav navbar-right">
-        <li><a href="#/multimedia.create">Create</a></li>
+        <li><a href="#/multimedia.create">{{'CREATE_NAV_LINK' | translate}}</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </nav><!-- /navbar -->
   <div ng-view></div>
+  <hr/>
+  <footer>
+    © 2014 University of Southampton
+  </footer>
 </div>
 
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
@@ -82,6 +87,7 @@
 <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="bower_components/angular-translate/angular-translate.js"></script>
 <script src="bower_components/moment/moment.js"></script>
 <script src="bower_components/videogular/videogular.js"></script>
 <script src="bower_components/videogular-controls/controls.js"></script>
@@ -105,6 +111,9 @@
 <script src="scripts/services/policyservice.js"></script>
 <script src="scripts/controllers/watch.js"></script>
 <script src="scripts/services/playlistservice.js"></script>
+<script src="scripts/controllers/register.js"></script>
+<script src="scripts/services/flash.js"></script>
+<script src="scripts/services/flashservice.js"></script>
 <!-- endbuild -->
 </body>
 </html>
