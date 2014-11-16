@@ -72,7 +72,8 @@ module.exports = {
       via:'owner'
     },
     comments:{
-
+      collection:'comment',
+      via:'owner'
     }
   }),
   
