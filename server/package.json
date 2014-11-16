@@ -1,8 +1,8 @@
 {
-  "name": "sails-passport-token-template",
+  "name": "Synote.js server",
   "private": true,
   "version": "0.0.1",
-  "description": "a Sails application",
+  "description": "Synote.js server",
   "keywords": [],
   "dependencies": {
     "sails": "~0.10.5",
@@ -28,7 +28,8 @@
     "supertest":"~0.15.0",
     "supertest-as-promised":"~1.0.0",
     "should":"~4.3.0",
-    "async":"~0.9.0"
+    "async":"~0.9.0",
+    "randomstring":"~1.0.3"
   },
   "scripts": {
     "start": "node app.js",
@@ -38,7 +39,7 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/user/sails-passport-token-template.git"
+    "url": "git://github.com/yunjiali/synote.js"
   },
   "author": "Yunjia Li",
   "license": "MIT"

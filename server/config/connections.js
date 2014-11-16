@@ -44,17 +44,17 @@ module.exports.connections = {
     adapter: 'sails-mysql',
     host: 'localhost',
     port:3306,
-    user: 'test',
-    password: 'test',
-    database: 'sails_jwt_template'
+    user: 'synote',
+    password: 'synote',
+    database: 'synotejs'
   },
   testMysqlServer: {
     adapter: 'sails-mysql',
     host: 'localhost',
     port:3306,
-    user: 'test',
-    password: 'test',
-    database: 'sails_jwt_template_test'
+    user: 'synote',
+    password: 'synote',
+    database: 'synotejs_test'
   },
 
   /***************************************************************************
@@ -71,7 +71,7 @@ module.exports.connections = {
     port: 27017,
     // user: 'username',
     // password: 'password',
-    database: 'sails_jwt_template'
+    database: 'synotejs'
   },
 
   /***************************************************************************

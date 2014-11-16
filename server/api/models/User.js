@@ -46,8 +46,34 @@ module.exports = {
       enum:['normal','admin','teacher'],
       required:true,
       defaultsTo:"normal" //could be admin, normal
-    }
+    },
+    multimedias:{
+      collection:'multimedia',
+      via:'owner'
+    },
+    synmarks:{
+      collection:'synmark',
+      via:'owner'
+    },
+    transcripts:{
+      collection:'transcript',
+      via:'owner'
+    },
+    slides:{
+      collection:'slide',
+      via:'owner'
+    },
+    cues:{
+      collection:'cue',
+      via:'owner'
+    },
+    tags:{
+      collection:'tag',
+      via:'owner'
+    },
+    comments:{
 
+    }
   }),
   
   beforeCreate: require('waterlock').models.user.beforeCreate,
