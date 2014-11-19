@@ -2,14 +2,14 @@
 
 /**
  * @ngdoc overview
- * @name clientApp
+ * @name synoteClient
  * @description
- * # clientApp
+ * # synoteClient
  *
  * Main module of the application.
  */
-angular
-  .module('clientApp', [
+var app = angular
+  .module('synoteClient', [
     'ngAnimate',
     'ngAria',
     'ngCookies',
@@ -17,19 +17,48 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
-  ])
-  .config(function ($routeProvider) {
-    $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
-      })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl'
-      })
-      .otherwise({
-        redirectTo: '/'
-      });
+    'ngTouch',
+    'config',
+    'LocalStorageModule'
+  ]);
+//app config
+app.config(['$routeProvider', 'localStorageServiceProvider', function ($routeProvider, localStorageServiceProvider) {
+  $routeProvider
+    .when('/', {
+      templateUrl: 'views/home.html',
+      controller: 'HomeCtrl',
+      resolve: {
+        auth: function ($q, authenticationService) {
+          var userInfo = authenticationService.getUserInfo();
+          if (userInfo) {
+            return $q.when(userInfo);
+          } else {
+            return $q.reject({ authenticated: false });
+          }
+        }
+      }
+    })
+    .when('/login', {
+      templateUrl: 'views/login.html',
+      controller: 'LoginCtrl'
+    })
+    .otherwise({
+      redirectTo: '/'
+    });
+
+  localStorageServiceProvider
+    .setPrefix('synoteClient');
+}]);
+
+app.run(['$rootScope', '$location', function ($rootScope, $location) {
+
+  //$rootScope.$on('$routeChangeSuccess', function (userInfo) {
+    //console.log(userInfo);
+  //});
+
+  $rootScope.$on('$routeChangeError', function (event, current, previous, eventObj) {
+    if (eventObj.authenticated === false) {
+      $location.path('/login');
+    }
   });
+}]);

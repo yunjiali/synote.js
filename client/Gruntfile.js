@@ -33,17 +33,18 @@ module.exports = function (grunt) {
         files: ['bower.json'],
         tasks: ['wiredep']
       },
-      js: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-        tasks: ['newer:jshint:all'],
-        options: {
-          livereload: '<%= connect.options.livereload %>'
-        }
-      },
-      jsTest: {
-        files: ['test/spec/{,*/}*.js'],
-        tasks: ['newer:jshint:test', 'karma']
-      },
+      //Remove jsHint
+      //js: {
+      //  files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+      //  tasks: ['newer:jshint:all'],
+      //  options: {
+      //    livereload: '<%= connect.options.livereload %>'
+      //  }
+      //},
+      //jsTest: {
+      //  files: ['test/spec/{,*/}*.js'],
+      //  tasks: ['newer:jshint:test', 'karma']
+      //},
       compass: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
         tasks: ['compass:server', 'autoprefixer']
@@ -319,6 +320,36 @@ module.exports = function (grunt) {
         }]
       }
     },
+    ngconstant: {
+      options: {
+        name: 'config',
+        wrap: '"use strict";\n\n{%= __ngModule %}',
+        space: '  '
+      },
+      development: {
+        options: {
+          dest: '<%= yeoman.app %>/scripts/config.js'
+        },
+        constants: {
+          ENV: {
+            name: 'development',
+            apiEndpoint: 'http://localhost:1337'
+          }
+        }
+      },
+      production: {
+        options: {
+          dest: '<%= yeoman.dist %>/scripts/config.js'
+        },
+        constants: {
+          ENV: {
+            name:'production',
+            apiEndpoint:'http://synote.org'
+          }
+        }
+      }
+    },
+
 
     // Replace Google CDN references
     cdnify: {
@@ -395,6 +426,7 @@ module.exports = function (grunt) {
 
     grunt.task.run([
       'clean:server',
+      'ngconstant:development',
       'wiredep',
       'concurrent:server',
       'autoprefixer',
@@ -418,6 +450,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'ngconstant:production', // ADD THIS
     'wiredep',
     'useminPrepare',
     'concurrent:dist',
