@@ -81,5 +81,7 @@ module.exports = {
    ***************************************************************************/
 
    // environment: process.env.NODE_ENV || 'development'
-
+  youtube:{
+    key: "AIzaSyBw5KaKPmZIzqVYB3O0BfwPY3BeCWuX6Dw"
+  }
 };

@@ -5,6 +5,7 @@
 
 var request = require('supertest-as-promised');
 var async = require('async');
+var should = require('should');
 
 
 describe('RtestController', function() {

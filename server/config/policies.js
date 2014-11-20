@@ -52,5 +52,8 @@ module.exports.policies = {
 	  admin:['isAdmin'],
 	  restricted:['hasJsonWebToken'],
 	  open:true
-  	}
+  	},
+	MultimediaController:{
+		metadata:['hasJsonWebToken','requireurl']
+	}
 };

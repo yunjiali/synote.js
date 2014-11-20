@@ -25,7 +25,10 @@
         <li ng-class="{active: isActive('#/')}"><a href="#/">Home</a></li>
         <li ng-class="{active: isActive('#/browse')}"><a href="#/browse">Browse</a></li>
       </ul>
-      <ul class="nav navbar-nav navbar-right">
+      <ul ng-if="" class="nav navbar-nav navbar-right"><!-- use ng-if to decide show or no show-->
+        <li ng-class="{active: isActive('#/login')}"><a href="#/login">Login</a></li>
+      </ul>
+      <ul ng-if="!" class="nav navbar-nav navbar-right"><!-- use ng-if to decide show or no show-->
         <li ng-class="{active: isActive('#/login')}"><a href="#/login">Login</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
