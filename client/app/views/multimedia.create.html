@@ -1,0 +1,77 @@
+<div id="multimedia_create_div">
+  <div id="error_div">
+    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+  </div>
+  <form name='multimedia_create_form' role="form">
+    <fieldset>
+      <div class="control-group">
+        <label for="url" class="control-label"><b><em>*</em>URL</b></label>
+        <div class="controls">
+          <div class="input-append">
+            <input type='text' autocomplete="off" class="required form-control" name='url' id='url' ng-model="url" required ng-trim="true"/>
+            <button id="url_submit_btn" type="btn btn-primary" ng-click="getMetadata()" class="btn">Inspect</button>
+            <p class="help-block">Please enter the URL of a YouTube or DailyMotion Video e.g. https://www.youtube.com/watch?v=AZeXETmatZk</p>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+  <div ng-show="metadata" id="metadata_div">
+    <form class="form-horizontal">
+      <fieldset>
+        <legend>Video info</legend>
+
+        <!-- Text input-->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="title">Title</label>
+          <div class="col-md-4">
+            <input id="title" ng-model="metadata.metadata.title" name="title" type="text" placeholder="" class="form-control input-md" required="">
+          </div>
+        </div>
+
+        <!-- Textarea -->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="description">Description</label>
+          <div class="col-md-4">
+            <textarea class="form-control" ng-model="metadata.metadata.description" id="description" name="description"></textarea>
+          </div>
+        </div>
+
+        <div class="tagsinput-primary" ng-init="">
+          <input name="tagsinput" class="tagsinput" data-role="tagsinput" value="School, Teacher, Colleague">
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="description">Duration</label>
+          <div class="col-md-4">
+            <input id="duration" disabled="disabled" ng-model="metadata.metadata.duration" name="duration" type="text" placeholder="" class="form-control input-md" required="">
+          </div>
+        </div>
+
+        <!-- Multiple Checkboxes -->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="subtitles">Subtitiles</label>
+          <div class="col-md-4">
+            <div class="checkbox" ng-repeat="subtitle in metadata.subtitles.list">
+              <label for="subtitles_{{subtitle.language}}" >
+                <input type="checkbox" name="subtitles" id="subtitles_{{subtitle.language}}" value="subtitle.language">
+                {{subtitle.language}}
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Button (Double) -->
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="submit_btn"></label>
+          <div class="col-md-8">
+            <button id="submit_btn" name="submit_btn" class="btn btn-success">Create</button>
+            <button id="reset_btn" name="reset_btn" class="btn btn-danger">Cancel</button>
+          </div>
+        </div>
+
+      </fieldset>
+    </form>
+
+  </div>
+</div>

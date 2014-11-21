@@ -17,7 +17,7 @@ angular.module('synoteClient')
       $http.post(ENV.apiEndpoint+'/auth/login', { email: email, password: password, withCredentials: true})
         .then(function (result) {
           userInfo = {
-            username: result.data,
+            username: result.data.username,
             email:result.data.email,
             role:result.data.role,
             id:result.data.id
@@ -65,7 +65,9 @@ angular.module('synoteClient')
     }
 
     function isLoggedIn() {
-      if(userInfo && userInfo.tokenExpires>Date.now()){
+      //console.log(userInfo.tokenExpires);
+      //console.log(Date.now());
+      if(userInfo && userInfo.tokenExpires && userInfo.tokenExpires>Date.now()){
         return true;
       }
 
@@ -83,6 +85,7 @@ angular.module('synoteClient')
       login: login,
       logout: logout,
       getUserInfo: getUserInfo,
-      getAccessToken: getAccessToken
+      getAccessToken: getAccessToken,
+      isLoggedIn: isLoggedIn
     };
   }]);

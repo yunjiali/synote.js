@@ -7,11 +7,10 @@
   <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="bower_components/flat-ui/dist/css/flat-ui.min.css" rel="stylesheet">
   <link href="bower_components//font-awesome/css/font-awesome.min.css" rel="stylesheet">
-  <!-- build:css(.tmp) styles/main.css -->
-  <link rel="stylesheet" href="styles/main.css">
+  <!-- build:css(.tmp) styles/main.css removed-->
+  <link rel="stylesheet" href="styles/app.css">
 </head>
 <body>
-
 <div class="container" ng-app="synoteClient">
   <nav class="navbar navbar-inverse navbar-embossed" role="navigation" ng-controller="HeaderCtrl">
     <div class="navbar-header">
@@ -25,11 +24,11 @@
         <li ng-class="{active: isActive('#/')}"><a href="#/">Home</a></li>
         <li ng-class="{active: isActive('#/browse')}"><a href="#/browse">Browse</a></li>
       </ul>
-      <ul ng-if="" class="nav navbar-nav navbar-right"><!-- use ng-if to decide show or no show-->
+      <ul ng-cloak ng-if="!isLoggedIn()" class="nav navbar-nav navbar-right">
         <li ng-class="{active: isActive('#/login')}"><a href="#/login">Login</a></li>
       </ul>
-      <ul ng-if="!" class="nav navbar-nav navbar-right"><!-- use ng-if to decide show or no show-->
-        <li ng-class="{active: isActive('#/login')}"><a href="#/login">Login</a></li>
+      <ul ng-cloak ng-if="isLoggedIn()" class="nav navbar-nav navbar-right">
+        <li><a href="#/multimedia.create">Create</a></li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </nav><!-- /navbar -->
@@ -83,6 +82,8 @@
 <script src="bower_components/angular-touch/angular-touch.js"></script>
 <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="bower_components/moment/moment.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 
@@ -93,6 +94,9 @@
 <script src="scripts/controllers/login.js"></script>
 <script src="scripts/controllers/home.js"></script>
 <script src="scripts/controllers/header.js"></script>
+<script src="scripts/controllers/multimedia.create.js"></script>
+<script src="scripts/services/multimediaservice.js"></script>
+<script src="scripts/services/policyservice.js"></script>
 <!-- endbuild -->
 </body>
 </html>

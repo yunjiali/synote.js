@@ -19,10 +19,12 @@ var app = angular
     'ngSanitize',
     'ngTouch',
     'config',
-    'LocalStorageModule'
+    'LocalStorageModule',
+    'ui.bootstrap'
+    //leave ui-route for synoteplayer
   ]);
 //app config
-app.config(['$routeProvider', 'localStorageServiceProvider', function ($routeProvider, localStorageServiceProvider) {
+app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', function ($routeProvider ,localStorageServiceProvider,$httpProvider) {
   $routeProvider
     .when('/', {
       templateUrl: 'views/home.html',
@@ -42,23 +44,43 @@ app.config(['$routeProvider', 'localStorageServiceProvider', function ($routePro
       templateUrl: 'views/login.html',
       controller: 'LoginCtrl'
     })
+    .when('/multimedia.create', {
+      templateUrl: 'views/multimedia.create.html',
+      controller: 'MultimediaCreateCtrl',
+      resolve:{
+        loginRequired: function(policyService){
+          return policyService.loginRequired();
+        }
+      }
+    })
     .otherwise({
       redirectTo: '/'
     });
 
   localStorageServiceProvider
     .setPrefix('synoteClient');
+
+  $httpProvider.defaults.withCredentials = true;
 }]);
 
 app.run(['$rootScope', '$location', function ($rootScope, $location) {
 
-  //$rootScope.$on('$routeChangeSuccess', function (userInfo) {
-    //console.log(userInfo);
-  //});
+  /*$rootScope.$on('$locationChangeStart', function(evt, next, current, authenticationService){
+    var nextPath = $location.path();
+    var nextRoute = $route.routes[nextPath]
 
+    if(nextRoute.auth && nextRoute.auth && !authenticationService.isLoggedIn()){
+      $location.path("/login");
+      // event.preventDefault();
+    }
+  });*/
+  $rootScope.$on('$routeChangeSuccess', function (userInfo) {
+    //console.log(userInfo);
+  });
+  /*
   $rootScope.$on('$routeChangeError', function (event, current, previous, eventObj) {
     if (eventObj.authenticated === false) {
       $location.path('/login');
     }
-  });
+  });*/
 }]);
