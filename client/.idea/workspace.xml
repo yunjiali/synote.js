@@ -34,10 +34,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="multimedia.create.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="multimedia.create.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/multimedia.create.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.42097488" vertical-offset="0" max-vertical-offset="677">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="480">
               <caret line="19" column="38" selection-start-line="19" selection-start-column="38" selection-end-line="19" selection-end-column="38" />
               <folding />
             </state>
@@ -104,11 +104,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="multimedia.create.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="multimedia.create.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/multimedia.create.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-16.25" vertical-offset="195" max-vertical-offset="1245">
-              <caret line="39" column="48" selection-start-line="39" selection-start-column="48" selection-end-line="39" selection-end-column="48" />
+            <state vertical-scroll-proportion="0.25267994" vertical-offset="375" max-vertical-offset="1395">
+              <caret line="36" column="16" selection-start-line="36" selection-start-column="16" selection-end-line="36" selection-end-column="16" />
               <folding />
             </state>
           </provider>
@@ -663,18 +663,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/multimedia.create.html">
+    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/multimedia.create.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-16.25" vertical-offset="195" max-vertical-offset="1245">
-          <caret line="39" column="48" selection-start-line="39" selection-start-column="48" selection-end-line="39" selection-end-column="48" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="480">
+          <caret line="19" column="38" selection-start-line="19" selection-start-column="38" selection-end-line="19" selection-end-column="38" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/scripts/controllers/multimedia.create.js">
+    <entry file="file://$PROJECT_DIR$/app/views/multimedia.create.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.42097488" vertical-offset="0" max-vertical-offset="677">
-          <caret line="19" column="38" selection-start-line="19" selection-start-column="38" selection-end-line="19" selection-end-column="38" />
+        <state vertical-scroll-proportion="0.25267994" vertical-offset="375" max-vertical-offset="1395">
+          <caret line="36" column="16" selection-start-line="36" selection-start-column="16" selection-end-line="36" selection-end-column="16" />
           <folding />
         </state>
       </provider>

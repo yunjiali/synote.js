@@ -5,10 +5,13 @@
 * @docs        :: http://sailsjs.org/#!documentation/models
 */
 
-var randomstring = require("randomstring");
 
 module.exports = {
-
+  types:{
+    customurl:function(url){
+      return require('validator').isURL(url);
+    }
+  },
   attributes: {
     title:{
       type:'string',
@@ -30,7 +33,7 @@ module.exports = {
     },
     url:{
       type:"string",
-      url:"true",
+      customurl:true,
       size:"4096"
     },
     tags:{
@@ -59,7 +62,7 @@ module.exports = {
     },
     thumbnail:{
       type:"string",
-      url:"true",
+      customurl:true,
       size:"4096"
     },
     synmarks:{
@@ -78,12 +81,8 @@ module.exports = {
       collection:'playlistItem',
       via:'multimedia'
     }
-  },
-
-  beforeCreate:function(values,cb){
-    values.rsid = randomstring.generate();
   }
-
   //TODO: delete multimedia then also delete PlaylistItem
+  //TODO: delete multimedia then also delete synmarks, transcripts and slides
 };
 

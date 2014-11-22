@@ -2,6 +2,7 @@
 	"Welcome": "Welcome",
 	"A brand new app.": "A brand new app.",
 	"This is open!":"This is open!",
-	"Missing parameter url":"Missing parameter url",
-	"Parameter url is not valid.":"Parameter url is not valid."
+	"Missing parameter %s":"Missing parameter %s",
+	"Parameter %s is not valid.":"Parameter %s is not valid.",
+	"%s has been successfully created":"%s has been successfully created"
 }

@@ -6,12 +6,12 @@
 var validator = require('validator');
 
 module.exports = function(req, res, next) {
-    if(!req.query.url)
-        return res.badRequest(sails.__("Missing parameter url."));
+    if(!req.query.url && !req.body.url)
+        return res.badRequest(sails.__("Missing parameter %s.", "url"));
 
-    var url = req.query.url;
+    var url = (req.query.url?req.query.url:req.body.url);
     if(!validator.isURL(url))
-        return res.badRequest((sails.__("Parameter url is not valid." )));
+        return res.badRequest((sails.__("Parameter %s is not valid.", "url" )));
 
     next();
 };

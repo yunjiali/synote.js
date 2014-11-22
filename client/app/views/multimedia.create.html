@@ -37,14 +37,24 @@
           </div>
         </div>
 
-        <div class="tagsinput-primary" ng-init="">
-          <input name="tagsinput" class="tagsinput" data-role="tagsinput" value="School, Teacher, Colleague">
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="tagsinput">Tags</label>
+          <div class="tagsinput-primary col-md-4">
+            <input name="tagsinput" class="tagsinput" data-role="tagsinput" value="School, Teacher, Colleague">
+          </div>
         </div>
 
         <div class="form-group">
           <label class="col-md-4 control-label" for="description">Duration</label>
           <div class="col-md-4">
             <input id="duration" disabled="disabled" ng-model="metadata.metadata.duration" name="duration" type="text" placeholder="" class="form-control input-md" required="">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-md-4 control-label" for="description">Thumbnail image</label>
+          <div class="col-md-4">
+            <img src="{{metadata.metadata.thumbnail}}"/>
           </div>
         </div>
 

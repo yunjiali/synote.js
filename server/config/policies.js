@@ -54,6 +54,7 @@ module.exports.policies = {
 	  open:true
   	},
 	MultimediaController:{
-		metadata:['hasJsonWebToken','requireurl']
+		metadata:['hasJsonWebToken','requireurl'],
+		create:['hasJsonWebToken','requiretitle']
 	}
 };

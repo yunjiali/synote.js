@@ -30,9 +30,6 @@ module.exports = {
       model:'synmark',
       required:false
     }
-  },
-  beforeCreate:function(values,cb){
-    values.rsid = randomstring.generate();
   }
 };
 

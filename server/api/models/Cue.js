@@ -5,8 +5,6 @@
 * @docs        :: http://sailsjs.org/#!documentation/models
 */
 
-var randomstring = require("randomstring");
-
 module.exports = {
 
   attributes: {
@@ -27,13 +25,13 @@ module.exports = {
     },
     st:{
       type:'integer',
-      defaultTo:0,
+      defaultsTo:0,
       min:0,
       required:true
     },
     et:{
       type:'integer',
-      defaultTo:0,
+      defaultsTo:0,
       min:0,
       required:true
     },
@@ -46,9 +44,6 @@ module.exports = {
       type:'string',
       size:'1024'
     }
-  },
-  beforeCreate:function(values,cb){
-    values.rsid = randomstring.generate();
   }
 };
 

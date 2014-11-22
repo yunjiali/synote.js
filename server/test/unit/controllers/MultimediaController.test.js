@@ -180,12 +180,86 @@ describe('MultimediaController', function() {
         //TODO: add a couple of bad examples: http://www.youtube.com/watch?v=WKsjaOqDXgg BBC banned it
     });
 
-    //
-    /*describe('GET /rtest/restricted', function () {
-     it('should get open access', function () {
-     request(sails.hooks.http.app)
-     .get('/rtest/open')
-     .expect(200);
-     });
-     });*/
+    describe.only('POST /multimedia/create', function(){
+        var youtubeURLSubtitles = "https://www.youtube.com/watch?v=5MgBikgcWnY";
+        var accessToken = "";
+        before(function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback();
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null, resObj.token);
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
+
+        it('should not successfully if token is not presented', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            agent
+                .post('/multimedia/create')
+                .send({
+                    title:"The first 20 hours -- how to learn anything | Josh Kaufman | TEDxCSU",
+                    description:"Josh Kaufman is the author of the #1 international bestseller, 'The Personal MBA: Master the Art of Busines",
+                    duration:"1167",
+                    thumbnail:"https://i.ytimg.com/vi/5MgBikgcWnY/default.jpg",
+                    url:"http://www.youtube.com/watch?v=5MgBikgcWnY",
+                    tags:"ted,talk,ok"
+                })
+                .expect(403)
+                .end(function(err,res){
+                    res.statusCode.should.equal(403);
+                    done();
+                })
+        });
+
+        it('should successfully create multimedia with tags', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            agent
+                .post('/multimedia/create?access_token='+accessToken)
+                .send({
+                title:"The first 20 hours -- how to learn anything | Josh Kaufman | TEDxCSU",
+                description:"Josh Kaufman is the author of the #1 international bestseller, 'The Personal MBA: Master the Art of Busines",
+                duration:"1167",
+                thumbnail:"https://i.ytimg.com/vi/5MgBikgcWnY/default.jpg",
+                url:"http://www.youtube.com/watch?v=5MgBikgcWnY",
+                tags:"ted,talk,ok"
+            })
+                .expect(200)
+                .end(function(err,res){
+                    console.log(res);
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    //check tags
+                    Multimedia.find(resObj.mmid).populate('tags').exec(function(err, mms){
+                        should.exist(mms);
+                        console.log(mms[0]);
+                        mms[0].toJSON().should.have.property('tags').with.lengthOf(3);
+                        done();
+                    });
+                })
+        });
+
+        //it('should successfully create multimedia with subtitles', function(done){
+        //
+        //});
+    });
+
 });

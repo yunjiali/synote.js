@@ -5,8 +5,6 @@
 * @docs        :: http://sailsjs.org/#!documentation/models
 */
 
-var randomstring = require("randomstring");
-
 module.exports = {
   attributes: {
     owner: {
@@ -27,12 +25,9 @@ module.exports = {
     },
     lang: { //TODO: use npm langauges to see if the langugage is valid
       type: 'string',
-      size: 2,
-      defaultTo: 'en'
+      size: 255,
+      defaultsTo: 'en'
     }
-  },
-  beforeCreate:function(values,cb){
-    values.rsid = randomstring.generate();
   }
 };
 
