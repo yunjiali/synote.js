@@ -244,7 +244,6 @@ describe('MultimediaController', function() {
             })
                 .expect(200)
                 .end(function(err,res){
-                    console.log(res);
                     var resObj = JSON.parse(res.text);
                     resObj.success.should.equal(true);
                     //check tags
@@ -253,6 +252,36 @@ describe('MultimediaController', function() {
                         console.log(mms[0]);
                         mms[0].toJSON().should.have.property('tags').with.lengthOf(3);
                         done();
+                    });
+                })
+        });
+
+        it('should successfully create multimedia with subtitles', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            agent
+                .post('/multimedia/create?access_token='+accessToken)
+                .send({
+                    title:"The first 20 hours -- how to learn anything | Josh Kaufman | TEDxCSU",
+                    description:"Josh Kaufman is the author of the #1 international bestseller, 'The Personal MBA: Master the Art of Busines",
+                    duration:"1167",
+                    thumbnail:"https://i.ytimg.com/vi/5MgBikgcWnY/default.jpg",
+                    url:"http://www.youtube.com/watch?v=5MgBikgcWnY",
+                    tags:"ted,talk,ok",
+                    subtitles:["srt,it,http://www.youtube.com/api/timedtext?v=5MgBikgcWnY&fmt=srt&lang=it&name=",
+                        "srt,en,http://www.youtube.com/api/timedtext?v=5MgBikgcWnY&fmt=srt&lang=en&name"]
+                })
+                .expect(200)
+                .end(function(err,res){
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    //check tags
+                    Multimedia.find(resObj.mmid).populate('transcripts').exec(function(err, mms){
+                        should.exist(mms);
+                        mms[0].toJSON().should.have.property('transcripts').with.lengthOf(2);
+                        Transcript.find({where:{annotates:mms[0].id}}).populate('cues').exec(function(errTrans, transcripts){
+                            transcripts[0].toJSON().should.have.property('cues');
+                            done();
+                        })
                     });
                 })
         });

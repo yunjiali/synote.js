@@ -125,7 +125,6 @@ module.exports = {
 
                 //download the subtitle
                 SubtitleService.getSubtitleSRT(items[2],items[1], function(errSub, subData){
-                    console.log(items[1]);
                     if(errSub)
                         callbackSub(errSub);
 
@@ -145,7 +144,6 @@ module.exports = {
                     callbackSub(null);
                 });
 
-
             }, function(err, results){
                 if(err) return res.badRequest(err);
 
@@ -156,6 +154,15 @@ module.exports = {
                     return res.json({success:true, message:sails.__("%s has been successfully created", multimedia.title), mmid:newmm.id});
 
                 });
+            });
+        }
+        else{
+            Multimedia.create(multimedia).exec(function(errMultimedia,newmm){
+                if(errMultimedia){
+                    return res.serverError(errMultimedia);
+                }
+                return res.json({success:true, message:sails.__("%s has been successfully created", multimedia.title), mmid:newmm.id});
+
             });
         }
 

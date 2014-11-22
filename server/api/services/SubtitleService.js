@@ -50,7 +50,7 @@ module.exports = {
                 //TODO: CustomiseException
                 if(err != null)
                     return callback(err,result);
-                
+
                 var data = srt.fromString(lang,result);
 
                 return callback(null,data);

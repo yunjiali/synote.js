@@ -27,8 +27,8 @@
       <file leaf-file-name="MultimediaController.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/controllers/MultimediaController.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1755" max-vertical-offset="2550">
-              <caret line="128" column="30" selection-start-line="128" selection-start-column="30" selection-end-line="128" selection-end-column="30" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="1633" max-vertical-offset="2655">
+              <caret line="132" column="38" selection-start-line="132" selection-start-column="38" selection-end-line="132" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -64,11 +64,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SubtitleService.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SubtitleService.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/services/SubtitleService.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.1981567" vertical-offset="0" max-vertical-offset="1695">
-              <caret line="52" column="16" selection-start-line="52" selection-start-column="16" selection-end-line="52" selection-end-column="16" />
+            <state vertical-scroll-proportion="-8.653846" vertical-offset="0" max-vertical-offset="1695">
+              <caret line="15" column="9" selection-start-line="15" selection-start-column="9" selection-end-line="15" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -84,11 +84,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MultimediaController.test.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MultimediaController.test.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/unit/controllers/MultimediaController.test.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="99.0" vertical-offset="3354" max-vertical-offset="4035">
-              <caret line="54" column="91" selection-start-line="54" selection-start-column="91" selection-end-line="54" selection-end-column="91" />
+            <state vertical-scroll-proportion="0.70046085" vertical-offset="3819" max-vertical-offset="4470">
+              <caret line="287" column="0" selection-start-line="287" selection-start-column="0" selection-end-line="287" selection-end-column="0" />
               <folding>
                 <element signature="e#0#41#0" expanded="false" />
               </folding>
@@ -747,16 +747,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/unit/controllers/MultimediaController.test.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="99.0" vertical-offset="3354" max-vertical-offset="4035">
-          <caret line="54" column="91" selection-start-line="54" selection-start-column="91" selection-end-line="54" selection-end-column="91" />
-          <folding>
-            <element signature="e#0#41#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/api/policies/requiretitle.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.17725259" vertical-offset="0" max-vertical-offset="677">
@@ -805,6 +795,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/api/services/SubtitleService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-8.653846" vertical-offset="0" max-vertical-offset="1695">
+          <caret line="15" column="9" selection-start-line="15" selection-start-column="9" selection-end-line="15" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/controllers/MultimediaController.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1633" max-vertical-offset="2655">
+          <caret line="132" column="38" selection-start-line="132" selection-start-column="38" selection-end-line="132" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/api/models/Transcript.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="585">
@@ -813,19 +819,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/controllers/MultimediaController.js">
+    <entry file="file://$PROJECT_DIR$/test/unit/controllers/MultimediaController.test.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1755" max-vertical-offset="2550">
-          <caret line="128" column="30" selection-start-line="128" selection-start-column="30" selection-end-line="128" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/api/services/SubtitleService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.1981567" vertical-offset="0" max-vertical-offset="1695">
-          <caret line="52" column="16" selection-start-line="52" selection-start-column="16" selection-end-line="52" selection-end-column="16" />
-          <folding />
+        <state vertical-scroll-proportion="0.70046085" vertical-offset="3819" max-vertical-offset="4470">
+          <caret line="287" column="0" selection-start-line="287" selection-start-column="0" selection-end-line="287" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#41#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
