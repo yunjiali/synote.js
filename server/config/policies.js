@@ -54,7 +54,23 @@ module.exports.policies = {
 	  open:true
   	},
 	MultimediaController:{
-		metadata:['hasJsonWebToken','requireurl'],
-		create:['hasJsonWebToken','requiretitle']
+		metadata:['hasJsonWebToken','requireurlQuery'],
+		create:['hasJsonWebToken','requiretitleBody'],
+		get:['requiremmidParams']
+	},
+	SynmarkController:{
+		create:['hasJsonWebToken','requiremfstBody','requiremmidBody']
+	},
+	PlaylistController:{
+		create:['hasJsonWebToken','requiretitleBody'],
+		additem:['hasJsonWebToken','requiremmidParams', 'requireplidParams'],
+		saveitems:['hasJsonWebToken'],
+		get:['requireplidParams']
+
+	},
+	PlaylistItemSynmarkController:{
+		addsynmark:['hasJsonWebToken','requirepliidParams','requiresynmarkidParams'], //permission
+		removesynmark:['hasJsonWebToken', 'requirepliidParams', 'requiresynmarkidParams'] //permission
 	}
+
 };

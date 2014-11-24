@@ -34,7 +34,7 @@ module.exports.routes = {
 
   '/': {
     view: 'homepage'
-  }
+  },
 
   /***************************************************************************
   *                                                                          *
@@ -45,5 +45,10 @@ module.exports.routes = {
   * for configuration options and examples.                                  *
   *                                                                          *
   ***************************************************************************/
-
+  'get /multimedia/get/:mmid':'MultimediaController.get',
+  'post /playlist/:plid/add/:mmid':'PlaylistController.add',
+  'put /playlist/:plid/save':'PlaylistController.save',
+  'get /playlist/get/:plid':'PlaylistController.get',
+  'post /playlistitemsynmark/:pliid/add/synmark/:synmarkid':'PlaylistItemSynmarkController.addsynmark',
+  'delete /playlistitemsynmark/:pliid/remove/synmark/:synmarkid':'PlaylistItemSynmarkController.removesynmark'
 };

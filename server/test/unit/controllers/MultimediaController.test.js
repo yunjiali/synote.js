@@ -180,7 +180,7 @@ describe('MultimediaController', function() {
         //TODO: add a couple of bad examples: http://www.youtube.com/watch?v=WKsjaOqDXgg BBC banned it
     });
 
-    describe.only('POST /multimedia/create', function(){
+    describe('POST /multimedia/create', function(){
         var youtubeURLSubtitles = "https://www.youtube.com/watch?v=5MgBikgcWnY";
         var accessToken = "";
         before(function(done){
@@ -211,7 +211,7 @@ describe('MultimediaController', function() {
             });
         });
 
-        it('should not successfully if token is not presented', function(done){
+        it('should not be successful if token is not presented', function(done){
             var agent = request.agent(sails.hooks.http.app);
             agent
                 .post('/multimedia/create')
@@ -230,7 +230,7 @@ describe('MultimediaController', function() {
                 })
         });
 
-        it('should successfully create multimedia with tags', function(done){
+        it('should be successful to create multimedia with tags', function(done){
             var agent = request.agent(sails.hooks.http.app);
             agent
                 .post('/multimedia/create?access_token='+accessToken)
@@ -256,7 +256,7 @@ describe('MultimediaController', function() {
                 })
         });
 
-        it('should successfully create multimedia with subtitles', function(done){
+        it('should be successful to create multimedia with subtitles', function(done){
             var agent = request.agent(sails.hooks.http.app);
             agent
                 .post('/multimedia/create?access_token='+accessToken)
@@ -289,6 +289,11 @@ describe('MultimediaController', function() {
         //it('should successfully create multimedia with subtitles', function(done){
         //
         //});
+    });
+
+    //TODO: get multimedia
+    describe('GET /multimedia/get', function(){
+
     });
 
 });

@@ -6,7 +6,7 @@
 var validator = require('validator');
 
 module.exports = function(req, res, next) {
-    if(!req.query.title && !req.body.title)
+    if(!req.body || !req.body.title)
         return res.badRequest(sails.__("Missing parameter %s.", "title"));
 
     next();

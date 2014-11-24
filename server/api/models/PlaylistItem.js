@@ -15,14 +15,20 @@ module.exports = {
     multimedia:{
       model:'multimedia'
     },
-    ind:{ //index of the multiemdia resource
+    rsid:{
+      type:'string',
+      unique:true,
+      required:true,
+      index:true
+    },
+    ind:{ //index of the multiemdia resource in this playlist
       type:'integer',
       required:true,
       min:1
     },
     synmarks:{
-      collection:'synmark',
-      via:'belongsToPlaylistItems'
+      collection:'PlaylistItemSynmark',
+      via:'playlistItem'
     }
   }
 };

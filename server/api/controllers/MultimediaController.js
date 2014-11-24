@@ -8,6 +8,8 @@ var async = require('async');
 var S = require('string');
 var validator = require('validator');
 var randomstring = require("randomstring");
+var Q = require('q');
+
 
 module.exports = {
     //get metadata info from various video hosting websites
@@ -51,6 +53,12 @@ module.exports = {
      */
     create:function(req,res){
         var multimedia = {};
+
+        if(typeof req.body.duration === 'string')
+            console.log("string");
+        else
+            console.log('number');
+
         multimedia.title = S(req.body.title).trim().s;
         if(req.body.description) {
             multimedia.description = S(req.body.description).trim().s
@@ -132,6 +140,7 @@ module.exports = {
                     {
                         var sObj = {};
                         sObj.setting="";
+                        sObj.owner = req.session.user.id;
                         sObj.ind = subData[i].number;
                         sObj.rsid = randomstring.generate(); //randomly generate uuid
                         sObj.content = subData[i].languages[items[1]];
@@ -165,7 +174,41 @@ module.exports = {
 
             });
         }
-
+    },
+    get: function(req,res){
+        //TODO: get different things with different permission
+        //if playlist in query get synmark belongs to a playlist
+        var multimedia = req.session.multimedia;
+        Q.all([
+            Synmark.find({annotates:multimedia.id}).populate('tags').populate('owner')
+                .then(function(synmarks){return synmarks;}),
+            Transcript.find({annotates:multimedia.id}).populate('cues').populate('owner')
+                .then(function(transcripts){return transcripts;}),
+            Playlist.find({owner:req.session.user.id}).populate('items')
+                .then(function(transcripts){return transcripts;})
+        ])
+        .spread(function(synmarks,transcripts,playlists){
+            var data = {};
+            data.multimedia = multimedia;
+            data.synmarks = synmarks;
+            data.transcripts = transcripts;
+            data.playlists = playlists;
+            return res.json(data);
+        })
+        .catch(function(err){
+            return res.serverError(err);
+        });
     }
+    /*
+    gettest:  function(req,res){
+        //TODO: get different things with different permission
+        //if playlist in query get synmark belongs to a playlist
+        var multimedia = req.session.multimedia;
+        multimedia.populate('synmarks').exec(function(err,newmm){
+
+            return json
+
+        });
+    }*/
 };
 

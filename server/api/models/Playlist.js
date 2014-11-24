@@ -5,8 +5,6 @@
 * @docs        :: http://sailsjs.org/#!documentation/models
 */
 
-var randomstring = require("randomstring");
-
 module.exports = {
 
   attributes: {
@@ -32,15 +30,12 @@ module.exports = {
       type:"string",
       enum:['private','view','edit'],
       required:true,
-      defaultsTo:"comment" //could be admin, normal
+      defaultsTo:"view" //could be admin, normal
     },
     items:{
       collection:'playlistItem',
       via:'belongsTo'
     }
-  },
-  beforeCreate:function(values,cb){
-    values.rsid = randomstring.generate();
   }
 };
 

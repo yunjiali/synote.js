@@ -4,5 +4,15 @@
 	"This is open!":"This is open!",
 	"Missing parameter %s":"Missing parameter %s",
 	"Parameter %s is not valid.":"Parameter %s is not valid.",
-	"%s has been successfully created":"%s has been successfully created"
+	"%s has been successfully created":"%s has been successfully created",
+	"Cannot find the multimedia resource.":"Cannot find the multimedia resource.",
+	"Cannot find the playlist.":"Cannot find the playlist.",
+	"Cannot find the synmark.":"Cannot find the synmark.",
+	"Playlist %s has been successfully created":"Playlist %s has been successfully created",
+	"%s has been successfully added to playlist %s":"%s has been successfully added to playlist %s",
+	"Cannot find the playlist item.":"Cannot find the playlist item.",
+	"synmark has been successfully removed from the playlist %s":"synmark has been successfully removed from the playlist %s",
+	"synmark has been successfully added to the playlist %s":"synmark has been successfully added to the playlist %s",
+	"The synmark has already been added in the playlist item.":"The synmark has already been added in the playlist item.",
+	"The synmark doesn't annotate the multimedia.":"The synmark doesn't annotate the multimedia."
 }

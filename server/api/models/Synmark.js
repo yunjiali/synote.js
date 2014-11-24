@@ -5,8 +5,6 @@
 * @docs        :: http://sailsjs.org/#!documentation/models
 */
 
-var randomstring = require("randomstring");
-
 module.exports = {
 
   attributes: {
@@ -41,7 +39,7 @@ module.exports = {
     },
     mfst:{ //media fragment start
       type:'integer',
-      defaultTo:0,
+      defaultsTo:0,
       min:0,
       required:true
     },
@@ -84,21 +82,16 @@ module.exports = {
       via:'belongsTo'
     },
     belongsToPlaylistItems:{
-      collection:'playlistItem',
-      via:'synmarks',
-      dominant: true
+      collection:'PlaylistItemSynmark',
+      via:'synmark'
     }
   },
-
-  beforeCreate:function(values,cb){
-    values.rsid = randomstring.generate();
-  },
-
   getMediaFragmentString:function(){ // return a valid media fragment string
 
   }
 
   //TODO: implement customised validator for synmark: one of the title, content, tags must present
+  //TODO: implement validation that mfet must bigger than mfst
   //TODO: delete synmark also delete the synmark in any playlist
 };
 

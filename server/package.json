@@ -34,7 +34,8 @@
     "xml2js":"~0.4.4",
     "string":"~2.2.0",
     "underscore":"~1.7.0",
-    "srt":"git+ssh://git@github.com:yunjiali/srt-parser.git"
+    "srt":"git+ssh://git@github.com:yunjiali/srt-parser.git",
+    "q":"~1.1.2"
   },
   "scripts": {
     "start": "node app.js",
