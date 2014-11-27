@@ -59,7 +59,7 @@ module.exports = {
      * @param multimedia: passed forward from policy
      * @param
      */
-    add:function(req,res){
+    additem:function(req,res){
 
         //check playlist permission first
         var playlist = req.session.playlist;

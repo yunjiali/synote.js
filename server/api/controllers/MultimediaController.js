@@ -6,6 +6,7 @@
  */
 var async = require('async');
 var S = require('string');
+var _ = require('lodash');
 var validator = require('validator');
 var randomstring = require("randomstring");
 var Q = require('q');
@@ -175,40 +176,98 @@ module.exports = {
             });
         }
     },
+    /**
+     * Get multimedia
+     * @param mmid
+     * @param plid (optional): the id of the playlist that is currently playing
+     * @param pliid (optional): the pliid that currently playing
+     */
     get: function(req,res){
         //TODO: get different things with different permission
         //if playlist in query get synmark belongs to a playlist
+        //if user not logged in, no playlist is returned
         var multimedia = req.session.multimedia;
-        Q.all([
-            Synmark.find({annotates:multimedia.id}).populate('tags').populate('owner')
-                .then(function(synmarks){return synmarks;}),
-            Transcript.find({annotates:multimedia.id}).populate('cues').populate('owner')
-                .then(function(transcripts){return transcripts;}),
-            Playlist.find({owner:req.session.user.id}).populate('items')
-                .then(function(transcripts){return transcripts;})
-        ])
-        .spread(function(synmarks,transcripts,playlists){
+        var pliid;
+
+        if(req.query && req.query.pliid){
+            if(!isNaN(parseInt(req.query.pliid))){
+                pliid = parseInt(req.query.pliid);
+            }
+            else
+                res.badRequest(sails.__("Parameter %s is not valid.", "pliid"));
+        }
+
+        var synmarkPromise = Synmark.find({annotates:multimedia.id}).populate('tags').populate('owner')
+            .then(function(synmarks){
+                if(typeof pliid === 'undefined')
+                    return synmarks;
+                else{
+                    //the multimedia will be played in a playlist, so we will get if synmarks in this playlist
+                    var synmarkPromises = synmarks.map(function(synmark){
+                        return SynmarkService.belongsToPlaylistItem(pliid,synmark.id)
+                            .then(function(inPlaylistItem){
+                                synmark.inPlaylistItem = inPlaylistItem;
+                                return synmark;
+                            });
+                    });
+                    return Q.all(synmarkPromises).then(function(synmarks){
+                        //console.log(synmarks);
+                        return synmarks;
+                    });
+                }
+            })
+
+
+        var transcriptPromise = Transcript.find({annotates:multimedia.id}).populate('cues',{sort:'ind ASC'}).populate('owner')
+            .then(function(transcripts){return transcripts;});
+
+        var multimediaPromises = [];
+        multimediaPromises.push(synmarkPromise);
+        multimediaPromises.push(transcriptPromise);
+
+        var playlistsPromise;
+        if(req.session.user){
+            playlistsPromise = Playlist.find({owner:req.session.user.id}).populate('items',{sort:'ind ASC'})
+                .then(function(transcripts){return transcripts;});
+            multimediaPromises.push(playlistsPromise);
+        }
+        else{
+            playlistsPromise = UtilsService.emptyPromise();
+        }
+
+        var currentPlaylistPromise;
+        if(pliid){
+            currentPlaylistPromise = PlaylistItem.findOne({id:pliid}).populate('belongsTo')
+                .then(function(playlistItem){
+                    return playlistItem.belongsTo;
+                    //!!!!find playlist and populate all items, we need it!
+                })
+                .then(function(playlist){
+                    return Playlist.find({id:playlist.id}).populate('items');
+                });
+        }
+        else{
+            currentPlaylistPromise = UtilsService.emptyPromise();
+        }
+        multimediaPromises.push(currentPlaylistPromise);
+
+
+
+        Q.all(multimediaPromises)
+        .spread(function(synmarks,transcripts,playlists, currentPlaylist){
             var data = {};
             data.multimedia = multimedia;
             data.synmarks = synmarks;
             data.transcripts = transcripts;
-            data.playlists = playlists;
+            if(typeof playlists !== 'undefined')
+                data.playlists = playlists;
+            if(typeof currentPlaylist !== 'undefined')
+                data.currentplaylist = currentPlaylist;
             return res.json(data);
         })
         .catch(function(err){
             return res.serverError(err);
         });
     }
-    /*
-    gettest:  function(req,res){
-        //TODO: get different things with different permission
-        //if playlist in query get synmark belongs to a playlist
-        var multimedia = req.session.multimedia;
-        multimedia.populate('synmarks').exec(function(err,newmm){
-
-            return json
-
-        });
-    }*/
 };
 

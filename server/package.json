@@ -35,7 +35,8 @@
     "string":"~2.2.0",
     "underscore":"~1.7.0",
     "srt":"git+ssh://git@github.com:yunjiali/srt-parser.git",
-    "q":"~1.1.2"
+    "q":"~1.1.2",
+    "lodash":"~2.4.1"
   },
   "scripts": {
     "start": "node app.js",

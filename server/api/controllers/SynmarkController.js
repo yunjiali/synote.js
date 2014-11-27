@@ -113,6 +113,13 @@ module.exports = {
 
             return res.json({success:true, message:sails.__("%s has been successfully created", "Synmark"), synmarkid:newsynmark.id});
         })
+    },
+
+    get:function(req,res){
+        var synmarkid = req.params.synmarkid;
+        Synmark.findOne({id:synmarkid}).then(function(synmark){
+            return res.json(synmark);
+        })
     }
 };
 

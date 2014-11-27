@@ -3,6 +3,8 @@
  * A utils toolkit to deal with various of things
  */
 
+var Q = require('q');
+
 module.exports = {
     stringToSec:function(timeStr)
     {
@@ -122,5 +124,13 @@ module.exports = {
             return m[2];
         }
         return;
+    },
+    emptyPromise:function(){
+        var deferred = Q.defer();
+        setTimeout(function(){
+            deferred.resolve(undefined);
+        },10);
+
+        return deferred.promise;
     }
 }

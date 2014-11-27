@@ -16,13 +16,14 @@ before(function(done) {
         // here you can load fixtures, etc.
 
         var agent = request.agent(sails.hooks.http.app);
-        var token="";
+        var accessToken="";
         var mmid1, mmid2, mmid3;
         var synmarkid1_1, synmarkid1_2, synmarkid1_3, synmarkid1_4;
         var synmarkid2_1, synmarkid2_2;
         var synmarkid3_1, synmarkid3_2, synmarkid3_3;
         var plid1;
         var pliid1,pliid2,pliid3;
+        var plisid1,plisid2;
 
         //add test user
         async.waterfall([
@@ -70,14 +71,14 @@ before(function(done) {
                     .end(function(err, res){
                         var resObj = JSON.parse(res.text);
                         resObj.should.have.property("token");
-                        token = resObj.token;
+                        accessToken = resObj.token;
                         callback(null);
                     })
             },
             //multimedia1, 3 synmarks
             function(callback){
                 agent
-                    .post('/multimedia/create?access_token='+token)
+                    .post('/multimedia/create?access_token='+accessToken)
                     .send({
                         title:"6sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPe", //find multimedia using this title
                         description:"Josh Kaufman is the author of the #1 international bestseller, 'The Personal MBA: Master the Art of Busines",
@@ -157,7 +158,7 @@ before(function(done) {
             //multimedia 2, synmark2
             function(callback){
                 agent
-                    .post('/multimedia/create?access_token='+token)
+                    .post('/multimedia/create?access_token='+accessToken)
                     .send({
                         title:"6sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPf", //find multimedia using this title
                         description:"If you are interest on more free online course info, welcome to: http://opencourseonline.com",
@@ -182,7 +183,7 @@ before(function(done) {
                         content:'This is synmark2_1 test',
                         tags:'synmark2_1,test,data',
                         mfst:'11',
-                        mfet:'20',
+                        mfet:'21',//why??????
                         mmid: mmid2
                     })
                     .expect(200)
@@ -214,7 +215,7 @@ before(function(done) {
             },
             function(callback){ //multimedia3
                 agent
-                    .post('/multimedia/create?access_token='+token)
+                    .post('/multimedia/create?access_token='+accessToken)
                     .send({
                         title:"6sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPg", //find multimedia using this title
                         description:"Media fragment is important on the Web as it describes and server-side programmes to create snapshot pages for each media.",
@@ -310,7 +311,7 @@ before(function(done) {
             //create a playlist
             function(callback) {
                 agent
-                    .post('/playlist/create?access_token=' + token)
+                    .post('/playlist/create?access_token=' + accessToken)
                     .send({
                         title: 'playlist16sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPh',
                         description: 'This is playlist1'
@@ -332,31 +333,33 @@ before(function(done) {
                     .end(function(err,res){
                         var resObj = JSON.parse(res.text);
                         resObj.success.should.equal(true);
-                        pliid1 = resObj.pliid1;
+                        pliid1 = resObj.pliid;
                         callback(null);
                     })
             },
             //add synmark1_1 to multimedia1 item
             function(callback){
                 agent
-                    .post('/playlistitemsynmark/'+pliid1+'/add/synmark'+synmarkid1_1+'?access_token='+accessToken)
+                    .post('/playlistitemsynmark/'+pliid1+'/add/synmark/'+synmarkid1_1+'?access_token='+accessToken)
                     .send()
                     .expect(200)
                     .end(function(err,res){
                         var resObj = JSON.parse(res.text);
                         resObj.success.should.equal(true);
+                        plisid1 = resObj.plisid;
                         callback(null);
                     })
             },
             //add synmark1_2 to multimedia1 item
             function(callback){
                 agent
-                    .post('/playlistitemsynmark/'+pliid1+'/add/synmark'+synmarkid1_2+'?access_token='+accessToken)
+                    .post('/playlistitemsynmark/'+pliid1+'/add/synmark/'+synmarkid1_2+'?access_token='+accessToken)
                     .send()
                     .expect(200)
                     .end(function(err,res){
                         var resObj = JSON.parse(res.text);
                         resObj.success.should.equal(true);
+                        plisid2 = resObj.plisid;
                         callback(null);
 
                     })
@@ -376,7 +379,35 @@ before(function(done) {
             }
 
         ],function(err,results){
-            done(err,sails)
+            global.bootstrap = {};
+            global.bootstrap.multimedia= {};
+            global.bootstrap.multimedia.mmid1 = mmid1;
+            global.bootstrap.multimedia.mmid2 = mmid2;
+            global.bootstrap.multimedia.mmid3 = mmid3;
+
+            global.bootstrap.synmark= {};
+            global.bootstrap.synmark.synmarkid1_1 = synmarkid1_1;
+            global.bootstrap.synmark.synmarkid1_2 = synmarkid1_2;
+            global.bootstrap.synmark.synmarkid1_3 = synmarkid1_3;
+            global.bootstrap.synmark.synmarkid1_4 = synmarkid1_4;
+            global.bootstrap.synmark.synmarkid2_1 = synmarkid2_1;
+            global.bootstrap.synmark.synmarkid2_2 = synmarkid2_2;
+            global.bootstrap.synmark.synmarkid3_1 = synmarkid3_1;
+            global.bootstrap.synmark.synmarkid3_2 = synmarkid3_2;
+            global.bootstrap.synmark.synmarkid3_3 = synmarkid3_3;
+
+            global.bootstrap.playlist = {};
+            global.bootstrap.playlist.plid1 = plid1;
+
+            global.bootstrap.playlistitem = {};
+            global.bootstrap.playlistitem.pliid1 = pliid1;
+            global.bootstrap.playlistitem.pliid2 = pliid2;
+            global.bootstrap.playlistitem.pliid3 = pliid3;
+
+            global.bootstrap.playlistitemsynmark = {};
+            global.bootstrap.playlistitemsynmark.plisid1 = plisid1;
+            global.bootstrap.playlistitemsynmark.plisid2 = plisid2;
+            done(err,sails);
         });
     });
 });

@@ -53,6 +53,10 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', fu
         }
       }
     })
+    .when('/watch',{
+      templateUrl: 'views/login.html',
+      controller: 'WatchCtrl'
+    })
     .otherwise({
       redirectTo: '/'
     });

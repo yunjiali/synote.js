@@ -45,9 +45,7 @@ module.exports = {
     },
     mfet:{
       type:'integer',
-      min:function(){
-        return this.mfst;
-      }
+      min:0 //TODO: should be bigger than mfst
     },
     timeformat:{ //time format
       type:"string",

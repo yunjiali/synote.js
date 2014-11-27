@@ -4,7 +4,7 @@
  */
 
 module.exports = function(req, res, next) {
-    if(!req.params || req.params.plid)
+    if(!req.params || !req.params.plid)
         return res.badRequest(sails.__("Missing parameter %s.", "plid"));
 
     var plid = req.params.plid;

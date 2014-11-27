@@ -283,7 +283,7 @@ describe('MultimediaController', function() {
                             done();
                         })
                     });
-                })
+                });
         });
 
         //it('should successfully create multimedia with subtitles', function(done){
@@ -292,8 +292,61 @@ describe('MultimediaController', function() {
     });
 
     //TODO: get multimedia
-    describe('GET /multimedia/get', function(){
+    describe.only('GET /multimedia/get', function(){
+        var agent;
+        before(function(done){
+            agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback();
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null, resObj.token);
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
 
+        it("should get multimedia with owner's playlists if logged in", function(done){
+            agent
+                .get('/multimedia/get/'+global.bootstrap.multimedia.mmid1+'?access_token='+accessToken)
+                .expect(200)
+                .end(function(err,res){
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    //check tags
+                    resObj.playlists.length.should.greaterThan(0);
+                    done();
+                })
+        });
+
+        it("should get the current playlist if pliid is presented", function(done){
+            agent
+                .get('/multimedia/get/'+global.bootstrap.multimedia.mmid1+'?pliid='+global.bootstrap.playlistitem.pliid1+'&access_token='+accessToken)
+                .expect(200)
+                .end(function(err,res){
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    //check tags
+                    should.exist(resObj.currentplaylist);
+                    done();
+                })
+        });
     });
 
 });
