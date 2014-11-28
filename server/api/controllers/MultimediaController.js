@@ -179,7 +179,6 @@ module.exports = {
     /**
      * Get multimedia
      * @param mmid
-     * @param plid (optional): the id of the playlist that is currently playing
      * @param pliid (optional): the pliid that currently playing
      */
     get: function(req,res){
@@ -215,15 +214,10 @@ module.exports = {
                         return synmarks;
                     });
                 }
-            })
-
-
-        var transcriptPromise = Transcript.find({annotates:multimedia.id}).populate('cues',{sort:'ind ASC'}).populate('owner')
-            .then(function(transcripts){return transcripts;});
+            });
 
         var multimediaPromises = [];
         multimediaPromises.push(synmarkPromise);
-        multimediaPromises.push(transcriptPromise);
 
         var playlistsPromise;
         if(req.session.user){
@@ -235,34 +229,13 @@ module.exports = {
             playlistsPromise = UtilsService.emptyPromise();
         }
 
-        var currentPlaylistPromise;
-        if(pliid){
-            currentPlaylistPromise = PlaylistItem.findOne({id:pliid}).populate('belongsTo')
-                .then(function(playlistItem){
-                    return playlistItem.belongsTo;
-                    //!!!!find playlist and populate all items, we need it!
-                })
-                .then(function(playlist){
-                    return Playlist.find({id:playlist.id}).populate('items');
-                });
-        }
-        else{
-            currentPlaylistPromise = UtilsService.emptyPromise();
-        }
-        multimediaPromises.push(currentPlaylistPromise);
-
-
-
         Q.all(multimediaPromises)
-        .spread(function(synmarks,transcripts,playlists, currentPlaylist){
+        .spread(function(synmarks,playlists){
             var data = {};
             data.multimedia = multimedia;
             data.synmarks = synmarks;
-            data.transcripts = transcripts;
             if(typeof playlists !== 'undefined')
                 data.playlists = playlists;
-            if(typeof currentPlaylist !== 'undefined')
-                data.currentplaylist = currentPlaylist;
             return res.json(data);
         })
         .catch(function(err){

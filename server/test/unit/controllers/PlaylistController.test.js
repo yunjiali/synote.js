@@ -10,10 +10,10 @@ var should = require('should');
 
 describe('PlaylistController', function() {
 
-    describe.only('POST /playlist/create, /playlist/:plid/add/:mmid', function(){
+    describe('POST /playlist/create, /playlist/:plid/add/:mmid', function(){
         var accessToken = "";
-        var mmid="";
-        var plid="";
+        var mmid= global.bootstrap.multimedia.mmid1;
+        var plid= global.bootstrap.playlist.plid1;
         before(function(done){
             var agent = request.agent(sails.hooks.http.app);
             async.waterfall([
@@ -36,20 +36,6 @@ describe('PlaylistController', function() {
                             accessToken=resObj.token;
                             callback(null);
                         });
-                },
-                function(callback){
-                    Multimedia.findOne({title:'6sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPe'}, function(err,multimedia){
-                        should.exist(multimedia.id);
-                        mmid = multimedia.id.toString();
-                        callback(null);
-                    });
-                },
-                function(callback){
-                    Playlist.findOne({title:'playlist16sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPh'}, function(err,pl){
-                        should.exist(pl.id);
-                        plid = pl.id.toString();
-                        callback(null);
-                    });
                 }
             ],function(err, results){
                 done();
@@ -92,7 +78,7 @@ describe('PlaylistController', function() {
                 })
         });
 
-        it('should successfully add to playlist item', function(done){
+        it('should successfully add playlist item', function(done){
             var agent = request.agent(sails.hooks.http.app);
             agent
                 .post('/playlist/'+plid+'/add/'+mmid+'?access_token='+accessToken)
@@ -109,7 +95,7 @@ describe('PlaylistController', function() {
                 });
         });
 
-        it('should successfully add to playlist item', function(done){
+        it('should successfully add playlist item', function(done){
             var agent = request.agent(sails.hooks.http.app);
             agent
                 .post('/playlist/'+plid+'/add/'+mmid+'?access_token='+accessToken)
@@ -124,6 +110,51 @@ describe('PlaylistController', function() {
                         done();
                     });
                 });
+        });
+    });
+
+    describe.only('POST /playlist/get/:plid ', function(){
+        var accessToken = "";
+        var mmid= global.bootstrap.multimedia.mmid1;
+        var plid= global.bootstrap.playlist.plid1;
+        before(function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback(null);
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null);
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
+
+        it('should get playlist info with permission view', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            agent
+                .get('/playlist/get/'+plid)
+                .expect(200)
+                .end(function(err,res){
+                    res.statusCode.should.equal(200);
+                    res.title.should.equal('playlist1');
+                    done();
+                })
         });
     });
 

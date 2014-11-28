@@ -20,7 +20,12 @@ var app = angular
     'ngTouch',
     'config',
     'LocalStorageModule',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    "com.2fdevs.videogular",
+    "com.2fdevs.videogular.plugins.controls",
+    "com.2fdevs.videogular.plugins.overlayplay",
+    "com.2fdevs.videogular.plugins.poster",
+    "info.vietnamcode.nampnq.videogular.plugins.youtube"
     //leave ui-route for synoteplayer
   ]);
 //app config
@@ -53,8 +58,8 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', fu
         }
       }
     })
-    .when('/watch',{
-      templateUrl: 'views/login.html',
+    .when('/watch/:mmid/:plid?',{
+      templateUrl: 'views/watch.html',
       controller: 'WatchCtrl'
     })
     .otherwise({

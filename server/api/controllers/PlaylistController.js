@@ -9,6 +9,7 @@ var async = require('async');
 var S = require('string');
 var validator = require('validator');
 var randomstring = require("randomstring");
+var Q = require('q');
 
 module.exports = {
     /**
@@ -81,18 +82,27 @@ module.exports = {
     },
 
     /**
-     * Get playlist, including multimedias and related synmarks
-     * @param req
-     * @param res
+     * Get playlist, including the playlist items (multimedias)
+     * @param plid: playlist id from params
      */
     get:function(req,res){
         //TODO: get different things with different permission
         //var playlist = req.session.playlist;
         var plid = req.params.plid;
 
-        PlaylistItem.find({belongsTo:plid}).populate('multimedia');
-        //then populate synmarks
-        PlaylistItem.find({playlistItem:pliid}).populate('synmars');
+        var playlistPromise = Playlist.findOne({id: plid});
+        var playlistItemsPromise = PlaylistItem.find({belongsTo:plid}).populate('multimedia');
+
+        Q.all([playlistPromise,playlistItemsPromise])
+            .spread(function(playlist,playlistItems){
+                var data = {};
+                data.playlist = playlist;
+                data.items = playlistItems;
+                return res.json(data);
+            })
+            .catch(function(err){
+                return res.serverError(err);
+            });
     }
 };
 

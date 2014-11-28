@@ -1,1 +1,66 @@
-<p>This is the watch view.</p>
+<h2 class="player-h2">{{multimedia.title}}</h2>
+<div>
+  <span>By</span>
+  <span id="user_span"><a href="#">{{multimedia.owner.username}}</a></span>
+  <span>| Published </span>
+  <span id="publish_span">13 days ago</span>
+  <span>|</span>
+  <span id="views_span">1,894 Views</span>
+</div>
+<div class="row" id="video_div">
+  <div class="col-md-8">
+    <div style="width:640px;height:480px;z-index:1000;">
+      <videogular vg-player-ready="onPlayerReady" vg-theme="config.theme.url" vg-autoplay="config.autoPlay">
+        <vg-video vg-src="config.sources" vg-youtube></vg-video>
+        <vg-controls vg-autohide="config.autoHide" vg-autohide-time="config.autoHideTime">
+          <vg-play-pause-button></vg-play-pause-button>
+          <vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
+          <vg-scrubBar>
+            <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
+          </vg-scrubBar>
+          <vg-timedisplay>{{ timeLeft | date:'mm:ss' }}</vg-timedisplay>
+          <vg-volume>
+            <vg-mutebutton></vg-mutebutton>
+            <vg-volumebar></vg-volumebar>
+          </vg-volume>
+          <vg-fullscreenButton></vg-fullscreenButton>
+        </vg-controls>
+
+        <vg-poster-image vg-url='config.plugins.poster.url'></vg-poster-image>
+        <vg-buffering></vg-buffering>
+        <vg-overlay-play vg-play-icon="config.theme.playIcon"></vg-overlay-play>
+
+        <vg-poster-image vg-url='config.plugins.poster.url'></vg-poster-image>
+        <vg-buffering></vg-buffering>
+        <vg-overlay-play vg-play-icon="config.theme.playIcon"></vg-overlay-play>
+      </videogular>
+    </div>
+  </div>
+</div>
+
+<div class="row" id="video_controls_div">
+  <div class="col-md-7">
+    <button class="btn btn-primary" ng-click="API.play()">Play</button>
+    <button class="btn btn-primary" ng-click="API.pause()">Pause</button>
+    <button class="btn btn-primary" ng-click="API.stop()">Stop</button>
+    <button class="btn btn-primary" ng-click="API.seekTime(30, false)">Move to second 30</button>
+    <button class="btn btn-primary" ng-click="changeSource()">Next</button>
+  </div>
+</div>
+<div id="tags_div">
+  <span id="tags_title_span">Tags</span>
+  <br/>
+  <span id="tags_span">{{tags}}</span>
+</div>
+<div id="synmarks_div">
+  <div ng-repeat="synmark in synmarks">
+    <div>{{synmark.title}}</div>
+    <div>
+      <span>{{synmark.mfst}}</span>
+      <span> to </span>
+      <span>{{synmark.mfet}} </span>
+    </div>
+  </div>
+</div>
+
+

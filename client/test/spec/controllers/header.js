@@ -3,7 +3,7 @@
 describe('Controller: HeaderCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('synoteClientApp'));
+  beforeEach(module('synoteClient'));
 
   var HeaderCtrl,
     scope;

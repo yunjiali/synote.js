@@ -2,7 +2,7 @@
 
 /**
  * @ngdoc service
- * @name synoteClientApp.multimediaService
+ * @name synoteClient.multimediaService
  * @description
  * # multimediaService
  * Factory in the synoteClient.
@@ -28,8 +28,32 @@ angular.module('synoteClient')
       return deferred.promise;
     }
 
+    function getMultimedia(mmid, plid){
+      var deferred = $q.defer();
+
+      var accessToken = authenticationService.getUserInfo().accessToken;
+      var accessTokenStr = accessToken?("access_token="+accessToken):"";
+      var plidStr = plid?("plid="+plid):"";
+      if(accessToken && plid)
+        plidStr = "&"+plidStr
+
+
+      $http.get(ENV.apiEndpoint + "/multimedia/get/"+mmid+"?"+accessTokenStr+plidStr)
+        .then(function (result) {
+          if(result.status === 200)
+            deferred.resolve(result.data);
+          else
+            deferred.reject({success:false,message:result.statusText});
+        }, function (error) {
+          deferred.reject(error);
+        });
+
+      return deferred.promise;
+    }
+
     return {
-      getMetadata: getMetadata
+      getMetadata: getMetadata,
+      getMultimedia: getMultimedia
     };
 
   }]);
