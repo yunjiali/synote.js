@@ -22,22 +22,33 @@ module.exports = {
      */
     metadata:function(req,res){
         var url = req.query.url;
-        YouTubeService.getMetadata(url, function(err, info) {
-            if (err) return res.badRequest(err);
 
-            if(req.query.subtitles === "true"){
-                YouTubeService.getSubtitleList(url, function(errsl, sl) {
-                    if (errsl) return res.badRequest(errsl);
+        //is YouTube video
+        if(UtilsService.isYouTubeURL(url)){
+            YouTubeService.getMetadata(url, function(err, info) {
+                if (err) return res.badRequest(err);
 
-                    info.subtitles = sl;
+                if(req.query.subtitles === "true"){
+                    YouTubeService.getSubtitleList(url, function(errsl, sl) {
+                        if (errsl) return res.badRequest(errsl);
 
+                        info.subtitles = sl;
+
+                        return res.json(info);
+                    });
+                }
+                else {
                     return res.json(info);
-                });
-            }
-            else {
-                return res.json(info);
-            }
-        });
+                }
+            });
+        }
+        else{ //is a random file
+            FFmpegService.getMetadata(url, function(err, info){
+                if (err) return res.badRequest(err);
+                else return res.json(info);
+            });
+        }
+
     },
     /**
      * Post
@@ -50,6 +61,7 @@ module.exports = {
      * @param starttime
      * @param mtype
      * @param thumbnail
+     * @param isVideo
      * @param subtitles: a list ["format,lang,url","format,lang,url|...
      */
     create:function(req,res){
@@ -109,6 +121,10 @@ module.exports = {
 
         if(req.body.thumbnail){
             multimedia.thumbnail = S(req.body.thumbnail).trim().s;
+        }
+
+        if(typeof req.body.isVideo !== 'undefined' && req.body.isVideo === 'false'){
+            multimedia.mtype = "audio";
         }
 
         multimedia.owner = req.session.user.id;

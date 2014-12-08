@@ -8,11 +8,13 @@ var should = require('should');
 
 
 describe('MultimediaController', function() {
-
     describe('GET /multimedia/metadata ', function () {
 
         var youtubeURL = "http://www.youtube.com/watch?v=AZeXETmatZk";
         var youtubeURLSubtitles = "https://www.youtube.com/watch?v=5MgBikgcWnY";
+        var webmURL = "https://dl.dropboxusercontent.com/u/51617581/bigbuck.webm";
+        //var audioURL = "https://dl.dropboxusercontent.com/u/51617581/interview.mp3";
+        var notValidURL = "https%3A%2F%2Fdl.dropboxusercontent.com%2Fu%2F51617581%2Fbigbuck.webm";
         //var dailymotionURL = "http://www.dailymotion.com/video/x1tlo7u_britain-s-got-talent-2013-168-final-shadow-theatre-of-attraction-with-a-great-british-montage_music";
         //var vimeoURL = "http://vimeo.com/1105548";
 
@@ -95,6 +97,80 @@ describe('MultimediaController', function() {
                             var resObj = JSON.parse(res.text);
                             resObj.id.should.equal("5MgBikgcWnY");
                             resObj.should.have.property("subtitles");
+                            callback();
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
+
+        it('should get webm metadata', function (done) {
+            var agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback();
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            callback(null, resObj.token);
+                        })
+                },
+                function(token, callback){
+                    agent
+                        .get('/multimedia/metadata?access_token='+token+"&url="+encodeURI(webmURL))
+                        .expect(200)
+                        .end(function(err, res){
+                            console.log(res.text);
+                            var resObj = JSON.parse(res.text);
+                            resObj.metadata.duration.should.equal(27);
+                            callback();
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
+
+        it('should not metadata when the url is invalid', function (done) {
+            var agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback();
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            callback(null, resObj.token);
+                        })
+                },
+                function(token, callback){
+                    agent
+                        .get('/multimedia/metadata?access_token='+token+"&url="+encodeURI(notValidURL))
+                        .expect(400)
+                        .end(function(err, res){
+                            res.statusCode.should.equal(400);
                             callback();
                         });
                 }
@@ -284,6 +360,31 @@ describe('MultimediaController', function() {
                         })
                     });
                 });
+        });
+
+        it('should be successful to create audio', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            agent
+                .post('/multimedia/create?access_token='+accessToken)
+                .send({
+                    title:"Interview audio",
+                    description:"This is a test interview audio",
+                    duration:"332",
+                    url:"https://dl.dropboxusercontent.com/u/51617581/interview.mp3",
+                    tags:"audio,interview,ok",
+                    isVideo:"false"
+                })
+                .expect(200)
+                .end(function(err,res){
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    //check tags
+                    Multimedia.findOne(resObj.mmid).exec(function(err, mm){
+                        should.exist(mm);
+                        mm.mtype.should.equal("audio");
+                        done();
+                    });
+                })
         });
 
         //it('should successfully create multimedia with subtitles', function(done){

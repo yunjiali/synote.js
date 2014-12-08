@@ -1,87 +1,104 @@
-<div id="multimedia_create_div">
-  <div id="error_div">
-    <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-  </div>
-  <form name='multimedia_create_form' role="form">
-    <fieldset>
-      <div class="control-group">
-        <label for="url" class="control-label"><b><em>*</em>URL</b></label>
-        <div class="controls">
-          <div class="input-append">
-            <input type='text' autocomplete="off" class="required form-control" name='url' id='url' ng-model="url" required ng-trim="true"/>
-            <button id="url_submit_btn" type="btn btn-primary" ng-click="getMetadata()" class="btn">Inspect</button>
-            <p class="help-block">Please enter the URL of a YouTube or DailyMotion Video e.g. https://www.youtube.com/watch?v=AZeXETmatZk</p>
-          </div>
-        </div>
-      </div>
-    </fieldset>
-  </form>
-  <div ng-show="metadata" id="metadata_div">
-    <form class="form-horizontal">
-      <fieldset>
-        <legend>Video info</legend>
-
-        <!-- Text input-->
+<div class="container">
+  <h2>Create Multimedia</h2>
+  <mc-messages></mc-messages>
+  <hr class="colorgraph">
+  <div id="multimedia_create_div" class="row">
+    <div>
+      <form name='multimedia_create_form' class="form-horizontal" role="form">
         <div class="form-group">
-          <label class="col-md-4 control-label" for="title">Title</label>
-          <div class="col-md-4">
-            <input id="title" ng-model="metadata.metadata.title" name="title" type="text" placeholder="" class="form-control input-md" required="">
-          </div>
-        </div>
-
-        <!-- Textarea -->
-        <div class="form-group">
-          <label class="col-md-4 control-label" for="description">Description</label>
-          <div class="col-md-4">
-            <textarea class="form-control" ng-model="metadata.metadata.description" id="description" name="description"></textarea>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="col-md-4 control-label" for="tagsinput">Tags</label>
-          <div class="tagsinput-primary col-md-4">
-            <input name="tagsinput" class="tagsinput" data-role="tagsinput" value="School, Teacher, Colleague">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="col-md-4 control-label" for="description">Duration</label>
-          <div class="col-md-4">
-            <input id="duration" disabled="disabled" ng-model="metadata.metadata.duration" name="duration" type="text" placeholder="" class="form-control input-md" required="">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="col-md-4 control-label" for="description">Thumbnail image</label>
-          <div class="col-md-4">
-            <img src="{{metadata.metadata.thumbnail}}"/>
-          </div>
-        </div>
-
-        <!-- Multiple Checkboxes -->
-        <div class="form-group">
-          <label class="col-md-4 control-label" for="subtitles">Subtitiles</label>
-          <div class="col-md-4">
-            <div class="checkbox" ng-repeat="subtitle in metadata.subtitles.list">
-              <label for="subtitles_{{subtitle.language}}" >
-                <input type="checkbox" name="subtitles" id="subtitles_{{subtitle.language}}" value="subtitle.language">
-                {{subtitle.language}}
-              </label>
+          <div class="controls">
+            <label class="col-md-2 col-xs-4 control-label" for="url">URL</label>
+            <div class="col-xs-6 col-md-8">
+              <input type='text' autocomplete="off" placeholder="Multimedia URL" class="form-control required" name='url' id='url' ng-model="url" required ng-trim="true"/>
+              <p class="help-block">
+                Please enter the URL of a YouTube or DailyMotion Video e.g. https://www.youtube.com/watch?v=AZeXETmatZk
+              </p>
+              <p class="help-block">
+                Or any multimedia files on the web, for example https://dl.dropboxusercontent.com/u/51617581/bigbuck.webm
+              </p>
+            </div>
+            <div class="col-md-2 col-xs-2">
+              <button id="url_submit_btn" type="button" ng-click="getMetadata()" class="btn btn-primary">Inspect</button>
             </div>
           </div>
         </div>
-
-        <!-- Button (Double) -->
-        <div class="form-group">
-          <label class="col-md-4 control-label" for="submit_btn"></label>
-          <div class="col-md-8">
-            <button id="submit_btn" name="submit_btn" class="btn btn-success">Create</button>
-            <button id="reset_btn" name="reset_btn" class="btn btn-danger">Cancel</button>
+      </form>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div ng-show="metadata" id="metadata_div" class="col-xs-12 col-md-12">
+      <form class="form-horizontal" role="form">
+        <fieldset>
+          <!-- Text input-->
+          <div class="form-group">
+            <label class="col-md-2 col-xs-4 control-label" for="title">Title</label>
+            <div class="col-md-8 col-xs-8">
+              <input id="title" ng-model="metadata.metadata.title" name="title" type="text" placeholder="" class="form-control input-md" required/>
+            </div>
           </div>
-        </div>
 
-      </fieldset>
-    </form>
+          <!-- Textarea -->
+          <div class="form-group">
+            <label class="col-md-2 col-xs-4 control-label" for="description">Description</label>
+            <div class="col-md-8 col-xs-8">
+              <textarea class="form-control" rows="6" ng-model="metadata.metadata.description" id="description" name="description"></textarea>
+            </div>
+          </div>
 
+          <div class="form-group">
+            <label class="col-md-2 col-xs-4 control-label" for="tagsinput">Tags</label>
+            <div class="tagsinput-primary col-md-8 col-xs-8">
+              <input name="tagsinput" class="tagsinput" data-role="tagsinput" ng-model="tagsStr"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-2 col-xs-4 control-label" for="description">Duration</label>
+            <div class="col-md-8 col-xs-4">
+              <input id="duration" disabled="disabled" ng-model="durationStr" name="duration" type="text" placeholder="" class="form-control input-md" required/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-2 col-xs-4 control-label" for="description">Thumbnail image</label>
+            <div ng-cloak class="col-md-8 col-xs-8" ng-if="metadata.metadata.thumbnail">
+              <img src="{{metadata.metadata.thumbnail}}"/>
+              <input type="hidden" name="thumbnail" alt="thumbnail picture" ng-model="metadata.metadata.thumbnail"/>
+              </div>
+            <div ng-cloak class="col-md-8 col-xs-8" ng-if="!metadata.metadata.thumbnail">
+              <img alt="thumbnail not available" src="http://res.cloudinary.com/symbolnet/image/upload/v1417996309/default_wlvnze.jpg"/>
+            </div>
+          </div>
+
+          <!-- Multiple Checkboxes -->
+          <div class="form-group">
+            <label class="col-md-2 col-xs-4 control-label" for="subtitles">Subtitiles</label>
+            <div class="col-md-8 col-xs-8">
+              <div class="checkbox" ng-if="metadata.subtitles" ng-repeat="subtitle in metadata.subtitles.list">
+                <label for="subtitles_{{subtitle.language}}" >
+                  <input type="checkbox" name="subtitles" id="subtitles_{{subtitle.language}}" value="subtitle.language"/>
+                  {{subtitle.language}}
+                </label>
+              </div>
+              <div class="checkbox" ng-if="!metadata.subtitles">
+                <p>{{'NOSUBTITLE_TEXT' | translate}}</p>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="isVideo" ng-model="metadata.metadata.isVideo"/>
+          <input type="hidden" name="thumbnail" ng-model="metadata.metadata.thumbnail"/>
+          <hr class="colorgraph">
+          <div class="row">
+            <div class="col-xs-offset-4 col-md-offset-2 col-xs-4 col-sm-4 col-md-4">
+              <button id="submit_btn" name="submit_btn" class="btn btn-lg btn-success btn-block">Create</button>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-4">
+              <button id="reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block">Cancel</button>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
   </div>
 </div>

@@ -63,7 +63,8 @@ module.exports = {
     thumbnail:{
       type:"string",
       customurl:true,
-      size:"4096"
+      size:"4096",
+      defaultsTo:"http://res.cloudinary.com/symbolnet/image/upload/v1417996309/default_wlvnze.jpg"
     },
     synmarks:{
       collection:'synmark',

@@ -27,6 +27,11 @@ module.exports = {
       type: "string",
       required: true
     },
+    defaultimg:{
+      type:"string",
+      required: true,
+      defaultsTo:"https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=144"
+    },
     email:{
       type: "string",
       email: true,

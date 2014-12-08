@@ -9,7 +9,7 @@ var async = require('async');
 
 describe('UsersController', function() {
 
-    describe.only('POST /user/create', function() {
+    describe('POST /user/create', function() {
 
         it('should register normal user successfully and logout', function (done) {
 

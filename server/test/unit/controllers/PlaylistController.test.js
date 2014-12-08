@@ -9,14 +9,13 @@ var should = require('should');
 
 
 describe('PlaylistController', function() {
-    console.log("1234");
-    var agent = request.agent(sails.hooks.http.app);
-    console.log("1234444");
-    /*describe('POST /playlist/create, /playlist/:plid/add/:mmid', function(){
+    describe('POST /playlist/create, /playlist/:plid/add/:mmid', function(){
         var accessToken = "";
-        var mmid= global.bootstrap.multimedia.mmid1;
-        var plid= global.bootstrap.playlist.plid1;
+        var mmid= "";
+        var plid= ""
         before(function(done){
+            mmid= global.bootstrap.multimedia.mmid1;
+            plid= global.bootstrap.playlist.plid1;
             var agent = request.agent(sails.hooks.http.app);
             async.waterfall([
                 function(callback){
@@ -117,10 +116,12 @@ describe('PlaylistController', function() {
 
     describe('POST /playlist/get/:plid ', function(){
         var accessToken = "";
-        var mmid= global.bootstrap.multimedia.mmid1;
-        var plid= global.bootstrap.playlist.plid1;
+        var mmid="";
+        var plid="";
         before(function(done){
             var agent = request.agent(sails.hooks.http.app);
+            var mmid= global.bootstrap.multimedia.mmid1;
+            var plid= global.bootstrap.playlist.plid1;
             async.waterfall([
                 function(callback){
                     agent
@@ -158,7 +159,6 @@ describe('PlaylistController', function() {
                     done();
                 })
         });
-    });*/
-
+    });
 });
 

@@ -18,6 +18,8 @@ angular.module('synoteClient')
         .then(function (result) {
           userInfo = {
             username: result.data.username,
+            firstname: result.data.firstname,
+            lastname:result.data.lastname,
             email:result.data.email,
             role:result.data.role,
             id:result.data.id

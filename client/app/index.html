@@ -28,8 +28,16 @@
         <li><a href="#/login">{{'LOGIN_NAV_LINK' | translate}}</a></li>
         <li><a href="#/register">{{'REG_NAV_LINK' | translate}}</a></li>
       </ul>
-      <ul ng-cloak ng-if="isLoggedIn()" class="nav navbar-nav navbar-right">
-        <li><a href="#/multimedia.create">{{'CREATE_NAV_LINK' | translate}}</a></li>
+      <ul class="nav navbar-nav navbar-right" ng-cloak ng-if="isLoggedIn()">
+        <li class="dropdown nabar-right">
+          <a href class="dropdown-toggle" data-toggle="dropdown">Welcome, {{getUserInfo().username}}  <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#/multimedia.create">{{'CREATE_NAV_LINK' | translate}}</a></li>
+            <li><a href="#/user/{{getUserInfo().id}}">{{'PROFILE_NAV_LINK' | translate}}</a></li>
+            <li class="divider"></li>
+            <li><a href ng-click="logout()">{{'LOGOUT_NAV_LINK' | translate}}</a></li>
+          </ul>
+        </li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </nav><!-- /navbar -->
@@ -88,6 +96,8 @@
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 <script src="bower_components/angular-translate/angular-translate.js"></script>
+<script src="bower_components/angular-mocks/angular-mocks.js"></script>
+<script src="bower_components/message-center/message-center.js"></script>
 <script src="bower_components/moment/moment.js"></script>
 <script src="bower_components/videogular/videogular.js"></script>
 <script src="bower_components/videogular-controls/controls.js"></script>
@@ -112,8 +122,8 @@
 <script src="scripts/controllers/watch.js"></script>
 <script src="scripts/services/playlistservice.js"></script>
 <script src="scripts/controllers/register.js"></script>
-<script src="scripts/services/flash.js"></script>
-<script src="scripts/services/flashservice.js"></script>
+<script src="scripts/controllers/user.js"></script>
+<script src="scripts/services/utilservice.js"></script>
 <!-- endbuild -->
 </body>
 </html>

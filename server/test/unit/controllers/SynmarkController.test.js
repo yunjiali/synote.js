@@ -6,7 +6,6 @@ var request = require('supertest-as-promised');
 var async = require('async');
 var should = require('should');
 
-
 describe('SynmarkController', function() {
 
     describe('POST /synmark/create', function(){

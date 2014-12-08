@@ -8,42 +8,46 @@
  * Controller of the synoteClient
  */
 angular.module('synoteClient')
-  .controller('RegisterCtrl', ['$scope', '$http','$filter', '$location', 'ENV', 'flashService', function ($scope,$http,$filter, $location, ENV, flashService) {
+  .controller('RegisterCtrl', ['$scope', '$http','$filter', '$location', 'ENV', 'messageCenterService','utilService',
+      function ($scope,$http,$filter, $location, ENV, messageCenterService, utilService) {
     $scope.t_c = false;
     $scope.confirmpassword;
     $scope.formdata = {};
-    $scope.alerts = [];
-    $scope.flash = flashService;
     var $translate = $filter('translate');
 
     $scope.processForm = function () {
       //clean alerts
-      $scope.alerts = [];
       //check terms and conditions
       if(!$scope.t_c) {
-        $scope.alerts.push({type: 'danger', msg: $translate('TC_ERR')});
+        messageCenterService.add('danger',$translate('TC_ERR'));
         return;
       }
 
       if($scope.formdata.password !==  $scope.confirmpassword){
-        $scope.alerts.push({type: 'danger', msg: $translate('PASSWORD_REG_NOTMATCH')});
+        messageCenterService.add('danger',$translate('PASSWORD_REG_NOTMATCH'));
         return;
       }
       //check password
       $http.post(ENV.apiEndpoint + "/user/create", $scope.formdata)
-        .then(function (data) {
-          console.log(data);
+        .then(function (result) {
+          //console.log(data);
           //if unsuccess, push alerts
+          var data = result.data;
           //if success
-          flash.setMessage({type:success, msg:$translate('REG_SUCCESS_TEXT')});
-          $location.path('/login');
+          //console.log(data);
+          if(data.success === false){
+            var msgs = utilService.extractErrorMsgs(data.message);
+            for(var i=0;i<msgs.length;i++){
+              messageCenterService.add('danger', msgs[i]);
+            }
+          }
+          else {
+            messageCenterService.add('success', $translate('You have been successfully registered.'));
+            //$location.path('/login');
+          }
         }, function (err) {
-          $scope.alerts.push({type: 'danger', msg: err});
+          messageCenterService.add('danger',err);
         });
     }
-
-    $scope.closeAlert = function(index) {
-      $scope.alerts.splice(index, 1);
-    };
 
   }]);

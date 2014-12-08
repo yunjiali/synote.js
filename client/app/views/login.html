@@ -1,29 +1,28 @@
-<div>
-  <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-</div>
-<div class="row page-content">
-  <div class="row control-group">
-    <div class="col-md-3">
-      <label for="email">Email </label>
-    </div>
-    <div class="col-md-3">
-      <input type="text" name="email" ng-model="email" />
-    </div>
-  </div>
-  <div class="row control-group">
-    <div class="col-md-3">
-      <label for="password">Password</label>
-    </div>
-    <div class="col-md-3">
-      <input type="password" name="password" ng-model="password" />
-    </div>
-  </div>
-  <div class="row control-group">
-    <div class="col-md-3">
-      <button class="btn btn-default" ng-click="login()">Login</button>
-    </div>
-    <div class="col-md-3">
-      <button ng-click="cancel()" class="btn btn-link">Cancel</button>
+<mc-messages></mc-messages>
+<div class="container">
+  <div class="row" style="margin-top:20px">
+    <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+      <form role="form">
+        <fieldset>
+          <h2>Please Log In</h2>
+          <hr class="colorgraph">
+          <div class="form-group">
+            <input type="email" name="email" id="email" class="form-control input-lg" ng-model="email" placeholder="Email Address">
+          </div>
+          <div class="form-group">
+            <input type="password" name="password" id="password" ng-model="password" class="form-control input-lg" placeholder="Password">
+          </div>
+          <hr class="colorgraph">
+          <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6">
+              <input type="submit" ng-click="login()" class="btn btn-lg btn-success btn-block" value="Log In">
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6">
+              <button ng-click="cancel()" class="btn btn-lg btn-danger btn-block">Cancel</button>
+            </div>
+          </div>
+        </fieldset>
+      </form>
     </div>
   </div>
 </div>

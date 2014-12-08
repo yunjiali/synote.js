@@ -22,6 +22,7 @@ var app = angular
     'config',
     'LocalStorageModule',
     'ui.bootstrap',
+    'MessageCenterModule',
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",
     "com.2fdevs.videogular.plugins.overlayplay",
@@ -48,11 +49,25 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     })
     .when('/login', {
       templateUrl: 'views/login.html',
-      controller: 'LoginCtrl'
+      controller: 'LoginCtrl',
+      resolve:{
+        notLoggedIn:function(policyService){
+          return policyService.notLoggedIn();
+        }
+      }
     })
     .when('/register',{
       templateUrl:'views/register.html',
       controller:'RegisterCtrl'
+    })
+    .when('/user/:userid',{
+      templateUrl:'views/user.html',
+      controller:'UserCtrl',
+      resolve:{
+        isSameUser: function(policyService, $route){
+          return policyService.isSameUser($route.current.params.userId);
+        }
+      }
     })
     .when('/termsandconditions',{
       templateUrl:'views/termsandconditions.html'
@@ -79,13 +94,19 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     HOME_NAV_LINK:'Home',
     BROWSE_NAV_LINK:'Browse',
     TC_ERR:'You must agree on our terms and conditions.',
-    PASSWORD_REG_NOTMATCH:"Password and Confirmed password don't match.",
+    PASSWORD_REG_NOTMATCH:"Password and confirmed password don't match.",
     CREATE_NAV_LINK:"Create",
+    'PROFILE_NAV_LINK':"Profile",
     REG_NAV_LINK:"Register",
     REG_SUBMIT_BTN:"Register",
     REG_RESET_BTN:"Reset",
     REG_SUCCESS_TEXT:"You have been successfully registered.",
-    CREDENTIAL_ERR_TEXT:'Wrong username or password.'
+    CREDENTIAL_ERR_TEXT:'Wrong username or password.',
+    LOGOUT_NAV_LINK:'Log out',
+    LOGOUT_SUCCESS_TEXT:'You have successfully logged out.',
+    LOGOUT_ERR_TEXT:'Sorry, something went wrong. Please try again later.',
+    NOSUBTITLE_TEXT:'No Subtitle available'
+
   });
 
   $translateProvider.determinePreferredLanguage(function () {

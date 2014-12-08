@@ -1,3 +1,4 @@
 -R spec
 -b
+--recursive
 --timeout 90000
