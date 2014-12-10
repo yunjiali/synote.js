@@ -19,6 +19,7 @@ var app = angular
     'ngSanitize',
     'pascalprecht.translate',
     'ngTouch',
+    'cgBusy',
     'config',
     'LocalStorageModule',
     'ui.bootstrap',
@@ -31,7 +32,8 @@ var app = angular
     //leave ui-route for synoteplayer
   ]);
 //app config
-app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$translateProvider', function ($routeProvider ,localStorageServiceProvider,$httpProvider,$translateProvider) {
+app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$translateProvider',
+    function ($routeProvider ,localStorageServiceProvider,$httpProvider,$translateProvider) {
   $routeProvider
     .when('/', {
       templateUrl: 'views/home.html',
@@ -60,7 +62,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
       templateUrl:'views/register.html',
       controller:'RegisterCtrl'
     })
-    .when('/user/:userid',{
+    .when('/user/:userId',{
       templateUrl:'views/user.html',
       controller:'UserCtrl',
       resolve:{
@@ -96,7 +98,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     TC_ERR:'You must agree on our terms and conditions.',
     PASSWORD_REG_NOTMATCH:"Password and confirmed password don't match.",
     CREATE_NAV_LINK:"Create",
-    'PROFILE_NAV_LINK':"Profile",
+    PROFILE_NAV_LINK:"Profile",
     REG_NAV_LINK:"Register",
     REG_SUBMIT_BTN:"Register",
     REG_RESET_BTN:"Reset",
@@ -105,7 +107,10 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     LOGOUT_NAV_LINK:'Log out',
     LOGOUT_SUCCESS_TEXT:'You have successfully logged out.',
     LOGOUT_ERR_TEXT:'Sorry, something went wrong. Please try again later.',
-    NOSUBTITLE_TEXT:'No Subtitle available'
+    NOSUBTITLE_TEXT:'No Subtitle available',
+    LOGIN_REQUIRED_TEXT:'Login Required.',
+    CREATE_MM_SUCCESS_TEXT:'The multimedia asset has been created.',
+    LOST_SERVER_CONNECTION_TEXT:'Cannot connect to server. Please try again later.'
 
   });
 
@@ -119,6 +124,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     .setPrefix('synoteClient');
 
   $httpProvider.defaults.withCredentials = true;
+  $httpProvider.interceptors.push('synoteHTTPInterceptor');
 }]);
 
 app.run(['$rootScope', '$location', function ($rootScope, $location) {

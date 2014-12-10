@@ -42,7 +42,7 @@ angular.module('synoteClient')
             }
           }
           else {
-            messageCenterService.add('success', $translate('You have been successfully registered.'));
+            messageCenterService.add('success', $translate('REG_SUCCESS_TEXT'));
             //$location.path('/login');
           }
         }, function (err) {

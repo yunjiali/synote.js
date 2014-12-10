@@ -132,7 +132,6 @@ describe('MultimediaController', function() {
                         .get('/multimedia/metadata?access_token='+token+"&url="+encodeURI(webmURL))
                         .expect(200)
                         .end(function(err, res){
-                            console.log(res.text);
                             var resObj = JSON.parse(res.text);
                             resObj.metadata.duration.should.equal(27);
                             callback();
@@ -256,7 +255,7 @@ describe('MultimediaController', function() {
         //TODO: add a couple of bad examples: http://www.youtube.com/watch?v=WKsjaOqDXgg BBC banned it
     });
 
-    describe('POST /multimedia/create', function(){
+    describe.only('POST /multimedia/create', function(){
         var youtubeURLSubtitles = "https://www.youtube.com/watch?v=5MgBikgcWnY";
         var accessToken = "";
         before(function(done){
@@ -325,7 +324,6 @@ describe('MultimediaController', function() {
                     //check tags
                     Multimedia.find(resObj.mmid).populate('tags').exec(function(err, mms){
                         should.exist(mms);
-                        console.log(mms[0]);
                         mms[0].toJSON().should.have.property('tags').with.lengthOf(3);
                         done();
                     });
@@ -359,6 +357,27 @@ describe('MultimediaController', function() {
                             done();
                         })
                     });
+                });
+        });
+
+        it('should not be create multimedia if the subtitles param is invalid', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            agent
+                .post('/multimedia/create?access_token='+accessToken)
+                .send({
+                    title:"The first 20 hours -- how to learn anything | Josh Kaufman | TEDxCSU",
+                    description:"Josh Kaufman is the author of the #1 international bestseller, 'The Personal MBA: Master the Art of Busines",
+                    duration:"1167",
+                    thumbnail:"https://i.ytimg.com/vi/5MgBikgcWnY/default.jpg",
+                    url:"http://www.youtube.com/watch?v=5MgBikgcWnY",
+                    tags:"ted,talk,ok",
+                    subtitles:["it,http://www.youtube.com/api/timedtext?v=5MgBikgcWnY&fmt=srt&lang=it&name=",
+                        "srt,en,http://www.youtube.com/api/timedtext?v=5MgBikgcWnY&fmt=srt&lang=en&name"]
+                })
+                .expect(400)
+                .end(function(err,res){
+                    res.statusCode.should.equal(400);
+                    done();
                 });
         });
 

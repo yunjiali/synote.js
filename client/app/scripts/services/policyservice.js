@@ -58,7 +58,7 @@ angular.module('synoteClient')
         $location.path('/');
       }
 
-      if(userInfo.id !== userId) {
+      if(userInfo.id !== parseInt(userId)) {
         deferred.reject({isSameUser: false});
         $location.path('/');
       }

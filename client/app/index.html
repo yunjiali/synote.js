@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="bower_components/flat-ui/dist/css/flat-ui.min.css" rel="stylesheet">
-  <link href="bower_components//font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="bower_components/angular-busy/dist/angular-busy.min.css"/>
   <!-- build:css(.tmp) styles/main.css removed-->
   <link rel="stylesheet" href="styles/app.css">
 </head>
@@ -92,11 +93,13 @@
 <script src="bower_components/angular-route/angular-route.js"></script>
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script src="bower_components/angular-touch/angular-touch.js"></script>
+<script src="bower_components/angular-busy/dist/angular-busy.js"></script>
 <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 <script src="bower_components/angular-translate/angular-translate.js"></script>
 <script src="bower_components/angular-mocks/angular-mocks.js"></script>
+<script src="bower_components/angular-busy/dist/angular-busy.min.js"></script>
 <script src="bower_components/message-center/message-center.js"></script>
 <script src="bower_components/moment/moment.js"></script>
 <script src="bower_components/videogular/videogular.js"></script>
@@ -112,18 +115,20 @@
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script src="scripts/config.js"></script>
 <script src="scripts/app.js"></script>
+<script src="scripts/services/synotehttpinterceptor.js"></script>
 <script src="scripts/services/authenticationservice.js"></script>
+<script src="scripts/services/multimediaservice.js"></script>
+<script src="scripts/services/policyservice.js"></script>
+<script src="scripts/services/utilservice.js"></script>
+<script src="scripts/services/playlistservice.js"></script>
 <script src="scripts/controllers/login.js"></script>
 <script src="scripts/controllers/home.js"></script>
 <script src="scripts/controllers/header.js"></script>
 <script src="scripts/controllers/multimedia.create.js"></script>
-<script src="scripts/services/multimediaservice.js"></script>
-<script src="scripts/services/policyservice.js"></script>
 <script src="scripts/controllers/watch.js"></script>
-<script src="scripts/services/playlistservice.js"></script>
 <script src="scripts/controllers/register.js"></script>
 <script src="scripts/controllers/user.js"></script>
-<script src="scripts/services/utilservice.js"></script>
+
 <!-- endbuild -->
 </body>
 </html>

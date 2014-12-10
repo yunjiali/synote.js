@@ -8,7 +8,8 @@
  * Factory in the synoteClient.
  */
 angular.module('synoteClient')
-  .factory('multimediaService', ["$http","$q", 'ENV', 'authenticationService', function ($http, $q, ENV, authenticationService) {
+  .factory('multimediaService', ["$http","$q", 'ENV', 'authenticationService',
+      function ($http, $q, ENV, authenticationService, messageCenterService) {
 
     function getMetadata(url, subtitles) {
       var deferred = $q.defer();
@@ -22,7 +23,7 @@ angular.module('synoteClient')
           else
             deferred.reject({success:false,message:result.statusText});
         }, function (error) {
-          deferred.reject(error);
+          deferred.reject();
         });
 
       return deferred.promise;
@@ -51,9 +52,35 @@ angular.module('synoteClient')
       return deferred.promise;
     }
 
+    function createMultimedia(metadata){
+      var deferred = $q.defer();
+
+      var accessToken = authenticationService.getUserInfo().accessToken;
+
+      $http.post(ENV.apiEndpoint + "/multimedia/create?access_token="+accessToken, metadata)
+        .then(function (result) {
+
+          var data = result.data;
+          //if success
+          //console.log(data);
+          if(data.success === false){
+            deferred.reject(result.data);
+          }
+          else {
+            //$location.path('/login');
+            deferred.resolve(result.data);
+          }
+        }, function (err) {
+          deferred.reject(err);
+        });
+
+      return deferred.promise;
+    }
+
     return {
       getMetadata: getMetadata,
-      getMultimedia: getMultimedia
+      getMultimedia: getMultimedia,
+      createMultimedia:createMultimedia
     };
 
   }]);

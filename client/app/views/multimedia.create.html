@@ -1,8 +1,8 @@
-<div class="container">
+<div class="container" cg-busy="createPromise">
   <h2>Create Multimedia</h2>
   <mc-messages></mc-messages>
   <hr class="colorgraph">
-  <div id="multimedia_create_div" class="row">
+  <div id="multimedia_create_div" class="row" cg-busy="inspectPromise">
     <div>
       <form name='multimedia_create_form' class="form-horizontal" role="form">
         <div class="form-group">
@@ -11,7 +11,7 @@
             <div class="col-xs-6 col-md-8">
               <input type='text' autocomplete="off" placeholder="Multimedia URL" class="form-control required" name='url' id='url' ng-model="url" required ng-trim="true"/>
               <p class="help-block">
-                Please enter the URL of a YouTube or DailyMotion Video e.g. https://www.youtube.com/watch?v=AZeXETmatZk
+                Please enter the URL of a YouTube or DailyMotion Video e.g. https://www.youtube.com/watch?v=WkQjYHx3NY8
               </p>
               <p class="help-block">
                 Or any multimedia files on the web, for example https://dl.dropboxusercontent.com/u/51617581/bigbuck.webm
@@ -28,21 +28,21 @@
   <hr>
   <div class="row">
     <div ng-show="metadata" id="metadata_div" class="col-xs-12 col-md-12">
-      <form class="form-horizontal" role="form">
+      <form name="createForm" class="form-horizontal" role="form" ng-submit="processForm()" novalidate>
         <fieldset>
           <!-- Text input-->
-          <div class="form-group">
-            <label class="col-md-2 col-xs-4 control-label" for="title">Title</label>
+          <div class="form-group" ng-class="{'has-error':createForm.title.$invalid}">
+            <label class="col-md-2 col-xs-4 control-label" for="title">Title*</label>
             <div class="col-md-8 col-xs-8">
-              <input id="title" ng-model="metadata.metadata.title" name="title" type="text" placeholder="" class="form-control input-md" required/>
+              <input id="title" ng-trim="true" ng-model="metadata.title" name="title" type="text" placeholder="Title" class="form-control input-md" ng-required="true"/>
             </div>
           </div>
 
           <!-- Textarea -->
           <div class="form-group">
-            <label class="col-md-2 col-xs-4 control-label" for="description">Description</label>
+            <label class="col-md-2 col-xs-4 control-label" for="description">Description*</label>
             <div class="col-md-8 col-xs-8">
-              <textarea class="form-control" rows="6" ng-model="metadata.metadata.description" id="description" name="description"></textarea>
+              <textarea class="form-control" ng-class="{'has-error':createForm.description.$invalid}" ng-trim="true" placeholder="Description" rows="6" ng-model="metadata.description" id="description" name="description" ng-required="true"></textarea>
             </div>
           </div>
 
@@ -54,7 +54,7 @@
           </div>
 
           <div class="form-group">
-            <label class="col-md-2 col-xs-4 control-label" for="description">Duration</label>
+            <label class="col-md-2 col-xs-4 control-label" for="description">Duration*</label>
             <div class="col-md-8 col-xs-4">
               <input id="duration" disabled="disabled" ng-model="durationStr" name="duration" type="text" placeholder="" class="form-control input-md" required/>
             </div>
@@ -62,11 +62,11 @@
 
           <div class="form-group">
             <label class="col-md-2 col-xs-4 control-label" for="description">Thumbnail image</label>
-            <div ng-cloak class="col-md-8 col-xs-8" ng-if="metadata.metadata.thumbnail">
-              <img src="{{metadata.metadata.thumbnail}}"/>
-              <input type="hidden" name="thumbnail" alt="thumbnail picture" ng-model="metadata.metadata.thumbnail"/>
+            <div ng-cloak class="col-md-8 col-xs-8" ng-if="metadata.thumbnail">
+              <img ng-src="{{metadata.thumbnail}}"/>
+              <input type="hidden" name="thumbnail" alt="thumbnail picture" ng-model="metadata.thumbnail"/>
               </div>
-            <div ng-cloak class="col-md-8 col-xs-8" ng-if="!metadata.metadata.thumbnail">
+            <div ng-cloak class="col-md-8 col-xs-8" ng-if="!metadata.thumbnail">
               <img alt="thumbnail not available" src="http://res.cloudinary.com/symbolnet/image/upload/v1417996309/default_wlvnze.jpg"/>
             </div>
           </div>
@@ -75,23 +75,24 @@
           <div class="form-group">
             <label class="col-md-2 col-xs-4 control-label" for="subtitles">Subtitiles</label>
             <div class="col-md-8 col-xs-8">
-              <div class="checkbox" ng-if="metadata.subtitles" ng-repeat="subtitle in metadata.subtitles.list">
+              <div class="checkbox" ng-if="subtitles" ng-repeat="subtitle in subtitles">
                 <label for="subtitles_{{subtitle.language}}" >
-                  <input type="checkbox" name="subtitles" id="subtitles_{{subtitle.language}}" value="subtitle.language"/>
+                  <input type="checkbox" name="subtitles[]" ng-model="subtitle.selected" id="subtitles_{{subtitle.language}}" value="{{subtitle.url}}"/>
                   {{subtitle.language}}
                 </label>
               </div>
-              <div class="checkbox" ng-if="!metadata.subtitles">
+              <div class="checkbox" ng-if="subtitles.length === 0">
                 <p>{{'NOSUBTITLE_TEXT' | translate}}</p>
               </div>
             </div>
           </div>
-          <input type="hidden" name="isVideo" ng-model="metadata.metadata.isVideo"/>
-          <input type="hidden" name="thumbnail" ng-model="metadata.metadata.thumbnail"/>
+          <input type="hidden" name="isVideo" ng-model="metadata.isVideo"/>
+          <input type="hidden" name="thumbnail" ng-model="metadata.thumbnail"/>
+          <input type="hidden" name="url" ng-model="metadata.url"/>
           <hr class="colorgraph">
           <div class="row">
             <div class="col-xs-offset-4 col-md-offset-2 col-xs-4 col-sm-4 col-md-4">
-              <button id="submit_btn" name="submit_btn" class="btn btn-lg btn-success btn-block">Create</button>
+              <button id="submit_btn" ng-disabled="!createForm.$valid" name="submit_btn" class="btn btn-lg btn-success btn-block">Create</button>
             </div>
             <div class="col-xs-4 col-sm-4 col-md-4">
               <button id="reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block">Cancel</button>

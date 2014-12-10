@@ -147,7 +147,9 @@ module.exports = {
                 //subtitle.url = items[2];
                 subtitle.cues = [];
 
-
+                if(items.length !== 3){
+                    return callbackSub(sails.__("Parameter %s is not valid.", "subtitles" ))
+                }
                 //download the subtitle
                 SubtitleService.getSubtitleSRT(items[2],items[1], function(errSub, subData){
                     if(errSub)

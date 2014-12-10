@@ -34,8 +34,20 @@ angular.module('synoteClient')
       return result;
     }
 
+    var HHMMSSToSeconds = function(hms){
+      // your input string
+      var a = hms.split(':'); // split it at the colons
+
+      if(a.length !== 3)
+        return NaN
+      // minutes are worth 60 seconds. Hours are worth 60 minutes.
+      var seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
+      return seconds;
+    }
+
     return {
       extractErrorMsgs:extractErrorMsgs,
-      secondsToHHMMSS:secondsToHHMMSS
+      secondsToHHMMSS:secondsToHHMMSS,
+      HHMMSSToSeconds:HHMMSSToSeconds
     }
   });
