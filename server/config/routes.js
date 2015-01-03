@@ -46,10 +46,18 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
   'get /multimedia/get/:mmid':'MultimediaController.get',
+  'get /multimedia/metadata': 'MultimediaController.metadata',
+  'post /multimedia/create':'MultimediaController.create',
+  'post /multimedia/save/:mmid':'MultimediaController.save',
+  'get /multimedia/list':'MultimediaController.list',
+  'get /multimedia/list/owner':'MultimediaController.listByOwner',
+  'post /playlist/create':'PlaylistController.create',
   'post /playlist/:plid/add/:mmid':'PlaylistController.additem',
-  'put /playlist/:plid/save':'PlaylistController.saveitems',
+  'post /playlist/:plid/save':'PlaylistController.saveitems',
+  'post /playlist/save/:plid':'PlaylistController.save',
   'get /playlist/get/:plid':'PlaylistController.get',
   'post /playlistitemsynmark/:pliid/add/synmark/:synmarkid':'PlaylistItemSynmarkController.addsynmark',
   'delete /playlistitemsynmark/:pliid/remove/synmark/:synmarkid':'PlaylistItemSynmarkController.removesynmark',
-  'get /synmark/get/:synmarkid':'SynmarkController.get'
+  'get /synmark/get/:synmarkid':'SynmarkController.get',
+  'get /synmark/save/:synmarkid':'SynmarkController.save'
 };

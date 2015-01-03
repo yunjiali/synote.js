@@ -9,7 +9,7 @@ module.exports = function(req, res, next) {
 
     var plid = req.params.plid;
 
-    Playlist.findOne().where({id:plid}).exec(function(err, playlist){
+    Playlist.findOne().where({id:plid}).populate('owner').exec(function(err, playlist){
         if(err) return res.serverError(err);
         if(!playlist) return res.badRequest(sails.__("Cannot find the playlist."));
 

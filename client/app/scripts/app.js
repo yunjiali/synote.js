@@ -23,6 +23,8 @@ var app = angular
     'config',
     'LocalStorageModule',
     'ui.bootstrap',
+    'angularMoment',
+    'xeditable',
     'MessageCenterModule',
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",
@@ -71,12 +73,52 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
         }
       }
     })
+    .when('/user/:userId/multimedia/list',{
+      templateUrl:'views/user.multimedia.list.html',
+      controller:'UserMultimediaListCtrl',
+      resolve:{
+        isSameUser: function(policyService, $route){
+          return policyService.isSameUser($route.current.params.userId);
+        }
+      }
+    })
     .when('/termsandconditions',{
       templateUrl:'views/termsandconditions.html'
     })
     .when('/multimedia.create', {
       templateUrl: 'views/multimedia.create.html',
       controller: 'MultimediaCreateCtrl',
+      resolve:{
+        loginRequired: function(policyService){
+          return policyService.loginRequired();
+        }
+      }
+    })
+    .when('/multimedia.edit/:mmid', {
+      templateUrl: 'views/multimedia.edit.html',
+      controller: 'MultimediaEditCtrl',
+      resolve:{
+        loginRequired: function(policyService){
+          return policyService.loginRequired();
+        }
+      }
+    })
+    .when('/browse',{
+      templateUrl:'views/browse.html',
+      controller:'BrowseCtrl'
+    })
+    .when('/playlist.create',{
+      templateUrl: 'views/playlist.create.html',
+      controller: 'PlaylistCreateCtrl',
+      resolve:{
+        loginRequired: function(policyService){
+          return policyService.loginRequired();
+        }
+      }
+    })
+    .when('/playlist.edit/:playlistId',{
+      templateUrl: 'views/playlist.edit.html',
+      controller: 'PlaylistEditCtrl',
       resolve:{
         loginRequired: function(policyService){
           return policyService.loginRequired();
@@ -95,6 +137,9 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     LOGIN_NAV_LINK:'Login',
     HOME_NAV_LINK:'Home',
     BROWSE_NAV_LINK:'Browse',
+    EDIT_TEXT:'Edit',
+    SAVE_TEXT:'Save',
+    CANCEL_TEXT:'Cancel',
     TC_ERR:'You must agree on our terms and conditions.',
     PASSWORD_REG_NOTMATCH:"Password and confirmed password don't match.",
     CREATE_NAV_LINK:"Create",
@@ -110,8 +155,17 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     NOSUBTITLE_TEXT:'No Subtitle available',
     LOGIN_REQUIRED_TEXT:'Login Required.',
     CREATE_MM_SUCCESS_TEXT:'The multimedia asset has been created.',
-    LOST_SERVER_CONNECTION_TEXT:'Cannot connect to server. Please try again later.'
-
+    LOST_SERVER_CONNECTION_TEXT:'Cannot connect to server. Please try again later.',
+    NO_PLAYLIST_TEXT:'No playlist',
+    FAILED_LOADING_PLAYLIST_TEXT:'Loading playlist error.',
+    PLAYLIST_TITLE_PH_TEXT:'Playlist Title',
+    PLAYLIST_TITLE_ERR_TEXT:'Playlist title is missing',
+    PLAYLIST_DESCRIPTION_PH_TEXT:'Playlist description',
+    PLAYLIST_DESCRIPTION_ERR_TEXT:'Playlist description is missing',
+    CREATE_PLAYLIST_SUCCESS_TEXT:'Playlist has been successfully created',
+    PLAYLIST_NOVIDEO_TEXT:'No multimedia resource in this playlist.',
+    MMID_INVALID_TEXT:'Cannot find the multimedia resource.',
+    MULTIMEDIA_NOVIDEO_TEXT:'No multimedia resource is found.'
   });
 
   $translateProvider.determinePreferredLanguage(function () {

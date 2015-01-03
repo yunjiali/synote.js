@@ -19,6 +19,12 @@ module.exports = {
       required: true,
       index: true
     },
+    ind:{ //the index of the tag in the multimedia or synmark resource
+      type:'integer',
+      required:true,
+      min:1,
+      defaultsTo:1
+    },
     owner:{
       model:'user'
     },

@@ -120,6 +120,82 @@ module.exports = {
         Synmark.findOne({id:synmarkid}).then(function(synmark){
             return res.json(synmark);
         })
+    },
+
+    save:function(req,res){
+        var synmark = req.session.synmark;
+
+        if(req.body.title){
+            synmark.title = S(req.body.title).trim().s;
+        }
+
+        if(req.body.content){
+            synmark.content = S(req.body.content).trim().s;
+        }
+
+        if(req.body.permission){
+            synmark.permission = S(req.body.permission).trim().s;
+        }
+
+        if(req.body.tags){
+            //deal with tags
+        }
+
+        synmark.mfst = parseInt(req.body.mfst);
+
+        if(req.body.mfet){
+            if(!isNaN(parseInt(req.body.mfet))){
+                synmark.mfet = parseInt(req.body.mfet);
+            }
+            else
+                return res.badRequest((sails.__("Parameter %s is not valid.", "mfet" )));
+        }
+
+        if(req.body.timeformat){
+            synmark.timeformat = S(req.body.timeformat).trim().s;
+        }
+
+        //xywh must present together
+        if((req.body.mfx && req.body.mfy && req.body.mfw && req.body.mfh)){
+            if(!isNaN(parseInt(req.body.mfx))){
+                synmark.mfx = parseInt(req.body.mfx);
+            }
+            else{
+                return res.badRequest((sails.__("Parameter %s is not valid.", "mfx" )));
+            }
+
+            if(!isNaN(parseInt(req.body.mfy))){
+                synmark.mfy = parseInt(req.body.mfy);
+            }
+            else{
+                return res.badRequest((sails.__("Parameter %s is not valid.", "mfy" )));
+            }
+
+            if(!isNaN(parseInt(req.body.mfw))){
+                synmark.mfw = parseInt(req.body.mfw);
+            }
+            else{
+                return res.badRequest((sails.__("Parameter %s is not valid.", "mfw" )));
+            }
+
+            if(!isNaN(parseInt(req.body.mfh))){
+                synmark.mfh = parseInt(req.body.mfh);
+            }
+            else{
+                return res.badRequest((sails.__("Parameter %s is not valid.", "mfh" )));
+            }
+        }
+
+        if(req.body.xywhunit){
+            synmark.xywhunit = S(req.body.xywhunit).trim().s;
+        }
+
+        synmark.save().then(function(newsynmark){
+            return res.json({success:true, message:sails.__("%s has been successfully created", "Synmark"), synmarkid:newsynmark.id});
+
+        }, function(err){
+            return res.serverError(err);
+        })
     }
 };
 

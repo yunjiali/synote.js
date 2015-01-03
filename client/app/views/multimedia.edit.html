@@ -1,0 +1,76 @@
+<div mc-messages></div>
+<div class="row">
+  <div ng-include="'views/templates/sidebar.html'"></div>
+  <div class="col-sm-8 col-md-9">
+    <h2>Edit Multimedia</h2>
+    <hr class="colorgraph">
+    <div ng-show="metadata" id="metadata_div" class="col-sm-8 col-md-9" cg-busy="editPromise">
+      <form name="editForm" class="form-horizontal" role="form" ng-submit="processForm()" novalidate>
+        <fieldset>
+          <!-- Text input-->
+          <div class="form-group" ng-class="{'has-error':editForm.title.$invalid}">
+            <label class="col-md-2 col-xs-3 control-label" for="title">Title</label>
+            <div class="col-md-8 col-xs-7">
+              <input id="title" ng-trim="true" ng-model="metadata.title" name="title" type="text" placeholder="Title" class="form-control input-md" ng-required="true"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-md-2 col-xs-3 control-label" for="url">URL</label>
+            <div class="col-md-8 col-xs-7">
+              <input type='text' autocomplete="off" placeholder="Multimedia URL" class="form-control required" name='url' id='url' ng-model="metadata.url" required ng-trim="true"/>
+            </div>
+          </div>
+          <!-- Textarea -->
+          <div class="form-group">
+            <label class="col-md-2 col-xs-3 control-label" for="description">Description</label>
+            <div class="col-md-8 col-xs-7">
+              <textarea class="form-control" ng-class="{'has-error':editForm.description.$invalid}" ng-trim="true" placeholder="Description" rows="6" ng-model="metadata.description" id="description" name="description" ng-required="true"></textarea>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-2 col-xs-3 control-label" for="tagsinput">Tags</label>
+            <div class="tagsinput-primary col-md-8 col-xs-7">
+              <input name="tags" class="tagsinput" data-role="tagsinput" ng-model="tagsStr" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-2 col-xs-3 control-label" for="description">Duration</label>
+            <div class="col-md-8 col-xs-7">
+              <input id="duration" disabled="disabled" ng-model="durationStr" name="duration" type="text" placeholder="" class="form-control input-md" required/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-2 col-xs-3 control-label"  for="description">Thumbnail image</label>
+            <div ng-cloak class="col-md-8 col-xs-7" ng-if="metadata.thumbnail">
+              <img ng-src="{{metadata.thumbnail}}"/>
+              <input type="hidden" name="thumbnail" alt="thumbnail picture" ng-model="metadata.thumbnail"/>
+            </div>
+            <div ng-cloak class="col-md-8 col-xs-7" ng-if="!metadata.thumbnail">
+              <img alt="thumbnail not available" src="http://res.cloudinary.com/symbolnet/image/upload/v1417996309/default_wlvnze.jpg"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-md-2 col-xs-3 control-label" for="description">Created At</label>
+            <div class="col-md-8 col-xs-7">
+              <span id="createdat_span">{{createdat | date:'yyyy-mm-dd'}}</span>
+            </div>
+          </div>
+
+          <br/>
+          <div class="row">
+            <div class="col-xs-offset-4 col-md-offset-2 col-xs-4 col-sm-4 col-md-4">
+              <button id="submit_btn" ng-disabled="!editForm.$valid" name="submit_btn" class="btn btn-lg btn-success btn-block">Save</button>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-4">
+              <button id="reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block">Cancel</button>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>

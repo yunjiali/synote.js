@@ -30,7 +30,7 @@ module.exports = {
       type:"string",
       enum:['private','view','edit'],
       required:true,
-      defaultsTo:"view" //could be admin, normal
+      defaultsTo:"private" //could be admin, normal
     },
     items:{
       collection:'playlistItem',

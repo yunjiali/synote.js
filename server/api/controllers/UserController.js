@@ -8,6 +8,8 @@
  * @docs        :: http://waterlock.ninja/documentation
  */
 
+var randomstring = require("randomstring");
+
 module.exports = require('waterlock').actions.user({
   //TODO: write test case
   validateUsername: function(req, res) {
@@ -96,7 +98,27 @@ module.exports = require('waterlock').actions.user({
               User.publishCreate(user);
 
               waterlock.logger.debug('user login success');
-              return res.send({success:true});
+
+              //create the favourate playlist by default
+              var playlist = {};
+              playlist.title = sails.__("Favourite")
+              playlist.description = sails.__("My favourite list.")
+              playlist.publicPermission = "private";
+
+              playlist.rsid = randomstring.generate();
+              playlist.owner = user.id;
+              Playlist.create(playlist).exec(function(errPl, newpl){
+                if(errPl){
+                  User.destroy({id:user.id}).exec(function(errDelete, users){
+                    if(errDelete)
+                      return res.send({success:false, message:errDelete});
+                    else
+                      return res.send({success:false, message:err});
+                  });
+                  return res.serverError(errPl);
+                }
+                return res.send({success:true, msg:sails.__("You have successfully registered.")});
+              });
             });
           });
         }

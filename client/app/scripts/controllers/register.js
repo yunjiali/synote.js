@@ -16,6 +16,7 @@ angular.module('synoteClient')
     var $translate = $filter('translate');
 
     $scope.processForm = function () {
+      messageCenterService.reset();
       //clean alerts
       //check terms and conditions
       if(!$scope.t_c) {
@@ -42,7 +43,7 @@ angular.module('synoteClient')
             }
           }
           else {
-            messageCenterService.add('success', $translate('REG_SUCCESS_TEXT'));
+            messageCenterService.add('success', $translate('REG_SUCCESS_TEXT'),{status: messageCenterService.status.next});
             //$location.path('/login');
           }
         }, function (err) {

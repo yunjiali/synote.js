@@ -39,6 +39,16 @@ before(function(done) {
                         callback(null);
                     })
             },
+            //add another normal user
+            function(callback){
+                request(sails.hooks.http.app)
+                    .post('/user/create')
+                    .send({username:'teststatic2',password:'hellowaterlock',firstname:'test2',lastname:'static2',email:'teststatic2@synote.com'})
+                    .expect(200)
+                    .end(function(err,res){
+                        callback(null);
+                    })
+            },
             //add admin user
             function(callback) {
                 request(sails.hooks.http.app)

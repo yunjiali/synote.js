@@ -1,0 +1,63 @@
+<div mc-messages></div>
+<div class="row">
+  <div ng-include="'views/templates/sidebar.html'"></div>
+  <div class="well col-sm-8 col-md-9" cg-busy="getPromise">
+    <div ng-if="isOwner">
+      <form editable-form role="form" name="playlistForm" onaftersave="processForm()">
+        <div class="form-group">
+          <!-- editable username (text with validation) -->
+            <span editable-text="playlist.title" e-name="title" onbeforesave="checkName($data)" e-required>
+              <h3>{{playlist.title | limitTo: 255}}</h3>
+            </span>
+        </div>
+        <div class="form-group">
+          <span editable-textarea="playlist.description" e-name="description">
+            <p>{{playlist.description | limitTo: 1024}}</p>
+          </span>
+        </div>
+        <ul class="list-inline list-unstyled">
+          <li><span><i class="fa fa-user"></i>&nbsp;Created by {{playlist.owner.username}}</span></li>
+          <li>|</li>
+          <li><span><i class="fa fa-calendar"></i>&nbsp;{{timeAgo(playlist.createdAt)}}</span></li>
+          <li>|</li>
+          <span><i class="fa fa-file-video-o"></i>&nbsp;{{items.length}} resources</span>
+        </ul>
+        <div>
+          <!-- button to show form -->
+          <button type="button" class="btn btn-primary" ng-click="playlistForm.$show()" ng-show="!playlistForm.$visible">
+            {{'EDIT_TEXT' | translate}}
+          </button>
+          <!-- buttons to submit / cancel form -->
+          <span ng-show="playlistForm.$visible">
+            <button type="submit" class="btn btn-primary" ng-disabled="playlistForm.$waiting">
+              {{'SAVE_TEXT' | translate}}
+            </button>
+            <button type="button" class="btn btn-danger" ng-disabled="playlistForm.$waiting" ng-click="playlistForm.$cancel()">
+              {{'CANCEL_TEXT' | translate}}
+            </button>
+          </span>
+        </div>
+      </form>
+    </div>
+    <hr class="colorgraph"/>
+    <div ng-if="items.length === 0">
+      {{"PLAYLIST_NOVIDEO_TEXT" | translate}}
+    </div>
+    <div ng-if="items.length >0">
+      <div class="row" ng-repeat="item in items">
+        <div class="col-sm-2 col-md-3">
+          <a href="#" class="thumbnail">
+            <img ng-src="{{item.multimedia.thumbnail}}" alt="Thumbnail for {{item.multimedia.title}}">
+          </a>
+          <p><a class="btn btn-warning" href="#"><i class="fa fa-play"></i>&nbsp;Watch</a></p>
+        </div>
+        <div class="col-sm-10 col-md-9">
+          <h4 class="multimedia-title"><a href="/watch/{{item.multimedia.id}}">{{item.multimedia.title | limitTo:128}}</a></h4>
+          <p>
+            {{item.multimedia.description+"..." | limitTo: 1024}}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<div class="col-sm-4 col-md-3 sidebar" ng-controller="SidebarCtrl">
+  <div class="mini-submenu">
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </div>
+  <div class="list-group" cg-busy="plsPromise">
+    <span href="#" class="list-group-item active">
+        Playlist
+      <div class="pull-right">
+        <button ng-click="move()" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> New</button>
+      </div>
+    </span>
+    <a href ng-click="displayPlaylist(playlist.id)" ng-if="playlists.length > 0" ng-repeat="playlist in playlists" class="list-group-item">
+      <i class="fa fa-list"></i> {{playlist.title | limitTo:15}}
+      <span class="badge" ng-class="{'alert-success':playlist.publicPermission === 'view', 'alert-danger':playlist.publicPermission === 'private'}">{{playlist.items.length}}</span>
+    </a>
+    <a href ng-if="playlists.length === 0" class="list-group-item">
+      {{plsMsg}}
+    </a>
+  </div>
+</div>

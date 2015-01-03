@@ -67,10 +67,10 @@ module.exports = {
     create:function(req,res){
         var multimedia = {};
 
-        if(typeof req.body.duration === 'string')
-            console.log("string");
-        else
-            console.log('number');
+        //if(typeof req.body.duration === 'string')
+        //    console.log("string");
+        //else
+        //    console.log('number');
 
         multimedia.title = S(req.body.title).trim().s;
         if(req.body.description) {
@@ -92,7 +92,7 @@ module.exports = {
             for(var i=0;i<tags.length;i++){
                 var tag = S(tags[i]).trim().s;
                 if(tag) {
-                    multimedia.tags.push({text: S(tags[i]).trim().s, owner: req.session.user.id, rsid: randomstring.generate()});
+                    multimedia.tags.push({text: S(tags[i]).trim().s, owner: req.session.user.id, rsid: randomstring.generate(), ind:i+1});
                 }
             }
 
@@ -194,6 +194,178 @@ module.exports = {
             });
         }
     },
+    save:function(req,res){
+        var multimedia = req.session.multimedia;
+
+        var updatemm = {};
+
+        //title is not required
+        if(req.body.title) {
+            updatemm.title = S(req.body.title).trim().s;
+        }
+
+        if(req.body.description) {
+            updatemm.description = S(req.body.description).trim().s
+        }
+
+        if(req.body.url){
+            updatemm.url = S(req.body.url).trim().s;
+        }
+
+        if(req.permission){
+            updatemm.permission = S(req.body.permission).trim(0).s;
+        }
+
+        var updateTags = false;
+
+        if(req.body.tags){
+            //deal with tags
+            var tags = req.body.tags.split(',');
+            var oldtags = _.sortBy(multimedia.tags,function(tag){
+                return tag.ind;
+            }).map(function(tag){
+                return tag.text;
+            });
+
+            if(!_.isEqual(oldtags,tags)){
+                updatemm.tags = [];
+                for(var i=0;i<tags.length;i++){
+                    var tag = S(tags[i]).trim().s;
+                    if(tag) {
+                        updatemm.tags.push({text: S(tags[i]).trim().s, owner: req.session.user.id, rsid: randomstring.generate(), ind:i+1});
+                    }
+                }
+                updateTags = true;
+            }
+        }
+
+        if(req.body.duration) {
+            if(validator.isInt(req.body.duration))
+                updatemm.duration = parseInt(req.body.duration);
+            else
+                return res.badRequest((sails.__("Parameter %s is not valid.", "duration" )));
+        }
+
+        if(req.body.starttime){
+            var datetime = new Date(S(req.body.starttime).trim().s).toISOString();
+            if(!datetime){
+                return res.badRequest((sails.__("Parameter %s is not valid.", "starttime" )));
+            }
+
+            updatemm.starttime = datetime;
+        }
+
+        //TODO: write utils to decide if video
+        if(req.body.mtype){
+            updatemm.mtype = req.body.mtype;
+        }
+
+        if(req.body.thumbnail){
+            updatemm.thumbnail = S(req.body.thumbnail).trim().s;
+        }
+
+        if(typeof req.body.isVideo !== 'undefined' && req.body.isVideo === 'false'){
+            updatemm.mtype = "audio";
+        }
+
+        var tagsPromise = UtilsService.emptyPromise();
+        if(updateTags === true){
+            tagsPromise = Tag.destroy({ownermm:multimedia.id});
+        }
+
+        tagsPromise.then(function(){
+            Multimedia.update({id:multimedia.id},updatemm).then(function(newmms){
+                return res.json({success:true, message:sails.__("%s has been successfully updated.", newmms[0].title), mmid:newmms[0].id});
+            },function(err){
+                return res.serverError(err);
+            });
+        }, function(destroyErr){
+            return res.serverError(destroyErr);
+        });
+    },
+    /**
+     * list all multimedia
+     * @param skip
+     * @param limit
+     * @param sortby: sort by a field
+     * @param order
+     */
+    list:function(req,res){
+        //sort and pagination
+        //count
+        //mulitmedia/list
+        //publicpermission: view, comment and write
+        var skip = 0;
+        if(typeof req.query.skip !== "undefined" && !isNaN(parseInt(req.query.skip))){
+            skip = parseInt(req.query.skip);
+        }
+
+        var limit = 10;
+        if(typeof req.query.limit !== "undefined" && !isNaN(parseInt(req.query.limit))){
+            limit = parseInt(req.query.limit);
+        }
+
+        //TODO: Sortby multiple fields
+        //TODO: what if sortby string is not defined in Multimedia model?
+        var sortby = "createdAt";
+        if(typeof req.query.sortby !== "undefined"){
+            sortby = req.query.sortby;
+        }
+
+        var order = "DESC";
+        if(req.query.order === "ASC"){
+            order="ASC";
+        }
+
+        var sort = sortby + " "+order;
+
+        //do the count first...
+        var criteria = {publicPermission:['view','comment','edit']};
+        Multimedia.count(criteria).then(function(mmCount){
+            var end = (skip+limit)>mmCount?mmCount:(skip+limit);
+            Multimedia.find({where:criteria, skip:skip,limit:limit,sort:sort}).populate('tags').populate('synmarks').populate('owner').then(function(mms){
+                return res.json({success:true,count:mmCount, start:skip+1,end:end, mms:mms});
+            },function(err){
+                return res.serverError(err);
+            });
+        });
+    },
+    listByOwner:function(req,res){
+        //multimedia/list/owner/1
+        //count
+        var owner = req.session.user;
+        var skip = 0;
+        if(typeof req.query.skip !== "undefined" && !isNaN(parseInt(req.query.skip))){
+            skip = parseInt(req.query.skip);
+        }
+
+        var limit = 10;
+        if(typeof req.query.limit !== "undefined" && !isNaN(parseInt(req.query.limit))){
+            limit = parseInt(req.query.limit);
+        }
+
+        var sortby = "createdAt";
+        if(typeof req.query.sortby !== "undefined"){
+            sortby = req.query.sortby;
+        }
+
+        var order = "DESC";
+        if(req.query.order === "ASC"){
+            order="ASC";
+        }
+
+        var sort = sortby + " "+order;
+
+        //do the count first...
+        var criteria = {owner:owner};
+        Multimedia.count(criteria).then(function(mmCount){
+            Multimedia.find({where:criteria, skip:skip,limit:limit,sort:sort}).populate('tags').populate('synmarks').then(function(mms){
+                return res.json({success:true,count:mmCount, start:skip+1,end: skip+limit, mms:mms});
+            },function(err){
+                return res.serverError(err);
+            });
+        });
+    },
     /**
      * Get multimedia
      * @param mmid
@@ -201,7 +373,7 @@ module.exports = {
      */
     get: function(req,res){
         //TODO: get different things with different permission
-        //if playlist in query get synmark belongs to a playlist
+        //if playlist is in query, get synmark belongs to a playlist
         //if user not logged in, no playlist is returned
         var multimedia = req.session.multimedia;
         var pliid;
@@ -240,7 +412,7 @@ module.exports = {
         var playlistsPromise;
         if(req.session.user){
             playlistsPromise = Playlist.find({owner:req.session.user.id}).populate('items',{sort:'ind ASC'})
-                .then(function(transcripts){return transcripts;});
+                .then(function(playlists){return playlists;});
             multimediaPromises.push(playlistsPromise);
         }
         else{

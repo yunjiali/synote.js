@@ -31,6 +31,31 @@ describe('UsersController', function() {
                 });
         });
 
+        it('should create a default favourite playlist when user registered', function (done) {
+
+            request(sails.hooks.http.app)
+                .post('/user/create')
+                .send({
+                    username: 'testqpwoierupoqwresjdnfskansdkflj',
+                    password: 'hellowaterlock1117',
+                    firstname: 'test7',
+                    lastname: 'seven',
+                    email: 'test7@synote.com'
+                })
+                .expect(200)
+                .end(function (err, res) {
+                    if (err) return done(err);
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    User.findOne({username:'testqpwoierupoqwresjdnfskansdkflj'}).exec(function(errUser,user){
+                        Playlist.findOne({owner:user.id,title:sails.__("Favourite")}).exec(function(errPl, playlist){
+                            should.exist(playlist);
+                            done();
+                        });
+                    });
+                });
+        });
+
         /*it('should not register user as the password is shorter than 8 characters', function (done) {
 
             request(sails.hooks.http.app)

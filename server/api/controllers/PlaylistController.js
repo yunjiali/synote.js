@@ -25,7 +25,7 @@ module.exports = {
         }
 
         if(req.body.permission){
-            playlist.permission = req.body.permission;
+            playlist.publicPermission = req.body.permission;
         }
 
         playlist.rsid = randomstring.generate();
@@ -33,12 +33,47 @@ module.exports = {
 
 
         Playlist.create(playlist).exec(function(err, newpl){
-            console.log("abd");
             if(err){
                 return res.serverError(err);
             }
-            return res.json({success:true, message:sails.__("Playlist %s has been successfully created", newpl.title), plid:newpl.id});
+            return res.json({success:true, message:sails.__("Playlist %s has been successfully created.", newpl.title), plid:newpl.id});
         });
+    },
+
+    save:function(req,res){
+        var playlist = req.session.playlist;
+        var updatedpl = {};
+
+        if(req.body.title){
+            updatedpl.title = S(req.body.title).trim().s;
+        }
+
+        if(req.body.description){
+            updatedpl.description = S(req.body.description).trim().s;
+        }
+
+        if(req.body.permission){
+            updatedpl.publicPermission = req.body.permission;
+        }
+
+        //console.log("plid:"+playlist.id);
+        Playlist.update({id:playlist.id},updatedpl).then(function(newpl){
+            return res.json({success:true, message:sails.__("Playlist %s has been successfully updated.", newpl[0].title), plid:newpl[0].id});
+        }, function(err){
+            return res.serverError(err);
+        });
+    },
+
+    /**
+     * @param no parameter
+     */
+    list:function(req,res){
+        var owner = req.session.user.id;
+        Playlist.find({owner:owner}).populate('items').exec(function(err, pls){
+            if(err)
+                return res.serverError(err)
+            return res.json(pls);
+        })
     },
 
     /**
@@ -90,7 +125,7 @@ module.exports = {
         //var playlist = req.session.playlist;
         var plid = req.params.plid;
 
-        var playlistPromise = Playlist.findOne({id: plid});
+        var playlistPromise = Playlist.findOne({id: plid}).populate('owner');
         var playlistItemsPromise = PlaylistItem.find({belongsTo:plid}).populate('multimedia');
 
         Q.all([playlistPromise,playlistItemsPromise])

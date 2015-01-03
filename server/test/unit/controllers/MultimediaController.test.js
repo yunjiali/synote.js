@@ -5,6 +5,7 @@
 var request = require('supertest-as-promised');
 var async = require('async');
 var should = require('should');
+var _ = require('lodash');
 
 
 describe('MultimediaController', function() {
@@ -255,7 +256,7 @@ describe('MultimediaController', function() {
         //TODO: add a couple of bad examples: http://www.youtube.com/watch?v=WKsjaOqDXgg BBC banned it
     });
 
-    describe.only('POST /multimedia/create', function(){
+    describe('POST /multimedia/create', function(){
         var youtubeURLSubtitles = "https://www.youtube.com/watch?v=5MgBikgcWnY";
         var accessToken = "";
         before(function(done){
@@ -413,7 +414,7 @@ describe('MultimediaController', function() {
 
     //TODO: get multimedia
     describe('GET /multimedia/get', function(){
-        var agent;
+        var agent,accessToken;
         before(function(done){
             agent = request.agent(sails.hooks.http.app);
             async.waterfall([
@@ -466,6 +467,262 @@ describe('MultimediaController', function() {
                     should.exist(resObj.currentplaylist);
                     done();
                 })
+        });
+    });
+
+    describe.only('GET /multimedia/listByOwner', function(){
+        var agent,accessToken;
+        before(function(done){
+            agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback();
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null, resObj.token);
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
+
+
+        it("should list owner's multimedia successfully", function(done){
+
+            agent
+                .get('/multimedia/list?access_token='+accessToken)
+                .expect(200)
+                .end(function(err,res){
+                    res.statusCode.should.equal(200);
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    resObj.count.should.greaterThan(0);
+                    resObj.mms.length.should.greaterThan(0);
+                    done();
+                });
+
+        });
+
+        it("should list owner's multimedia with skip and limit", function(done){
+            agent
+                .get('/multimedia/list?access_token='+accessToken+'&skip=1&limit=2')
+                .expect(200)
+                .end(function(err,res){
+                    res.statusCode.should.equal(200);
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    resObj.mms.length.should.equal(2);
+                    done();
+                });
+        });
+    });
+
+    describe('POST /multimedia/save/:mmid ', function(){
+        var accessToken = "";
+        var mmid="";
+        var mmid2=""
+        before(function(done){
+            mmid= global.bootstrap.multimedia.mmid1;
+            mmid2= global.bootstrap.multimedia.mmid2;
+            done();
+        });
+
+        it('should edit multimedia successfully', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback(null);
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null);
+                        });
+                },
+                function(callback){
+                    agent
+                        .post('/multimedia/save/'+mmid+'?access_token='+accessToken)
+                        .send({title:'editedmultimedia16sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPhdd', description:'multimedia has been changed'})
+                        .expect(200)
+                        .end(function(err,res){
+                            res.statusCode.should.equal(200);
+                            var resObj = JSON.parse(res.text);
+                            should.exist(resObj.mmid);
+                            Multimedia.findOne({id:mmid}).exec(function(err,mm){
+                                should.exist(mm);
+                                mm.title.should.equal('editedmultimedia16sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPhdd');
+                                callback(null);
+                            });
+
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
+
+        it('should add new tags to multimedia', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback(null);
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null);
+                        });
+                },
+                function(callback){
+                    agent
+                        .post('/multimedia/save/'+mmid+'?access_token='+accessToken)
+                        .send({tags:'ted, talk, save, test',title:'editedmultimedia16sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPhdd', description:'multimedia has been changed'})
+                        .expect(200)
+                        .end(function(err,res){
+                            res.statusCode.should.equal(200);
+                            var resObj = JSON.parse(res.text);
+                            should.exist(resObj.mmid);
+                            Multimedia.findOne({id:mmid}).populate('tags').exec(function(err,mm){
+                                should.exist(mm);
+                                mm.title.should.equal('editedmultimedia16sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPhdd');
+                                mm.tags.length.should.equal(4);
+                                var tags = mm.tags.map(function(tag){
+                                    return tag.text;
+                                });
+                                _.indexOf(tags,'ok').should.equal(-1);
+                                _.indexOf(tags,'save').should.not.equal(-1)
+                                callback(null);
+                            });
+
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
+
+        it('should successfully reduce tags to multimedia', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback(null);
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null);
+                        });
+                },
+                function(callback){
+                    agent
+                        .post('/multimedia/save/'+mmid2+'?access_token='+accessToken)
+                        .send({tags:'NLP,sentimental,baseline algorithm'})
+                        .expect(200)
+                        .end(function(err,res){
+                            res.statusCode.should.equal(200);
+                            var resObj = JSON.parse(res.text);
+                            should.exist(resObj.mmid);
+                            Multimedia.findOne({id:mmid2}).populate('tags').exec(function(err,mm){
+                                should.exist(mm);
+                                mm.tags.length.should.equal(3);
+                                var tags = mm.tags.map(function(tag){
+                                    return tag.text;
+                                });
+                                _.indexOf(tags,'analysis').should.equal(-1);
+                                _.indexOf(tags,'NLP').should.not.equal(-1)
+                                callback(null);
+                            });
+
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
+
+        it('should not be permitted to edit multimedia', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic2@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback(null);
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null);
+                        });
+                },
+                function(callback){
+                    agent
+                        .post('/multimedia/save/'+mmid+'?access_token='+accessToken)
+                        .send({title:'multimedia16sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPhdduu', description:'Multimedia has been changed by some other users.'})
+                        .expect(403)
+                        .end(function(err,res){
+                            res.statusCode.should.equal(403);
+                            callback(null);
+                        })
+                }
+            ],function(err, results){
+                done();
+            });
         });
     });
 
