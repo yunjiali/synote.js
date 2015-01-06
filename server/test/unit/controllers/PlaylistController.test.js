@@ -9,12 +9,12 @@ var should = require('should');
 
 
 describe('PlaylistController', function() {
-    describe('POST /playlist/create, /playlist/:plid/add/:mmid', function(){
+    describe.only('POST /playlist/create, /playlist/:plid/add/:mmid', function(){
         var accessToken = "";
         var mmid= "";
         var plid= ""
         before(function(done){
-            mmid= global.bootstrap.multimedia.mmid1;
+            mmid= global.bootstrap.multimedia.mmid3;
             plid= global.bootstrap.playlist.plid1;
             var agent = request.agent(sails.hooks.http.app);
             async.waterfall([
@@ -91,23 +91,7 @@ describe('PlaylistController', function() {
                     //check tags
                     PlaylistItem.findOne({id:resObj.pliid}).exec(function(err, pli){
                         should.exist(pli);
-                        done();
-                    });
-                });
-        });
-
-        it('should successfully add playlist item', function(done){
-            var agent = request.agent(sails.hooks.http.app);
-            agent
-                .post('/playlist/'+plid+'/add/'+mmid+'?access_token='+accessToken)
-                .send()
-                .expect(200)
-                .end(function(err,res){
-                    var resObj = JSON.parse(res.text);
-                    resObj.success.should.equal(true);
-                    //check tags
-                    PlaylistItem.findOne({id:resObj.pliid}).exec(function(err, pli){
-                        should.exist(pli);
+                        pli.ind.should.greaterThan(1);
                         done();
                     });
                 });

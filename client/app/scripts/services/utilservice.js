@@ -45,9 +45,47 @@ angular.module('synoteClient')
       return seconds;
     }
 
+    var isYouTubeURL = function(url,bool) {
+
+      var pattern = /^https?:\/\/(?:www\.)?youtube\.com\/watch\?(?=.*v=((\w|-){11}))(?:\S+)?$/;
+      if (url.match(pattern)) {
+        return (bool !== true) ? RegExp.$1 : true;
+      } else { return false; }
+    }
+
+    var getVideoMIMEType = function(url){
+      var patt1=/\.([0-9a-z]+)(?:[\?#]|$)/i;
+      var ext = url.match(patt1);
+      if(ext === null){
+        return null;
+      }
+      else
+      {
+        var videoExt = ext[1]; //see http://stackoverflow.com/questions/6582171/javascript-regex-for-matching-extracting-file-extension
+        switch(videoExt.toLowerCase()){
+          case "mp4":
+                return "video/mp4";
+          case "ogg":
+                return "video/ogg";
+          case "webm":
+                return "video/webm";
+          default:
+                return null;
+        }
+      }
+    }
+
+    var isEmptyObject = function(obj){
+      if(typeof obj !== "object") return true;
+      else return Object.keys(obj).length ===0
+    }
+
     return {
       extractErrorMsgs:extractErrorMsgs,
       secondsToHHMMSS:secondsToHHMMSS,
-      HHMMSSToSeconds:HHMMSSToSeconds
+      HHMMSSToSeconds:HHMMSSToSeconds,
+      isYouTubeURL: isYouTubeURL,
+      getVideoMIMEType:getVideoMIMEType,
+      isEmptyObject:isEmptyObject
     }
   });

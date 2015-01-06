@@ -25,6 +25,7 @@
         <div>
           <!-- button to show form -->
           <button type="button" class="btn btn-primary" ng-click="playlistForm.$show()" ng-show="!playlistForm.$visible">
+            <i class="fa fa-edit"></i>
             {{'EDIT_TEXT' | translate}}
           </button>
           <!-- buttons to submit / cancel form -->
@@ -49,10 +50,10 @@
           <a href="#" class="thumbnail">
             <img ng-src="{{item.multimedia.thumbnail}}" alt="Thumbnail for {{item.multimedia.title}}">
           </a>
-          <p><a class="btn btn-warning" href="#"><i class="fa fa-play"></i>&nbsp;Watch</a></p>
+          <p><a class="btn btn-warning" href="#/watch/{{item.multimedia.id}}/{{item.id}}"><i class="fa fa-play"></i>&nbsp;Watch</a></p>
         </div>
         <div class="col-sm-10 col-md-9">
-          <h4 class="multimedia-title"><a href="/watch/{{item.multimedia.id}}">{{item.multimedia.title | limitTo:128}}</a></h4>
+          <h4 class="multimedia-title"><a href="#/watch/{{item.multimedia.id}}/{{item.id}}">{{item.multimedia.title | limitTo:128}}</a></h4>
           <p>
             {{item.multimedia.description+"..." | limitTo: 1024}}
           </p>

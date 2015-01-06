@@ -21,10 +21,13 @@ var app = angular
     'ngTouch',
     'cgBusy',
     'config',
+    'toaster',
     'LocalStorageModule',
     'ui.bootstrap',
     'angularMoment',
+    'angularjs-dropdown-multiselect',
     'xeditable',
+    'frapontillo.bootstrap-switch',
     'MessageCenterModule',
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",
@@ -50,6 +53,10 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
           }
         }
       }
+    })
+    .when('/503',{
+      templateUrl: 'views/503.html',
+      controller: '503Ctrl'
     })
     .when('/login', {
       templateUrl: 'views/login.html',
@@ -125,7 +132,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
         }
       }
     })
-    .when('/watch/:mmid/:plid?',{
+    .when('/watch/:mmid/:pliid?',{
       templateUrl: 'views/watch.html',
       controller: 'WatchCtrl'
     })
@@ -134,6 +141,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     });
 
   $translateProvider.translations('en',{
+    SERVER_NOT_AVAILABLE:'Oops! Synote is not available at the moment.',
     LOGIN_NAV_LINK:'Login',
     HOME_NAV_LINK:'Home',
     BROWSE_NAV_LINK:'Browse',
@@ -143,6 +151,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     TC_ERR:'You must agree on our terms and conditions.',
     PASSWORD_REG_NOTMATCH:"Password and confirmed password don't match.",
     CREATE_NAV_LINK:"Create",
+    MY_UPLOADS_LINK:"My Uploads",
     PROFILE_NAV_LINK:"Profile",
     REG_NAV_LINK:"Register",
     REG_SUBMIT_BTN:"Register",
@@ -158,14 +167,19 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     LOST_SERVER_CONNECTION_TEXT:'Cannot connect to server. Please try again later.',
     NO_PLAYLIST_TEXT:'No playlist',
     FAILED_LOADING_PLAYLIST_TEXT:'Loading playlist error.',
+    MY_UPLOADS_TITLE_TEXT:'My uploads',
+    PLAYLIST_TITLE_TEXT:'My Playlists',
     PLAYLIST_TITLE_PH_TEXT:'Playlist Title',
     PLAYLIST_TITLE_ERR_TEXT:'Playlist title is missing',
     PLAYLIST_DESCRIPTION_PH_TEXT:'Playlist description',
     PLAYLIST_DESCRIPTION_ERR_TEXT:'Playlist description is missing',
+    IN_PLAYLIST_TEXT:'In Playlists',
     CREATE_PLAYLIST_SUCCESS_TEXT:'Playlist has been successfully created',
     PLAYLIST_NOVIDEO_TEXT:'No multimedia resource in this playlist.',
     MMID_INVALID_TEXT:'Cannot find the multimedia resource.',
-    MULTIMEDIA_NOVIDEO_TEXT:'No multimedia resource is found.'
+    MULTIMEDIA_NOVIDEO_TEXT:'No multimedia resource is found.',
+    NO_TAGS_TEXT:'No tag',
+    NOTINANY_PLAYLIST_TEXT:"This resource hasn't been added to any playlist yet."
   });
 
   $translateProvider.determinePreferredLanguage(function () {

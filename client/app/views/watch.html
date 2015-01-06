@@ -1,16 +1,10 @@
-<h2 class="player-h2">{{multimedia.title}}</h2>
-<div>
-  <span>By</span>
-  <span id="user_span"><a href="#">{{multimedia.owner.username}}</a></span>
-  <span>| Published </span>
-  <span id="publish_span">13 days ago</span>
-  <span>|</span>
-  <span id="views_span">1,894 Views</span>
-</div>
-<div class="row" id="video_div">
-  <div class="col-md-8">
-      <videogular class="videogular" vg-player-ready="onPlayerReady" vg-theme="config.theme.url" vg-autoplay="config.autoPlay">
-        <vg-video vg-src="config.sources" vg-youtube></vg-video>
+<toaster-container></toaster-container>
+<div mc-messages></div>
+<div class="row" cg-busy="loadPromise">
+  <div class="col-md-7 col-sm-8" id="left_div" >
+    <div class="videogular-container" id="video_div" ng-if="videoError == false">
+      <videogular class="vg-controls" vg-player-ready="onPlayerReady" vg-complete="onCompleteVideo" vg-theme="config.theme" vg-autoplay="config.autoPlay">
+        <vg-video vg-src="config.sources" vg-youtube="rel=1;showinfo=1"></vg-video>
         <vg-controls class="vg-controls" vg-autohide="config.autoHide" vg-autohide-time="config.autoHideTime">
           <vg-play-pause-button></vg-play-pause-button>
           <vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
@@ -27,30 +21,104 @@
         <vg-buffering></vg-buffering>
       </videogular>
     </div>
+    <h2 class="player-h2">{{multimedia.title}}</h2>
+    <p>
+      <i class="fa fa-user"></i> by {{multimedia.owner.username}}
+      | <i class="fa fa-calendar"></i>&nbsp;Published <span am-time-ago="multimedia.createdAt"></span>
+      | <i class="fa fa-tags"></i> Tags :
+        <span class="label label-info label-tag" ng-repeat="tag in multimedia.tags" ng-if="multimedia.tags.length>0">
+          {{tag.text}}
+        </span>
+        <span  ng-if="multimedia.tags.length === 0">
+          {{'NO_TAGS_TEXT' | translate}}
+        </span>
+    </p>
+    <div class="well">
+      <tabset>
+        <tab heading="About" id="about_tab">
+          {{multimedia.description}}
+        </tab>
+        <tab heading="Add to" id="playlist_tab" ng-if="playlists">
+          <br/>
+          <div class="row" cg-busy="addToPlaylistPromise">
+            <div class="col-md-6 col-sm-6">
+              <span>
+                <b>{{'PLAYLIST_TITLE_TEXT' | translate}}</b>
+              </span>
+              <ul class="list-group">
+                <li ng-if="playlists.length > 0" ng-repeat="playlist in playlists" class="list-group-item">
+                  <i class="fa fa-list"></i><a href ng-click="displayPlaylist(playlist.id)">&nbsp;{{playlist.title | limitTo:15}}</a>
+                  <div class="pull-right"><button ng-click="addToPlaylist(playlist)" class="btn btn-xs btn-primary">Add</button></div>
+                </li>
+                <li ng-if="playlists.length === 0" class="list-group-item">
+                  {{'NO_PLAYLIST_TEXT' | translate}}
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-6 col-sm-6">
+              <span>
+                <b>{{'IN_PLAYLIST_TEXT' | translate}}</b>
+              </span>
+              <ul class="list-group">
+                <li ng-if="!isEmptyObject(multimediaInPlaylists)" ng-repeat="(id, playlist) in multimediaInPlaylists" class="list-group-item">
+                  <i class="fa fa-list"></i><a href ng-click="displayPlaylist(id)">&nbsp;{{playlist.title | limitTo:15}}</a>
+                  <span class="badge">{{playlist.count}}</span>
+                </li>
+                <li href ng-if="isEmptyObject(multimediaInPlaylists)" class="list-group-item">
+                  {{'NOTINANY_PLAYLIST_TEXT' | translate}}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </tab>
+        <tab heading="Transcript" id="transcript_tab">Transcript</tab>
+      </tabset>
+    </div>
 
-</div>
 
-<div class="row" id="video_controls_div">
-  <div class="col-md-7">
-    <button class="btn btn-primary" ng-click="API.play()">Play</button>
-    <button class="btn btn-primary" ng-click="API.pause()">Pause</button>
-    <button class="btn btn-primary" ng-click="API.stop()">Stop</button>
-    <button class="btn btn-primary" ng-click="API.seekTime(30, false)">Move to second 30</button>
-    <button class="btn btn-primary" ng-click="changeSource()">Next</button>
+    <div id="video_controls_div">
+      <button class="btn btn-primary" ng-click="API.play()">Play</button>
+      <button class="btn btn-primary" ng-click="API.pause()">Pause</button>
+      <button class="btn btn-primary" ng-click="API.stop()">Stop</button>
+      <button class="btn btn-primary" ng-click="API.seekTime(30, false)">Move to second 30</button>
+      <button class="btn btn-primary" ng-click="changeSource(33)">bunny</button>
+      <button class="btn btn-primary" ng-click="showToaster('success','success','abc',3000)">caption</button>
+    </div>
   </div>
-</div>
-<div id="tags_div">
-  <span id="tags_title_span">Tags</span>
-  <br/>
-  <span id="tags_span">{{tags}}</span>
-</div>
-<div id="synmarks_div">
-  <div ng-repeat="synmark in synmarks">
-    <div>{{synmark.title}}</div>
-    <div>
-      <span>{{synmark.mfst}}</span>
-      <span> to </span>
-      <span>{{synmark.mfet}} </span>
+  <div class="col-md-5 col-sm-4" id="right_div">
+    <div id="playlist_div" ng-if="playlist" cg-busy="loadPlaylistPromise" ng-style="style()" synote-resize="#video_div">
+      <div class="watch-playlist" style="display:inline">
+        <div class="watch-playlist-title">
+          <span><b>{{playlist.title}}</b></span>
+          <div class="pull-right">
+            <input bs-switch ng-model="hidePlaylist" type="checkbox" switch-on-text="Hide" switch-off-text="Show">
+          </div>
+        </div>
+        <ul ng-if="!hidePlaylist">
+          <li ng-class="{'watch-playlist-playing': isPlaylistItemPlaying(item.id)}" ng-repeat="item in playlist.items" ng-click="watchPlaylistItem(item.multimedia.id, item.id)">
+            <div class="media">
+              <a class="media-left" href>
+                <img width="64" class="img-rounded img-playlist hidden-sm" ng-src="{{item.multimedia.thumbnail}}"/>
+              </a>
+              <div class="media-body">
+                <b>{{item.ind}}. {{item.multimedia.title | limitTo:48}}</b><br/>
+                {{item.multimedia.description | limitTo:144}}
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div id="synmarks_div" class="well">
+      <div>some synmarks here</div>
+      <div ng-repeat="synmark in synmarks">
+        <div>{{synmark.title}}</div>
+        <div>
+          <span>{{synmark.mfst}}</span>
+          <span> to </span>
+          <span>{{synmark.mfet}} </span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

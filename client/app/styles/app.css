@@ -13,19 +13,46 @@ h3
   font-size:1.25em;
 }
 
+.synote-header{
+  text-align: center;
+}
+.synote-header img{
+  display: block;
+  margin: 0 auto 20px;
+}
+
+.synote-header .name{
+  font-size:2.75em;
+  display:block;
+  font-weight:700;
+  margin: 0 auto 20px;
+}
+
+.synote-media-left {
+  padding-left:0px !important;
+}
 .player-playlistitem-blink
 {
   background-color: #ffff00;
 }
 
+.videogular-container {
+  width: 100%;
+  margin: auto;
+  overflow: hidden;
+}
+
+.videogular-container.audio{
+  height:50px;
+}
+
+
 .videogular{
   height:inherit;
 }
 
-.videogular .vg-controls {
+videogular .vg-controls {
   z-index:99999;
-  top:100%;
-  position:inherit;
 }
 
 .colorgraph {
@@ -88,4 +115,75 @@ h3
   background-color: #1abc9c !important;
   border-color: #dfe2e5 !important;
 }
+
+.label-tag{
+  margin-left:4px;
+}
+
+/* playlist style on watch page*/
+.watch-playlist {
+  color: #798795;
+  margin-bottom: 20px;
+  border-radius: 6px;
+}
+.watch-playlist ul {
+  background-color: #2c3e50;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  border-radius: 0 0 6px 6px;
+}
+.watch-playlist li {
+  background: #34495e;
+  background-size: 20px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.214;
+  margin-top: 2px;
+  padding: 18px 42px 21px 25px;
+  position: relative;
+  -webkit-transition: .25s;
+  transition: .25s;
+}
+.watch-playlist li:first-child {
+  margin-top: 0;
+}
+.watch-playlist li:last-child {
+  border-radius: 0 0 6px 6px;
+  padding-bottom: 21px;
+}
+.watch-playlist li.watch-playlist-playing {
+  background: transparent;
+  color: #1abc9c;
+}
+
+.watch-playlist-title {
+  position: relative;
+  background: #1abc9c;
+  background-size: 16px 16px;
+  border-radius: 6px 6px 0 0;
+  color: #34495e;
+  padding: 19px 25px 20px;
+}
+
+
+.watch-playlist-thumbnail {
+  float: left;
+  font-size: 24px;
+  padding: 11px 22px 0 0;
+}
+.watch-playlist-content {
+  padding-top: 1px;
+  overflow: hidden;
+}
+.watch-playlist-description, .watch-playlist-title-description {
+  color: #ffffff;
+  font-size: 17px;
+  margin: 1px 0 3px;
+}
+
+#playlist_div {
+  overflow-y:scroll;
+}
+
 

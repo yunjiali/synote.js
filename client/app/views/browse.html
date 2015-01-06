@@ -9,32 +9,32 @@
     <hr class="colorgraph"/>
     <div class="row" ng-repeat="mm in mms" cg-busy="listPromise">
       <div class="col-sm-2 col-md-3">
-        <a href="/watch/{{mm.id}}" class="thumbnail">
+        <a href="#/watch/{{mm.id}}" class="thumbnail">
           <img ng-src="{{mm.thumbnail}}" alt="Thumbnail for {{mm.title}}">
         </a>
-        <p>{{secondsToHHMMSS(mm.duration)}}</p>
       </div>
       <div class="col-sm-10 col-md-9">
-        <h4 class="multimedia-title"><a href="/watch/{{mm.id}}">{{mm.title | limitTo:128}}</a></h4>
+        <h4 class="multimedia-title"><a href="#/watch/{{mm.id}}">{{mm.title | limitTo:128}}</a></h4>
         <p>
-          {{mm.description+"..." | limitTo: 1024}}
+          {{mm.description+"..." | limitTo: 512}}
         </p>
         <p></p>
         <p>
           <i class="fa fa-user"></i> by {{mm.owner.username}}
-          | <i class="fa fa-calendar"></i><span am-time-ago="mm.createdAt"></span>
+          | <i class="fa fa-calendar"></i>&nbsp;<span am-time-ago="mm.createdAt"></span>
+          | <i class="fa fa-clock-o"></i> {{secondsToHHMMSS(mm.duration)}}
           | <i class="fa fa-comment"></i> {{mm.synmarks.length}} Synmarks
         </p>
         <p>
-          <i class="fa fa-tags"></i> Tags : <a href="#"><span class="label label-info">Snipp</span></a>
-          <a href="#"><span class="label label-info">Bootstrap</span></a>
-          <a href="#"><span class="label label-info">UI</span></a>
-          <a href="#"><span class="label label-info">growth</span></a>
+          <i class="fa fa-tags"></i> Tags :
+          <span class="label label-info label-tag" ng-repeat="tag in mm.tags" ng-if="mm.tags.length>0">
+            {{tag.text}}
+          </span>
+          <span  ng-if="mm.tags.length === 0">
+            {{'NO_TAGS_TEXT' | translate}}
+          </span>
         </p>
         <br/>
-      </div>
-      <div>
-
       </div>
     </div>
     <pagination boundary-links="true" items-per-page="limit" total-items="count" ng-model="currentPage" ng-change="pageChanged()" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>

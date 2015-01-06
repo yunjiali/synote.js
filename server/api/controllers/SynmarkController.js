@@ -111,7 +111,7 @@ module.exports = {
         Synmark.create(synmark).exec(function(err, newsynmark){
             if(err) return res.serverError(err);
 
-            return res.json({success:true, message:sails.__("%s has been successfully created", "Synmark"), synmarkid:newsynmark.id});
+            return res.json({success:true, message:sails.__("%s has been successfully created", "Synmark"), synmarkid:newsynmark.id, synmark:newsynmark});
         })
     },
 
@@ -191,7 +191,7 @@ module.exports = {
         }
 
         synmark.save().then(function(newsynmark){
-            return res.json({success:true, message:sails.__("%s has been successfully created", "Synmark"), synmarkid:newsynmark.id});
+            return res.json({success:true, message:sails.__("%s has been successfully created", "Synmark"), synmarkid:newsynmark.id, synmark:newsynmark});
 
         }, function(err){
             return res.serverError(err);

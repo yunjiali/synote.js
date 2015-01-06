@@ -179,7 +179,7 @@ module.exports = {
                     if(errMultimedia){
                         return res.serverError(errMultimedia);
                     }
-                    return res.json({success:true, message:sails.__("%s has been successfully created", multimedia.title), mmid:newmm.id});
+                    return res.json({success:true, message:sails.__("%s has been successfully created", multimedia.title), mmid:newmm.id, mm:newmm});
 
                 });
             });
@@ -189,7 +189,7 @@ module.exports = {
                 if(errMultimedia){
                     return res.serverError(errMultimedia);
                 }
-                return res.json({success:true, message:sails.__("%s has been successfully created", multimedia.title), mmid:newmm.id});
+                return res.json({success:true, message:sails.__("%s has been successfully created", multimedia.title), mmid:newmm.id, mm:newmm});
 
             });
         }
@@ -275,7 +275,7 @@ module.exports = {
 
         tagsPromise.then(function(){
             Multimedia.update({id:multimedia.id},updatemm).then(function(newmms){
-                return res.json({success:true, message:sails.__("%s has been successfully updated.", newmms[0].title), mmid:newmms[0].id});
+                return res.json({success:true, message:sails.__("%s has been successfully updated.", newmms[0].title), mmid:newmms[0].id, mm:newmms[0]});
             },function(err){
                 return res.serverError(err);
             });
@@ -331,7 +331,6 @@ module.exports = {
         });
     },
     listByOwner:function(req,res){
-        //multimedia/list/owner/1
         //count
         var owner = req.session.user;
         var skip = 0;
@@ -357,7 +356,7 @@ module.exports = {
         var sort = sortby + " "+order;
 
         //do the count first...
-        var criteria = {owner:owner};
+        var criteria = {owner:owner.id};
         Multimedia.count(criteria).then(function(mmCount){
             Multimedia.find({where:criteria, skip:skip,limit:limit,sort:sort}).populate('tags').populate('synmarks').then(function(mms){
                 return res.json({success:true,count:mmCount, start:skip+1,end: skip+limit, mms:mms});
@@ -377,10 +376,28 @@ module.exports = {
         //if user not logged in, no playlist is returned
         var multimedia = req.session.multimedia;
         var pliid;
+        var playlistitemPromise = UtilsService.emptyPromise();
 
         if(req.query && req.query.pliid){
             if(!isNaN(parseInt(req.query.pliid))){
                 pliid = parseInt(req.query.pliid);
+                playlistitemPromise = PlaylistItem.findOne({id:pliid}).populate('synmarks').then(
+                    //need to populate playlist items
+                    function(pli){
+                        return PlaylistService.listPlaylistItems(pli.belongsTo).then(
+                            function(data){
+                                pli.playlist = data.playlist;
+                                pli.playlist.items = data.items;
+                                return pli;
+                            }, function(err){
+                                return res.serverError(err);
+                            }
+                        )
+
+                    },function(err){
+                        return res.serverError(err);
+                    }
+                );
             }
             else
                 res.badRequest(sails.__("Parameter %s is not valid.", "pliid"));
@@ -388,7 +405,7 @@ module.exports = {
 
         var synmarkPromise = Synmark.find({annotates:multimedia.id}).populate('tags').populate('owner')
             .then(function(synmarks){
-                if(typeof pliid === 'undefined')
+                /*if(typeof pliid === 'undefined')
                     return synmarks;
                 else{
                     //the multimedia will be played in a playlist, so we will get if synmarks in this playlist
@@ -403,29 +420,26 @@ module.exports = {
                         //console.log(synmarks);
                         return synmarks;
                     });
-                }
+                }*/
+                return synmarks;
+            }, function(err){
+                return res.serverError(err);
             });
 
         var multimediaPromises = [];
         multimediaPromises.push(synmarkPromise);
-
-        var playlistsPromise;
-        if(req.session.user){
-            playlistsPromise = Playlist.find({owner:req.session.user.id}).populate('items',{sort:'ind ASC'})
-                .then(function(playlists){return playlists;});
-            multimediaPromises.push(playlistsPromise);
-        }
-        else{
-            playlistsPromise = UtilsService.emptyPromise();
-        }
+        multimediaPromises.push(playlistitemPromise);
 
         Q.all(multimediaPromises)
-        .spread(function(synmarks,playlists){
+        .spread(function(synmarks,playlistItem){
             var data = {};
+            data.success = true;
             data.multimedia = multimedia;
             data.synmarks = synmarks;
-            if(typeof playlists !== 'undefined')
-                data.playlists = playlists;
+            if(typeof playlistItem !== 'undefined') {
+                data.playlistItem = playlistItem;
+            }
+
             return res.json(data);
         })
         .catch(function(err){

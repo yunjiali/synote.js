@@ -443,15 +443,15 @@ describe('MultimediaController', function() {
             });
         });
 
-        it("should get multimedia with owner's playlists if logged in", function(done){
+        it("should get multimedia with synmarks if logged in", function(done){
             agent
                 .get('/multimedia/get/'+global.bootstrap.multimedia.mmid1+'?access_token='+accessToken)
                 .expect(200)
                 .end(function(err,res){
                     var resObj = JSON.parse(res.text);
                     resObj.success.should.equal(true);
+                    resObj.synmarks.length.should.greaterThan(0);
                     //check tags
-                    resObj.playlists.length.should.greaterThan(0);
                     done();
                 })
         });
@@ -462,15 +462,18 @@ describe('MultimediaController', function() {
                 .expect(200)
                 .end(function(err,res){
                     var resObj = JSON.parse(res.text);
+                    //console.log(resObj.playlist);
+
                     resObj.success.should.equal(true);
-                    //check tags
-                    should.exist(resObj.currentplaylist);
+                    should.exist(resObj.playlistItem);
+                    //should.exist(resObj.playlistItem);
+                    resObj.playlistItem.playlist.items.length.should.greaterThan(0);
                     done();
                 })
         });
     });
 
-    describe.only('GET /multimedia/listByOwner', function(){
+    describe('GET /multimedia/listByOwner', function(){
         var agent,accessToken;
         before(function(done){
             agent = request.agent(sails.hooks.http.app);

@@ -22,10 +22,10 @@ module.exports={
                 var data = {};
                 data.playlist = playlist;
                 data.items = playlistItems;
-                deffered.resolve(data);
+                deferred.resolve(data);
             })
             .catch(function(err){
-                deffered.reject(err);
+                deferred.reject(err);
             });
 
         deferred.promise.nodeify(callback);

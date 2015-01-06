@@ -34,8 +34,9 @@ angular.module('synoteClient')
         //console.log('status', response.status)
         //return response;
         console.log(response);
-        if(response.status === 0){
+        if(response.status === 0 || response.status === 503){
           messageCenterService.add('danger', $translate('LOST_SERVER_CONNECTION_TEXT'));
+          $location.path('/503');
         }
         else if(response.status === 400){
           messageCenterService.add('danger', response.data);

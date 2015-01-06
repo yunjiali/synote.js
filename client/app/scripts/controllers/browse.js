@@ -36,7 +36,7 @@ angular.module('synoteClient')
     };
 
     $scope.pageChanged = function(){
-      console.log('changed:'+$scope.currentPage);
+      //console.log('changed:'+$scope.currentPage);
       $scope.listMultimedia(($scope.currentPage-1)*$scope.limit, $scope.limit,$scope.sortby, $scope.order);
     }
 
