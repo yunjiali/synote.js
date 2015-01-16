@@ -49,7 +49,7 @@ module.exports = {
             for(var i=0;i<tags.length;i++){
                 var tag = S(tags[i]).trim().s;
                 if(tag) {
-                    synmark.tags.push({text: S(tags[i]).trim().s, owner: req.session.user.id, rsid: randomstring.generate()});
+                    synmark.tags.push({text: S(tags[i]).trim().s, owner: req.session.user.id, rsid: randomstring.generate(), ind:i+1});
                 }
             }
 
@@ -123,7 +123,11 @@ module.exports = {
     },
 
     save:function(req,res){
-        var synmark = req.session.synmark;
+        var oldsynmark = req.session.synmark;
+
+        var synmark = oldsynmark;
+        synmark.annotates = oldsynmark.annotates.id;
+        synmark.owner = oldsynmark.owner.id;
 
         if(req.body.title){
             synmark.title = S(req.body.title).trim().s;
@@ -137,8 +141,27 @@ module.exports = {
             synmark.permission = S(req.body.permission).trim().s;
         }
 
+        var updateTags = false;
+
         if(req.body.tags){
             //deal with tags
+            var tags = req.body.tags.split(',');
+            var oldtags = _.sortBy(oldsynmark.tags,function(tag){
+                return tag.ind;
+            }).map(function(tag){
+                return tag.text;
+            });
+
+            if(!_.isEqual(oldtags,tags)){
+                synmark.tags = [];
+                for(var i=0;i<tags.length;i++){
+                    var tag = S(tags[i]).trim().s;
+                    if(tag) {
+                        synmark.tags.push({text: S(tags[i]).trim().s, owner: req.session.user.id, rsid: randomstring.generate(), ind:i+1});
+                    }
+                }
+                updateTags = true;
+            }
         }
 
         synmark.mfst = parseInt(req.body.mfst);
@@ -190,12 +213,20 @@ module.exports = {
             synmark.xywhunit = S(req.body.xywhunit).trim().s;
         }
 
-        synmark.save().then(function(newsynmark){
-            return res.json({success:true, message:sails.__("%s has been successfully created", "Synmark"), synmarkid:newsynmark.id, synmark:newsynmark});
+        var tagsPromise = UtilsService.emptyPromise();
+        if(updateTags === true){
+            tagsPromise = Tag.destroy({ownersynmark:synmark.id});
+        }
 
-        }, function(err){
-            return res.serverError(err);
-        })
+        tagsPromise.then(function(){
+            Synmark.update({id:oldsynmark.id},synmark).then(function(newsynmarks){
+                return res.json({success:true, message:sails.__("%s has been successfully updated", "Synmark"), synmarkid:newsynmarks[0].id, synmark:newsynmarks[0]});
+            },function(err){
+                return res.serverError(err);
+            });
+        }, function(destroyErr){
+            return res.serverError(destroyErr);
+        });
     }
 };
 

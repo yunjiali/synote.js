@@ -71,7 +71,9 @@
             </div>
           </div>
         </tab>
-        <tab heading="Transcript" id="transcript_tab">Transcript</tab>
+        <tab heading="Transcript" id="transcript_tab">
+          Display transcript
+        </tab>
       </tabset>
     </div>
 
@@ -86,7 +88,7 @@
     </div>
   </div>
   <div class="col-md-5 col-sm-4" id="right_div">
-    <div id="playlist_div" ng-if="playlist" cg-busy="loadPlaylistPromise" ng-style="style()" synote-resize="#video_div">
+    <div id="playlist_div" ng-if="playlist" cg-busy="loadPlaylistPromise" synote-resize="#video_div">
       <div class="watch-playlist" style="display:inline">
         <div class="watch-playlist-title">
           <span><b>{{playlist.title}}</b></span>
@@ -94,9 +96,9 @@
             <input bs-switch ng-model="hidePlaylist" type="checkbox" switch-on-text="Hide" switch-off-text="Show">
           </div>
         </div>
-        <ul ng-if="!hidePlaylist">
+        <ul ng-show="!hidePlaylist">
           <li ng-class="{'watch-playlist-playing': isPlaylistItemPlaying(item.id)}" ng-repeat="item in playlist.items" ng-click="watchPlaylistItem(item.multimedia.id, item.id)">
-            <div class="media">
+            <div class="media" ng-if="item.multimedia">
               <a class="media-left" href>
                 <img width="64" class="img-rounded img-playlist hidden-sm" ng-src="{{item.multimedia.thumbnail}}"/>
               </a>
@@ -105,18 +107,89 @@
                 {{item.multimedia.description | limitTo:144}}
               </div>
             </div>
+            <div class="media" ng-if="!item.multimedia">
+              <a class="media-left" href>
+                <img width="64" class="img-rounded img-playlist hidden-sm" ng-src="{{item.multimedia.thumbnail}}"/>
+              </a>
+              <div class="media-body">
+                This resource has been removed
+              </div>
+            </div>
           </li>
         </ul>
       </div>
     </div>
     <div id="synmarks_div" class="well">
-      <div>some synmarks here</div>
-      <div ng-repeat="synmark in synmarks">
-        <div>{{synmark.title}}</div>
-        <div>
-          <span>{{synmark.mfst}}</span>
-          <span> to </span>
-          <span>{{synmark.mfet}} </span>
+      <div class="row">
+        <div id="synmarks_title_div" class="col-md-5 col-sm-4">Synmarks</div>
+        <div id="synmarks_control_div" class="col-md-7 col-sm-8 pull-right">
+          <button class="btn btn-warning btn-sm" ng-click="showSynmarkForm()" ng-if="canCreateSynmark()"><i class="fa fa-bookmark"></i></button>
+          <div class="btn-group">
+            <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.all" btn-checkbox ng-class="{disabled: !playlist}">All</label>
+            <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.mine" btn-checkbox>Mine</label>
+          </div>
+        </div>
+      </div>
+      <div id="synmark_edit_div" class="row" ng-show="showEditingSynmarkForm" cg-busy="synmarkPromise">
+        <form name="synmarkForm">
+          <input type="hidden" ng-model="currentEditingSynmark.id" name="synmark_id"/>
+          <div class="form-group col-md-12 col-sm-12 synmark-form-group">
+            <input name="synmark_title" placeholder="Title" class="form-control" ng-model="currentEditingSynmark.title" ng-required="true"/>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <div class="input-group">
+              <input name="synmark_mfst" ng-model="synmarkMfst" placeholder="{{'START_TIME_PLACEHOLDER' | translate}}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
+              <span class="input-group-btn">
+                <button class="btn btn-info" type="button" ng-click="setSynmarkMfst()"><i class="fa fa-clock-o"></i></button>
+              </span>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <div class="input-group">
+              <input name="synmark_mfet" ng-model="synmarkMfet" placeholder="{{'END_TIME_PLACEHOLDER' | translate }}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
+              <span class="input-group-btn">
+                <button class="btn btn-info" type="button" ng-click="setSynmarkMfet()"><i class="fa fa-clock-o"></i></button>
+              </span>
+            </div>
+          </div>
+          <div class="form-group col-md-12 col-sm-12 synmark-form-group">
+            <input name="synmark_tags" placeholder="Tags" class="tagsinput form-control" data-role="tagsinput" ng-model="synmarkTagsStr"/>
+          </div>
+          <div class="form-group col-md-12 col-sm-12">
+            <text-angular name="synmark_content" placeholder="Synmark Content..." rows="5"
+                  ta-toolbar="[['bold','italics','underline','ul', 'ol']]" ng-model="synmarkContent"></text-angular>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button id="submit_btn" ng-disabled="!synmarkForm.$valid" ng-click="processSynmarkForm()" name="submit_btn" class="btn btn-lg btn-success btn-block">Submit</button>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button id="reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block" ng-click="cancelSynmarkEditing()">Cancel</button>
+          </div>
+        </form>
+      </div>
+      <div ng-repeat="synmark in synmarks | orderBy:'mfst':false">
+        <div class="row synmark-row">
+          <hr/>
+          <div class="col-md-12 col-sm-12">
+            <span>{{synmark.title}}</span>
+            <span class="synmark-owner"> by {{synmark.owner.username}}</span>
+            <div class="btn-group controls" role="group" ng-if="canEditSynmark(synmark)">
+              <button ng-click="editSynmark(synmark)" type="button" class="btn btn-default btn-xs"><i class="fa fa-edit"></i></button>
+              <button type="button" class="btn btn-default btn-xs"><i class="fa fa-remove"></i></button>
+            </div>
+          </div>
+          <div class="col-md-12 col-sm-12 synmark-time">
+            <span>{{secondsToHHMMSS(synmark.mfst)}}</span>
+            <span> to </span>
+            <span>{{secondsToHHMMSS(synmark.mfet)}}</span>
+          </div>
+          <div class="col-md-12 col-sm-12" ng-if="synmark.tags.length > 0">
+            <span class="label label-info label-tag" ng-repeat="tag in synmark.tags" ng-if="synmark.tags.length>0">
+              {{tag.text}}
+            </span>
+          </div>
+          <div class="col-md-12 col-sm-12" ng-bind-html="synmark.content">
+          </div>
         </div>
       </div>
     </div>

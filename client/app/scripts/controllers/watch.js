@@ -8,8 +8,11 @@
  * Controller of the synoteClient
  */
 angular.module('synoteClient')
-  .controller('WatchCtrl',['$scope','$routeParams','$location', '$sce', '$timeout', 'multimediaService', 'playlistService', 'utilService','toaster',
-    function ($scope,$routeParams,$location, $sce, $timeout, multimediaService, playlistService, utilService, toaster) {
+  .controller('WatchCtrl',['$scope','$filter', '$routeParams','$location', '$sce', '$timeout', '$document','multimediaService', 'playlistService', 'synmarkService','utilService','authenticationService','toaster',
+    function ($scope,$filter, $routeParams,$location, $sce, $timeout,$document, multimediaService, playlistService, synmarkService, utilService, authenticationService, toaster) {
+
+      var $translate = $filter('translate');
+
       $scope.videoError = false;
       $scope.multimedia = {};
       $scope.synmarks=[];
@@ -22,10 +25,23 @@ angular.module('synoteClient')
       $scope.timeLeft;
       $scope.duration;
 
+      $scope.synmarkDisplay = {}; //synmark display configuration object
+      $scope.synmarkDisplay.all = true; //display all synmarks or just the synmarks in the playlist
+      $scope.synmarkDisplay.mine = false; //display anyone's synmarks or just my synmarks
+      $scope.currentEditingSynmark = null; //the current synmark under editing
+      $scope.synmarkContent = ""; //rich text synmark content
+      $scope.synmarkTagsStr = ""; //synmark tags string
+      $scope.synmarkMfst = ""; //synmark start time
+      $scope.synmarkMfet = ""; //synmark endd time
+      $scope.showEditingSynmarkForm = false //show synmark editing form or not
+
+
       //$scope.hidePlaylist = true;
       //$scope.showPlaylistSynmarkOnly = false;
 
       $scope.secondsToHHMMSS = function(seconds){
+        if(!seconds)
+          return "";
         return utilService.secondsToHHMMSS(seconds);
       }
 
@@ -52,6 +68,138 @@ angular.module('synoteClient')
         return
       }
 
+      /*synmark functions*/
+      $scope.showSynmarkForm = function(){
+        if(!$scope.showEditingSynmarkForm){
+          $scope.showEditingSynmarkForm = true;
+          $scope.currentEditingSynmark = {}
+        }
+      }
+
+      $scope.editSynmark = function(synmark){
+        $scope.showEditingSynmarkForm = true;
+        var synmarkFormDiv = angular.element(document.getElementById('synmarks_div'));
+        $document.scrollToElementAnimated(synmarkFormDiv);
+
+        //let currentEditingSynmark reference to the current synmark
+        //Every change to the currentEditingSynmark will will also change the synmark in $scope.synmarks list
+        $scope.currentEditingSynmark = synmark;
+        $scope.synmarkMfst = $scope.secondsToHHMMSS(synmark.mfst);
+        $scope.synmarkMfet = $scope.secondsToHHMMSS(synmark.mfet);
+        $scope.synmarkContent = synmark.content;
+        $scope.synmarkTagsStr = synmark.tags.map(function(tag){ //TODO: it's better to use a specific id instead of class
+          $('.tagsinput').tagsinput('add',tag.text);
+          return tag.text;
+        }).toString();
+
+      }
+
+      $scope.deleteSynmark = function(synmark){
+
+      }
+
+      $scope.cancelSynmarkEditing = function(){
+        $scope.showEditingSynmarkForm = false;
+        $scope.synmarkContent = ""; //rich text synmark content
+        $scope.synmarkTagsStr = ""; //synmark tags string
+        $scope.currentEditingSynmark = null;
+      }
+
+      $scope.setSynmarkMfst = function(){
+        $scope.currentEditingSynmark.mfst = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
+      }
+
+      $scope.setSynmarkMfet = function(){
+        $scope.currentEditingSynmark.mfet = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
+      }
+
+      $scope.canCreateSynmark = function(){
+        return authenticationService.isLoggedIn();
+      }
+
+      $scope.canEditSynmark = function(synmark){
+        if(authenticationService.isLoggedIn() && synmark.owner && synmark.owner.id == authenticationService.getUserInfo().id){
+          return true;
+        }
+        return false;
+      }
+
+      $scope.processSynmarkForm = function(){
+        var mfst = utilService.HHMMSSToSeconds($scope.synmarkMfst);
+        if(isNaN(mfst)){
+          $scope.showToaster("error","error",$translate('SYNMARK_ST_ERROR'), 3000);
+        }
+        var mfet = utilService.HHMMSSToSeconds($scope.synmarkMfet);
+        if(isNaN(mfet)){
+          $scope.showToaster("error","error",$translate('SYNMARK_ET_ERROR'), 3000);
+        }
+
+        var newSynmark = {};
+        newSynmark.id = $scope.currentEditingSynmark.id;
+        newSynmark.title = $scope.currentEditingSynmark.title;
+        newSynmark.owner = $scope.currentEditingSynmark.owner.id;
+        newSynmark.tags = $scope.synmarkTagsStr;
+        newSynmark.mfst = mfst;
+        newSynmark.mfet = mfet;
+        newSynmark.content = $scope.synmarkContent;
+        newSynmark.annotates = $scope.multimedia.id;
+        //console.log($scope.synmarkContent);
+        //TODO: add more about xywh
+        if(newSynmark.id){ //edit
+
+          $scope.synmarkPromise = synmarkService.saveSynmark(newSynmark)
+            .then(function (result) {
+              //push the new synmark into synmarklist
+              //result.synmark.owner = authenticationService.getUserInfo();
+              //result.synamrk.tags = $scope.synmarkTagsStr.split(',').map(function (tagText) {
+              // return {text: tagText}
+              //});
+
+              //console.log(result.synmark.tags);
+              //find the edited synmark in the list and replace it
+              /*var editedSynmark = null;
+              for(var i=0;i<$scope.synmarks.length;i++){
+                if($scope.synmarks[i].id === result.synmark.id){
+                  console.log('dddddddd:'+result.synmark.id)
+                  $scope.synmarks[i]=result.synmark;
+                  break;
+                }
+              }*/
+              $scope.currentEditingSynmark.tags = $scope.synmarkTagsStr.split(',').map(function (tagText) {
+                 return {text: tagText}
+              });
+              $scope.currentEditingSynmark.mfst = mfst;
+              $scope.currentEditingSynmark.mfet = mfet;
+              $scope.currentEditingSynmark.content = $scope.synmarkContent;
+
+              $scope.showToaster("success","success",$translate('SAVE_SYNMARK_SUCCESS_TEXT'), 3000);
+              $scope.cancelSynmarkEditing();
+            }, function (error) {
+              $scope.showToaster("error","error",error, 3000);
+              //do nothing
+            });
+        }
+        else{//create new one
+          $scope.synmarkPromise = synmarkService.createSynmark(newSynmark)
+            .then(function (result) {
+              //push the new synmark into synmarklist
+              result.synmark.owner = authenticationService.getUserInfo();
+              if(result.synmark.tags.length > 0)
+                result.synamrk.tags = $scope.synmarkTagsStr.split(',').map(function(tagText){
+                  return {text:tagText}
+                });
+              $scope.synmarks.push(result.synmark);
+              $scope.showToaster("success","success",$translate('CREATE_SYNMARK_SUCCESS_TEXT'), 3000);
+              $scope.cancelSynmarkEditing();
+            }, function (error) {
+              $scope.showToaster("error","error",error, 3000);
+              //do nothing
+            });
+        }
+      }
+
+      /*synmark functions end*/
+
       var updateCurrentPlaylist = function(plid){
         $scope.loadPlaylistPromise = playlistService.get(plid)
           .then(function (data) {
@@ -65,6 +213,8 @@ angular.module('synoteClient')
         var mmid = $routeParams.mmid;
         var pliid = $routeParams.pliid;
 
+        $('.tagsinput').tagsinput();
+
         $scope.loadPromise = multimediaService.getMultimedia(mmid, pliid)
           .then(function (data) {
             $scope.multimedia = data.multimedia;
@@ -72,7 +222,7 @@ angular.module('synoteClient')
 
             if(data.playlistItem){
               $scope.hidePlaylist = false;
-              $scope.showPlaylistSynmarkOnly = true;
+              $scope.synmarkDisplay.all = false;
 
               $scope.playlist = data.playlistItem.playlist;
             }

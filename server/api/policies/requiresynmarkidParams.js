@@ -8,7 +8,7 @@ module.exports = function(req, res, next) {
 
     var synmarkid = req.params.synmarkid;
 
-    Synmark.findOne().where({id:synmarkid}).populate('annotates').exec(function(err, synmark){
+    Synmark.findOne().where({id:synmarkid}).populate('annotates').populate('owner').exec(function(err, synmark){
         if(err) return res.serverError(err);
         if(!synmark) return res.badRequest(sails.__("Cannot find the synmark."));
 

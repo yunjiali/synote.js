@@ -59,5 +59,6 @@ module.exports.routes = {
   'post /playlistitemsynmark/:pliid/add/synmark/:synmarkid':'PlaylistItemSynmarkController.addsynmark',
   'delete /playlistitemsynmark/:pliid/remove/synmark/:synmarkid':'PlaylistItemSynmarkController.removesynmark',
   'get /synmark/get/:synmarkid':'SynmarkController.get',
-  'get /synmark/save/:synmarkid':'SynmarkController.save'
+  'post /synmark/create':'SynmarkController.create',
+  'post /synmark/save/:synmarkid':'SynmarkController.save'
 };

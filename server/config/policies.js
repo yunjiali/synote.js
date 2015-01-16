@@ -62,7 +62,7 @@ module.exports.policies = {
 	},
 	SynmarkController:{
 		create:['hasJsonWebToken','requiremfstBody','requiremmidBody'],
-		edit:['hasJsonWebToken','requiresynmarkidParams','isSynmarkOwner']
+		save:['hasJsonWebToken','requiresynmarkidParams','isSynmarkOwner']
 	},
 	PlaylistController:{
 		create:['hasJsonWebToken','requiretitleBody'],

@@ -186,4 +186,55 @@ videogular .vg-controls {
   overflow-y:scroll;
 }
 
+#synmarks_div{
+  margin-top: 10px;
+}
 
+#synmarks_title_div{
+  font-size:1.4em;
+  margin-bottom:5px;
+}
+
+#synmarks_control_div{
+  text-align:right;
+}
+
+.synmark-row {
+  cursor: pointer;
+}
+
+.synmark-row hr {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.synmark-row .controls{
+  position: absolute;
+  top: 0;
+  right: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  display:none;
+}
+
+.synmark-row:hover .controls{
+  display:block !important;
+}
+
+.synmark-row:hover{
+  background-color: #f1c40f;
+}
+
+.synmark-form-group{
+  margin-top:5px;
+  margin-bottom:5px;
+}
+
+.synmark-owner{
+  color:rgba(253, 96, 73, 1);
+  text-decoration: underline;
+}
+
+.synmark-time {
+  color:rgba(253, 96, 73, 1);
+}

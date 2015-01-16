@@ -24,10 +24,14 @@ var app = angular
     'toaster',
     'LocalStorageModule',
     'ui.bootstrap',
+    'ui.mask',
     'angularMoment',
     'angularjs-dropdown-multiselect',
+    'angular-lodash',
     'xeditable',
     'frapontillo.bootstrap-switch',
+    'textAngular',
+    'duScroll',
     'MessageCenterModule',
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",
@@ -141,6 +145,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     });
 
   $translateProvider.translations('en',{
+    SYNOTE_SLOGAN: 'An annotation system for you',
     SERVER_NOT_AVAILABLE:'Oops! Synote is not available at the moment.',
     LOGIN_NAV_LINK:'Login',
     HOME_NAV_LINK:'Home',
@@ -179,7 +184,13 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     MMID_INVALID_TEXT:'Cannot find the multimedia resource.',
     MULTIMEDIA_NOVIDEO_TEXT:'No multimedia resource is found.',
     NO_TAGS_TEXT:'No tag',
-    NOTINANY_PLAYLIST_TEXT:"This resource hasn't been added to any playlist yet."
+    NOTINANY_PLAYLIST_TEXT:"This resource hasn't been added to any playlist yet.",
+    START_TIME_PLACEHOLDER:"Start time...",
+    END_TIME_PLACEHOLDER:"End time...",
+    SYNMARK_ST_ERROR:"The format of synmark start time is not valid.",
+    SYNMARK_ET_ERROR:"The format of synmark end time is not valid.",
+    CREATE_SYNMARK_SUCCESS_TEXT:"Synmark is created.",
+    SAVE_SYNMARK_SUCCESS_TEXT:"Synmark has been updated."
   });
 
   $translateProvider.determinePreferredLanguage(function () {

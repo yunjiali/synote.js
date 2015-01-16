@@ -32,7 +32,7 @@ angular.module('synoteClient')
     function getMultimedia(mmid, pliid){
       var deferred = $q.defer();
 
-      var accessToken = authenticationService.getUserInfo().accessToken;
+      var accessToken = authenticationService.isLoggedIn()?authenticationService.getUserInfo().accessToken:undefined;
       var accessTokenStr = accessToken?("access_token="+accessToken):"";
       var pliidStr = pliid?("pliid="+pliid):"";
       if(accessToken && pliid)
