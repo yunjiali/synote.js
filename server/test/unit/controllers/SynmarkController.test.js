@@ -204,7 +204,7 @@ describe('SynmarkController', function() {
         //TODO: can't edit other people's synmark
     });
 
-    describe.only('POST /synmark/delete', function(){
+    describe('POST /synmark/delete', function(){
         var accessToken = "";
         var mmid="";
         var synid1="";

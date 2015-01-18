@@ -229,6 +229,40 @@ angular.module('synoteClient')
           });
       }
 
+      $scope.addSynmarkToPlaylistItem=function(synmark,$event){
+        $event.stopPropagation(); //stop the synmark click event to propagate to the whole synmark div
+        var pliid = $routeParams.pliid;
+        if(!pliid)
+          return;
+        $scope.synmarkPromise = synmarkService.addToPlaylistItem(synmark, pliid)
+          .then(function (result) {
+            //remove it from $scope.synmarks
+            synmark.marked =  true;
+            $scope.refreshSynmarkDisplay();
+            $scope.showToaster("success","success",$translate('ADD_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT'), 3000);
+          }, function (error) {
+            $scope.showToaster("error","error",error, 3000);
+            //do nothing
+          });
+      }
+
+      $scope.removeSynmarkFromPlaylistItem=function(synmark,$event){
+        $event.stopPropagation(); //stop the synmark click event to propagate to the whole synmark div
+        var pliid = $routeParams.pliid;
+        if(!pliid)
+          return;
+        $scope.synmarkPromise = synmarkService.removeFromPlaylistItem(synmark, pliid)
+          .then(function (result) {
+            //remove it from $scope.synmarks
+            synmark.marked =  false;
+            $scope.refreshSynmarkDisplay();
+            $scope.showToaster("success","success",$translate('REMOVE_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT'), 3000);
+          }, function (error) {
+            $scope.showToaster("error","error",error, 3000);
+            //do nothing
+          });
+      }
+
       //play the current synmark
       $scope.playSynmark = function(synmark){
         var st = synmark.mfst;
@@ -259,6 +293,10 @@ angular.module('synoteClient')
           return true;
         }
         return false;
+      }
+
+      $scope.canBeMarked = function(synmark){
+        return !synmark.marked;
       }
 
       //click the "marked" button in button-group

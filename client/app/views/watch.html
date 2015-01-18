@@ -175,9 +175,11 @@
           <div class="col-md-12 col-sm-12">
             <span>{{synmark.title}}</span>
             <span class="synmark-owner"> by {{synmark.owner.username}}</span>
-            <div class="btn-group controls" role="group" ng-if="canEditSynmark(synmark)">
-              <button ng-click="editSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm"><i class="fa fa-edit"></i></button>
-              <button ng-click="deleteSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm"><i class="fa fa-remove"></i></button>
+            <div class="btn-group controls" role="group">
+              <button title="mark" ng-click="addSynmarkToPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canBeMarked(synmark)"><i class="fa fa-eye"></i></button>
+              <button title="mark" ng-click="removeSynmarkFromPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="!canBeMarked(synmark)"><i class="fa fa-eye-slash"></i></button>
+              <button title="edit synamrk" ng-click="editSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-edit"></i></button>
+              <button title="delete synmark" ng-click="deleteSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-remove"></i></button>
             </div>
           </div>
           <div class="col-md-12 col-sm-12 synmark-time">

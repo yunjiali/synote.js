@@ -85,9 +85,63 @@ angular.module('synoteClient')
       return deferred.promise;
     }
 
+    function addToPlaylistItem(synmark, pliid){
+      var deferred = $q.defer();
+
+      var accessToken = authenticationService.getUserInfo().accessToken;
+
+
+      $http.post(ENV.apiEndpoint + '/playlistitemsynmark/'+pliid+'/add/synmark/'+synmark.id+'?access_token='+accessToken)
+        .then(function (result) {
+
+          var data = result.data;
+          //if success
+          //console.log(data);
+          if(data.success === false){
+            deferred.reject(result.data);
+          }
+          else {
+            //$location.path('/login');
+            deferred.resolve(result.data);
+          }
+        }, function (err) {
+          deferred.reject(err);
+        });
+
+      return deferred.promise;
+    }
+
+    function removeFromPlaylistItem(synmark, pliid){
+      var deferred = $q.defer();
+
+      var accessToken = authenticationService.getUserInfo().accessToken;
+
+
+      $http.delete(ENV.apiEndpoint + '/playlistitemsynmark/'+pliid+'/remove/synmark/'+synmark.id+'?access_token='+accessToken)
+        .then(function (result) {
+
+          var data = result.data;
+          //if success
+          //console.log(data);
+          if(data.success === false){
+            deferred.reject(result.data);
+          }
+          else {
+            //$location.path('/login');
+            deferred.resolve(result.data);
+          }
+        }, function (err) {
+          deferred.reject(err);
+        });
+
+      return deferred.promise;
+    }
+
     return {
       createSynmark:createSynmark,
       deleteSynmark:deleteSynmark,
-      saveSynmark:saveSynmark
+      saveSynmark:saveSynmark,
+      addToPlaylistItem:addToPlaylistItem,
+      removeFromPlaylistItem:removeFromPlaylistItem
     }
   }]);

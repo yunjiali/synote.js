@@ -193,7 +193,9 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     NO_SYNMARK_TEXT:'No synmark',
     CREATE_SYNMARK_SUCCESS_TEXT:"Synmark is created.",
     SAVE_SYNMARK_SUCCESS_TEXT:"Synmark has been updated.",
-    DELETE_SYNMARK_SUCCESS_TEXT:"Synmark has been deleted"
+    DELETE_SYNMARK_SUCCESS_TEXT:"Synmark has been deleted",
+    ADD_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT:'Synmark has been successfully added to the playlist',
+    REMOVE_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT:'Synmark has been successfully removed from the playlist'
   });
 
   $translateProvider.determinePreferredLanguage(function () {
