@@ -221,7 +221,7 @@ videogular .vg-controls {
   display:block !important;
 }
 
-.synmark-row:hover{
+.synmark-row:hover, .synmark-row-highlighted{
   background-color: #f1c40f;
 }
 

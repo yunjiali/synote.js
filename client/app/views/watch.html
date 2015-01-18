@@ -7,11 +7,12 @@
         <vg-video vg-src="config.sources" vg-youtube="rel=1;showinfo=1"></vg-video>
         <vg-controls class="vg-controls" vg-autohide="config.autoHide" vg-autohide-time="config.autoHideTime">
           <vg-play-pause-button></vg-play-pause-button>
-          <vg-timedisplay>{{ currentTime | date:'mm:ss' }}</vg-timedisplay>
+          <vg-timedisplay>{{ API.currentTime | date:'mm:ss' }}</vg-timedisplay>
           <vg-scrubBar>
             <vg-scrubbarcurrenttime></vg-scrubbarcurrenttime>
+            <vg-cuepoints vg-cuepoints-config="cuepoints"></vg-cuepoints>
           </vg-scrubBar>
-          <vg-timedisplay>{{ timeLeft | date:'mm:ss' }}</vg-timedisplay>
+          <vg-timedisplay>{{ API.timeLeft | date:'mm:ss' }}</vg-timedisplay>
           <vg-volume>
             <vg-mutebutton></vg-mutebutton>
             <vg-volumebar></vg-volumebar>
@@ -121,12 +122,13 @@
     </div>
     <div id="synmarks_div" class="well">
       <div class="row">
-        <div id="synmarks_title_div" class="col-md-5 col-sm-4">Synmarks</div>
-        <div id="synmarks_control_div" class="col-md-7 col-sm-8 pull-right">
+        <div id="synmarks_title_div" class="col-md-4 col-sm-3">Synmarks</div>
+        <div id="synmarks_control_div" class="col-md-8 col-sm-9 pull-right">
           <button class="btn btn-warning btn-sm" ng-click="showSynmarkForm()" ng-if="canCreateSynmark()"><i class="fa fa-bookmark"></i></button>
           <div class="btn-group">
-            <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.all" btn-checkbox ng-class="{disabled: !playlist}">All</label>
-            <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.mine" btn-checkbox>Mine</label>
+            <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.marked" ng-change="toggleMarked()" btn-checkbox ng-class="{disabled: !playlist}">Marked</label>
+            <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.mine" ng-change="toggleMine()" btn-checkbox>Mine</label>
+            <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.chained" ng-change="toggleChained()" btn-checkbox>Chained</label>
           </div>
         </div>
       </div>
@@ -167,15 +169,15 @@
           </div>
         </form>
       </div>
-      <div ng-repeat="synmark in synmarks | orderBy:'mfst':false">
-        <div class="row synmark-row">
+      <div ng-repeat="synmark in synmarks | orderBy:'mfst':false" ng-if="synmarks.length>0">
+        <div class="row synmark-row" ng-if="synmark.display" ng-click="playSynmark(synmark)" ng-class="{'synmark-row-highlighted':shouldSynmarkHighlighted(synmark)}">
           <hr/>
           <div class="col-md-12 col-sm-12">
             <span>{{synmark.title}}</span>
             <span class="synmark-owner"> by {{synmark.owner.username}}</span>
             <div class="btn-group controls" role="group" ng-if="canEditSynmark(synmark)">
-              <button ng-click="editSynmark(synmark)" type="button" class="btn btn-default btn-xs"><i class="fa fa-edit"></i></button>
-              <button type="button" class="btn btn-default btn-xs"><i class="fa fa-remove"></i></button>
+              <button ng-click="editSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm"><i class="fa fa-edit"></i></button>
+              <button ng-click="deleteSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm"><i class="fa fa-remove"></i></button>
             </div>
           </div>
           <div class="col-md-12 col-sm-12 synmark-time">
@@ -191,6 +193,9 @@
           <div class="col-md-12 col-sm-12" ng-bind-html="synmark.content">
           </div>
         </div>
+      </div>
+      <div ng-if="synmarks.length === 0">
+        {{'NO_SYNMARK_TEXT' | translate}}
       </div>
     </div>
   </div>

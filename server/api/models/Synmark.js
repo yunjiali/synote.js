@@ -5,6 +5,8 @@
 * @docs        :: http://sailsjs.org/#!documentation/models
 */
 
+var async = require('async');
+
 module.exports = {
 
   attributes: {
@@ -86,10 +88,39 @@ module.exports = {
   },
   getMediaFragmentString:function(){ // return a valid media fragment string
 
-  }
+  },
 
   //TODO: implement customised validator for synmark: one of the title, content, tags must present
   //TODO: implement validation that mfet must bigger than mfst
   //TODO: delete synmark also delete the synmark in any playlist
+  afterDestroy: function(deleted_synmarks, next){
+
+    //remove tags
+    async.eachSeries(deleted_synmarks, function(synmark, tagCallback){
+
+      Tag.destroy({ownersynmark:synmark.id}).exec(function(err){
+        if(err)
+          tagCallback(err);
+        tagCallback(null);
+      })
+    }, function(err){
+      if(err)
+        console.log(err);
+
+      //remove playlistitemsynmark
+      async.eachSeries(deleted_synmarks, function(synmark, itemCallback){
+
+        PlaylistItemSynmark.destroy({synmark:synmark.id}).exec(function(err){
+          if(err)
+            itemCallback(err);
+          itemCallback(null);
+        })
+      }, function(err){
+        if(err)
+          console.log(err);
+        next();
+      });
+    });
+  }
 };
 

@@ -381,7 +381,7 @@ module.exports = {
         if(req.query && req.query.pliid){
             if(!isNaN(parseInt(req.query.pliid))){
                 pliid = parseInt(req.query.pliid);
-                playlistitemPromise = PlaylistItem.findOne({id:pliid}).populate('synmarks').then(
+                playlistitemPromise = PlaylistItem.findOne({id:pliid}).then(
                     //need to populate playlist items
                     function(pli){
                         return PlaylistService.listPlaylistItems(pli.belongsTo).then(
@@ -405,14 +405,14 @@ module.exports = {
 
         var synmarkPromise = Synmark.find({annotates:multimedia.id}).populate('tags').populate('owner')
             .then(function(synmarks){
-                /*if(typeof pliid === 'undefined')
+                if(typeof pliid === 'undefined')
                     return synmarks;
                 else{
                     //the multimedia will be played in a playlist, so we will get if synmarks in this playlist
                     var synmarkPromises = synmarks.map(function(synmark){
                         return SynmarkService.belongsToPlaylistItem(pliid,synmark.id)
                             .then(function(inPlaylistItem){
-                                synmark.inPlaylistItem = inPlaylistItem;
+                                synmark.marked = inPlaylistItem;
                                 return synmark;
                             });
                     });
@@ -420,8 +420,8 @@ module.exports = {
                         //console.log(synmarks);
                         return synmarks;
                     });
-                }*/
-                return synmarks;
+                }
+                //return synmarks;
             }, function(err){
                 return res.serverError(err);
             });

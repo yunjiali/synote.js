@@ -227,6 +227,16 @@ module.exports = {
         }, function(destroyErr){
             return res.serverError(destroyErr);
         });
+    },
+    delete:function(req,res){
+        var synmark = req.session.synmark;
+        Synmark.destroy({id:synmark.id}).exec(function(err){
+            if(err){
+                return res.serverError(err);
+            }
+
+            return res.json({success:true, message:sails.__("%s has been successfully deleted", "Synmark")})
+        })
     }
 };
 

@@ -37,7 +37,8 @@ var app = angular
     "com.2fdevs.videogular.plugins.controls",
     "com.2fdevs.videogular.plugins.overlayplay",
     "com.2fdevs.videogular.plugins.poster",
-    "info.vietnamcode.nampnq.videogular.plugins.youtube"
+    "info.vietnamcode.nampnq.videogular.plugins.youtube",
+    "uk.ac.soton.ecs.videogular.plugins.cuepoints"
     //leave ui-route for synoteplayer
   ]);
 //app config
@@ -189,8 +190,10 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     END_TIME_PLACEHOLDER:"End time...",
     SYNMARK_ST_ERROR:"The format of synmark start time is not valid.",
     SYNMARK_ET_ERROR:"The format of synmark end time is not valid.",
+    NO_SYNMARK_TEXT:'No synmark',
     CREATE_SYNMARK_SUCCESS_TEXT:"Synmark is created.",
-    SAVE_SYNMARK_SUCCESS_TEXT:"Synmark has been updated."
+    SAVE_SYNMARK_SUCCESS_TEXT:"Synmark has been updated.",
+    DELETE_SYNMARK_SUCCESS_TEXT:"Synmark has been deleted"
   });
 
   $translateProvider.determinePreferredLanguage(function () {

@@ -39,6 +39,25 @@ angular.module('synoteClient')
       var deferred = $q.defer();
 
       var accessToken = authenticationService.getUserInfo().accessToken;
+
+      $http.delete(ENV.apiEndpoint + "/synmark/delete/"+synmark.id+"?access_token="+accessToken)
+        .then(function (result) {
+
+          var data = result.data;
+          //if success
+          //console.log(data);
+          if(data.success === false){
+            deferred.reject(result.data);
+          }
+          else {
+            //$location.path('/login');
+            deferred.resolve(result.data);
+          }
+        }, function (err) {
+          deferred.reject(err);
+        });
+
+      return deferred.promise;
     }
 
     function saveSynmark(synmark){

@@ -93,7 +93,7 @@ describe('SynmarkController', function() {
         });
     });
 
-    describe.only('POST /synmark/save', function(){
+    describe('POST /synmark/save', function(){
         var accessToken = "";
         var mmid="";
         var synid="";
@@ -182,7 +182,7 @@ describe('SynmarkController', function() {
                     tags:'synmark,test,changed,data',
                     mfst:'30',
                     mfet:'42',
-                    annotates: mmid
+                    mmid: mmid
                 })
                 .expect(200)
                 .end(function (err, res) {
@@ -197,6 +197,132 @@ describe('SynmarkController', function() {
                         syn.annotates.toString().should.equal(mmid);
                         done();
                     });
+                });
+
+        });
+
+        //TODO: can't edit other people's synmark
+    });
+
+    describe.only('POST /synmark/delete', function(){
+        var accessToken = "";
+        var mmid="";
+        var synid1="";
+        var synid2="";
+        before(function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback(null);
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null);
+                        });
+                },
+                function(callback){
+                    Multimedia.findOne({title:'6sXUak6SvC2AEZ6bXdfwAoVgUPSXxPPe'}, function(err,multimedia){
+                        should.exist(multimedia.id);
+                        mmid = multimedia.id.toString();
+                        callback(null);
+                    });
+                },
+                function(callback){
+                    agent
+                        .post('/synmark/create?access_token='+accessToken)
+                        .send({
+                            title:'synmark6sXUak6SvC2AEZ6bXdfwAoVgUPSXxewpqoierur',
+                            content:'This is synmark6sXUak6SvC2AEZ6bXdfwAoVgUPSXxPeer test',
+                            tags:'synmark,test,data',
+                            mfst:'30',
+                            mfet:'42',
+                            mmid: mmid
+                        })
+                        .expect(200)
+                        .end(function(err,res){
+                            callback(null);
+                        });
+                },
+                function(callback){
+                    agent
+                        .post('/synmark/create?access_token='+accessToken)
+                        .send({
+                            title:'synmark6sXUak6SvC2AEZ6bXdfwAoVgUPSXxeasdhflasldkfjr',
+                            content:'This is synmark6sXUak6SvC2AEZ6bXdfwAoVgUPSXxPeer test',
+                            tags:'synmark2,test2,data2',
+                            mfst:'60',
+                            mfet:'70',
+                            mmid: mmid
+                        })
+                        .expect(200)
+                        .end(function(err,res){
+                            callback(null);
+                        });
+                },
+                function(callback){
+                    Synmark.findOne({title:'synmark6sXUak6SvC2AEZ6bXdfwAoVgUPSXxewpqoierur'}, function(err,newsynmark){
+                        should.exist(newsynmark.id);
+                        synid1 = newsynmark.id;
+                        callback(null);
+                    });
+                },
+                function(callback){
+                    Synmark.findOne({title:'synmark6sXUak6SvC2AEZ6bXdfwAoVgUPSXxeasdhflasldkfjr'}, function(err,newsynmark){
+                        should.exist(newsynmark.id);
+                        synid2 = newsynmark.id;
+                        callback(null);
+                    });
+                }
+
+            ],function(err, results){
+                done();
+            });
+        });
+
+        it('should not delete if token is not presented', function(done){
+            Synmark.findOne({id:synid1}, function(err,newsynmark){
+                var agent = request.agent(sails.hooks.http.app);
+                agent
+                    .delete('/synmark/delete/'+synid1)
+                    .expect(403)
+                    .end(function(err,res){
+                        res.statusCode.should.equal(403);
+                        done();
+                    });
+            });
+        });
+
+        it('should successfully delete synmark with tags and playlistsynmark casading', function(done){
+            var agent = request.agent(sails.hooks.http.app);
+            agent
+                .delete('/synmark/delete/'+synid1+'?access_token=' + accessToken)
+                .expect(200)
+                .end(function (err, res) {
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    //check if tags are also deleted
+                    Synmark.findOne({id:synid1}, function(err, newsynmark){
+                        should.not.exist(newsynmark);
+                        Tag.find({ownersynmark:synid1}, function(errTag, tags){
+                            tags.length.should.equal(0);
+                            PlaylistItemSynmark.find({synmark:synid1}, function(errPlis, pliss){
+                                pliss.length.should.equal(0);
+                                done();
+                            });
+                        });
+                    })
                 });
 
         });

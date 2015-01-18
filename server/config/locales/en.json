@@ -6,6 +6,7 @@
 	"Parameter %s is not valid.":"Parameter %s is not valid.",
 	"%s has been successfully created":"%s has been successfully created",
 	"%s has been successfully updated.":"%s has been successfully updated.",
+	"%s has been successfully deleted":"%s has been successfully deleted",
 	"Cannot find the multimedia resource.":"Cannot find the multimedia resource.",
 	"Cannot find the playlist.":"Cannot find the playlist.",
 	"Cannot find the synmark.":"Cannot find the synmark.",

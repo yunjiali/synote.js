@@ -15,19 +15,20 @@ angular.module('synoteClient')
 
       $scope.videoError = false;
       $scope.multimedia = {};
-      $scope.synmarks=[];
-      $scope.playseq = [];
       $scope.playlists; //the playlists user have created, won't be presented if not loggedin
       $scope.playlist; // the playlist that is currently playing, won't be presented if the video is not played in a playlist
       $scope.multimediaInPlaylists = {}; //the playlists that this multimedia has already been added with a count of added times (one multimedia can be add to one playlist more than once)
       $scope.API;
-      $scope.currentTime;
-      $scope.timeLeft;
       $scope.duration;
+      $scope.cuepoints = {}; //the play sequence object based on chained synmarks
+      $scope.cuepoints.current = null; //the current index of chained synmarks
+      $scope.cuepoints.points = [];
 
+      $scope.synmarks=[];
       $scope.synmarkDisplay = {}; //synmark display configuration object
-      $scope.synmarkDisplay.all = true; //display all synmarks or just the synmarks in the playlist
-      $scope.synmarkDisplay.mine = false; //display anyone's synmarks or just my synmarks
+      $scope.synmarkDisplay.marked = $location.search().marked === "true"?true:false; //display just the synmarks in the playlist
+      $scope.synmarkDisplay.mine = $location.search().mine === "true"?true:false;//display anyone's synmarks or just my synmarks
+      $scope.synmarkDisplay.chained = $location.search().chained === "true"?true:false;
       $scope.currentEditingSynmark = null; //the current synmark under editing
       $scope.synmarkContent = ""; //rich text synmark content
       $scope.synmarkTagsStr = ""; //synmark tags string
@@ -35,9 +36,127 @@ angular.module('synoteClient')
       $scope.synmarkMfet = ""; //synmark endd time
       $scope.showEditingSynmarkForm = false //show synmark editing form or not
 
+      var watchAPICurrentTime = true; // a flag to stop watching watchAPICurrentTime
+      var watchAPITimeLeft = true; // a flag to stop watching watchAPITimeLeft
+
 
       //$scope.hidePlaylist = true;
       //$scope.showPlaylistSynmarkOnly = false;
+
+      //register watch for currentTime
+      $scope.$watch('API.currentTime', function(newValue, oldValue){
+        if(!watchAPICurrentTime)
+          return;
+
+        if(newValue == undefined || oldValue == undefined)
+          return;
+
+        if(newValue.getTime()/1000 === oldValue.getTime()/1000)
+          return;
+
+        var currentTime = newValue.getTime()/1000;
+        if($scope.synmarkDisplay.chained && $scope.cuepoints.points.length>0){
+          if($scope.cuepoints.current == undefined){
+            $scope.cuepoints.current = $scope.cuepoints.points[0];
+            $scope.API.seekTime($scope.cuepoints.current.time);
+          }
+          else if(currentTime<$scope.cuepoints.current.time || currentTime>$scope.cuepoints.current.end){
+            //not within the current cuepoint, two options:
+            //1. I have jumped to some where within another cuepoint
+            //2. I have jumped (or just played) to somewhere that is not within another cuepoint in cuepoints.points
+            var seqs = $scope.cuepoints.points.filter(function(seq){
+              return seq.time<=currentTime && seq.end>currentTime;
+            });
+
+            if(seqs.length>0){ //find the currentTime is within one or more cuepoints
+              $scope.cuepoints.current = seqs[0];
+              $scope.API.seekTime($scope.cuepoints.current.time);
+            }
+            else{ //can't find any cuepoints within currentTime
+              var nextSeqs = $scope.cuepoints.points.filter(function(seq){
+                return seq.time>currentTime;
+              });
+
+              if(nextSeqs.length>0){ //find some cuepoints that are behind the currentTime, then play the first cuepoint behind the currentTime
+                $scope.cuepoints.current = nextSeqs[0];
+                $scope.API.seekTime($scope.cuepoints.current.time);
+              }
+              else{
+                // can't find any cuepoint that is behind the currentTime, in this case:
+                // 1. if it's a playlist, start to play the next video
+                // 2. if it's not a playlist, replay the last cuepoint
+                if(!$scope.playlist) {
+                  $scope.cuepoints.current = $scope.cuepoints.points[$scope.cuepoints.points.length - 1];
+                  $scope.API.seekTime($scope.cuepoints.current.time);
+                }
+                else{
+                  var nextItem = $scope.nextInPlaylist();
+                  if(nextItem){
+                    watchAPICurrentTime = false;
+                    $scope.watchPlaylistItem(nextItem.multimedia.id, nextItem.id);
+                  }
+                  else{
+                    $scope.cuepoints.current = $scope.cuepoints.points[$scope.cuepoints.points.length - 1];
+                    $scope.API.seekTime($scope.cuepoints.current.time);
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      //register watch for timeLeft, if completed and there is a playlist, we play the last one
+      //if this is the last video, we just simply stop playing
+      $scope.$watch('API.timeLeft', function(newValue,oldValue){
+        if(!watchAPITimeLeft)
+          return;
+
+        if(!$scope.playlist)
+          return;
+
+        if(newValue.getTime() === oldValue.getTime()) {
+          return;
+        }
+
+        if(newValue.getTime()>0) {
+          return;
+        }
+
+        var nextItem = $scope.nextInPlaylist();
+        if(nextItem){
+          console.log("nextitem");
+          watchAPITimeLeft = false;
+          $scope.watchPlaylistItem(nextItem.multimedia.id, nextItem.id);
+        }
+      });
+
+      $scope.nextInPlaylist = function(){
+        var pliid = $routeParams.pliid;
+        if(!$routeParams.pliid)
+          return undefined;
+        else{
+          var items = $scope.playlist.items.filter(function(item){
+            return item.id === parseInt(pliid);
+          });
+
+          if(items.length === 0)
+            return undefined;
+
+          var ind = items[0].ind+1;
+
+          var nextItems = $scope.playlist.items.filter(function(item){
+            return item.ind === ind;
+          });
+
+          if(nextItems.length === 0){
+            return undefined;
+          }
+
+
+          return nextItems[0];
+        }
+      }
 
       $scope.secondsToHHMMSS = function(seconds){
         if(!seconds)
@@ -51,7 +170,7 @@ angular.module('synoteClient')
 
       $scope.displayPlaylist = function(plid){
         $location.path('/playlist.edit/'+plid);
-        return
+        return;
       }
 
       $scope.showToaster = function(type,title, msg, time){
@@ -64,8 +183,8 @@ angular.module('synoteClient')
       }
 
       $scope.watchPlaylistItem = function(mmid, pliid){
-        $location.path('/watch/'+mmid+"/"+pliid);
-        return
+        $location.path('/watch/'+mmid+"/"+pliid).search("marked",$scope.synmarkDisplay.marked).search("mine",$scope.synmarkDisplay.mine).search("chained",$scope.synmarkDisplay.chained);
+        return;
       }
 
       /*synmark functions*/
@@ -76,7 +195,8 @@ angular.module('synoteClient')
         }
       }
 
-      $scope.editSynmark = function(synmark){
+      $scope.editSynmark = function(synmark,$event){
+        $event.stopPropagation(); //stop the synmark click event to propagate to the whole synmark div
         $scope.showEditingSynmarkForm = true;
         var synmarkFormDiv = angular.element(document.getElementById('synmarks_div'));
         $document.scrollToElementAnimated(synmarkFormDiv);
@@ -94,8 +214,25 @@ angular.module('synoteClient')
 
       }
 
-      $scope.deleteSynmark = function(synmark){
+      $scope.deleteSynmark = function(synmark,$event){
+        $event.stopPropagation(); //stop the synmark click event to propagate to the whole synmark div
+        $scope.synmarkPromise = synmarkService.deleteSynmark(synmark)
+          .then(function (result) {
+            //remove it from $scope.synmarks
+            $scope.synmarks = $scope.synmarks.filter(function(syn){
+              return syn.id !== synmark.id;
+            })
+            $scope.showToaster("success","success",$translate('DELETE_SYNMARK_SUCCESS_TEXT'), 3000);
+          }, function (error) {
+            $scope.showToaster("error","error",error, 3000);
+            //do nothing
+          });
+      }
 
+      //play the current synmark
+      $scope.playSynmark = function(synmark){
+        var st = synmark.mfst;
+        $scope.API.seekTime(st,false);
       }
 
       $scope.cancelSynmarkEditing = function(){
@@ -106,11 +243,11 @@ angular.module('synoteClient')
       }
 
       $scope.setSynmarkMfst = function(){
-        $scope.currentEditingSynmark.mfst = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
+        $scope.synmarkMfst = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
       }
 
       $scope.setSynmarkMfet = function(){
-        $scope.currentEditingSynmark.mfet = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
+        $scope.synmarkMfet = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
       }
 
       $scope.canCreateSynmark = function(){
@@ -122,6 +259,70 @@ angular.module('synoteClient')
           return true;
         }
         return false;
+      }
+
+      //click the "marked" button in button-group
+      $scope.toggleMarked = function(){
+        $scope.refreshSynmarkDisplay();
+      }
+
+      //click the "mine" button in button-group
+      $scope.toggleMine = function(){
+        $scope.refreshSynmarkDisplay();
+      }
+
+      //click the "chain" button in button-group
+      $scope.toggleChained = function(){
+        //play the video second after second or synmark after synmark
+        if($scope.synmarkDisplay.chained){
+          //scan synmarks and changed
+          var chainedSynmarks = $scope.synmarks.filter(function(synmark){
+            return synmark.display === true;
+          });
+
+          var cuepoints = chainedSynmarks.map(function(synmark){
+            return {time:synmark.mfst, end:synmark.mfet};
+          });
+
+          $scope.cuepoints.points = cuepoints.sort(function(a,b){
+            return (a.time - b.time !== 0)?(a.time - b.time):(a.end- b.end);
+          });
+        }
+        else{ //clean all the chained cuepoints
+          $scope.cuepoints.points = [];
+        }
+      }
+
+      $scope.refreshSynmarkDisplay = function(){ //refresh the displayed synmarks based on synmarkDisplay object
+        for(var i=0;i<$scope.synmarks.length;i++){
+          if($scope.synmarkDisplay.marked && $scope.synmarkDisplay.mine){
+            if($scope.synmarks[i].marked && $scope.synmarks[i].owner.id === authenticationService.getUserInfo().id){
+              $scope.synmarks[i].display = true;
+            }
+            else{
+              $scope.synmarks[i].display = false;
+            }
+          }
+          else if(!$scope.synmarkDisplay.marked && $scope.synmarkDisplay.mine){
+            if($scope.synmarks[i].owner.id === authenticationService.getUserInfo().id){
+              $scope.synmarks[i].display = true;
+            }
+            else{
+              $scope.synmarks[i].display = false;
+            }
+          }
+          else if($scope.synmarkDisplay.marked && !$scope.synmarkDisplay.mine){
+            if($scope.synmarks[i].marked){
+              $scope.synmarks[i].display = true;
+            }
+            else{
+              $scope.synmarks[i].display = false;
+            }
+          }
+          else{
+            $scope.synmarks[i].display = true;
+          }
+        }
       }
 
       $scope.processSynmarkForm = function(){
@@ -137,34 +338,19 @@ angular.module('synoteClient')
         var newSynmark = {};
         newSynmark.id = $scope.currentEditingSynmark.id;
         newSynmark.title = $scope.currentEditingSynmark.title;
-        newSynmark.owner = $scope.currentEditingSynmark.owner.id;
+        newSynmark.owner = $scope.currentEditingSynmark.owner?$scope.currentEditingSynmark.owner.id:authenticationService.getUserInfo.id;
         newSynmark.tags = $scope.synmarkTagsStr;
         newSynmark.mfst = mfst;
         newSynmark.mfet = mfet;
         newSynmark.content = $scope.synmarkContent;
         newSynmark.annotates = $scope.multimedia.id;
+        newSynmark.mmid = $scope.multimedia.id;
         //console.log($scope.synmarkContent);
         //TODO: add more about xywh
         if(newSynmark.id){ //edit
 
           $scope.synmarkPromise = synmarkService.saveSynmark(newSynmark)
             .then(function (result) {
-              //push the new synmark into synmarklist
-              //result.synmark.owner = authenticationService.getUserInfo();
-              //result.synamrk.tags = $scope.synmarkTagsStr.split(',').map(function (tagText) {
-              // return {text: tagText}
-              //});
-
-              //console.log(result.synmark.tags);
-              //find the edited synmark in the list and replace it
-              /*var editedSynmark = null;
-              for(var i=0;i<$scope.synmarks.length;i++){
-                if($scope.synmarks[i].id === result.synmark.id){
-                  console.log('dddddddd:'+result.synmark.id)
-                  $scope.synmarks[i]=result.synmark;
-                  break;
-                }
-              }*/
               $scope.currentEditingSynmark.tags = $scope.synmarkTagsStr.split(',').map(function (tagText) {
                  return {text: tagText}
               });
@@ -180,21 +366,45 @@ angular.module('synoteClient')
             });
         }
         else{//create new one
+
           $scope.synmarkPromise = synmarkService.createSynmark(newSynmark)
             .then(function (result) {
               //push the new synmark into synmarklist
               result.synmark.owner = authenticationService.getUserInfo();
-              if(result.synmark.tags.length > 0)
-                result.synamrk.tags = $scope.synmarkTagsStr.split(',').map(function(tagText){
+              if($scope.synmarkTagsStr.length>0)
+                result.synmark.tags = $scope.synmarkTagsStr.split(',').map(function(tagText){
                   return {text:tagText}
                 });
+
               $scope.synmarks.push(result.synmark);
               $scope.showToaster("success","success",$translate('CREATE_SYNMARK_SUCCESS_TEXT'), 3000);
               $scope.cancelSynmarkEditing();
+
+              //if synmarkDisplay.marked === true
+              //also add this synmark to playlistitem
+              if($scope.synmarkDisplay.marked === true){
+                result.synmark.marked = true;
+              }
+              else {
+                result.synmark.marked = false;
+              }
+
+              result.synmark.display = true;
+
             }, function (error) {
               $scope.showToaster("error","error",error, 3000);
               //do nothing
             });
+        }
+      }
+
+      $scope.shouldSynmarkHighlighted = function(synmark){
+        var ct = $scope.API.currentTime.getTime()/1000;
+        if(synmark.mfst<ct && synmark.mfet>ct){
+          return true;
+        }
+        else{
+          return false;
         }
       }
 
@@ -222,10 +432,12 @@ angular.module('synoteClient')
 
             if(data.playlistItem){
               $scope.hidePlaylist = false;
-              $scope.synmarkDisplay.all = false;
+              $scope.synmarkDisplay.marked = false;
 
               $scope.playlist = data.playlistItem.playlist;
             }
+
+            $scope.refreshSynmarkDisplay();
 
             $scope.duration = data.multimedia.duration;
 
@@ -270,14 +482,6 @@ angular.module('synoteClient')
                   $scope.API.play();
                 },2000);
               }
-            }
-
-            //tidy synmarks data
-            for(var i=0;i<$scope.synmarks.length;i++) {
-              var mf = {};
-              mf.st = $scope.synmarks[i].mfst;
-              mf.et = $scope.synmarks[i].mfet;
-              $scope.playseq.push(mf);
             }
 
             playlistService.list().then(
