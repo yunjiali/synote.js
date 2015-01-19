@@ -61,5 +61,7 @@ module.exports.routes = {
   'get /synmark/get/:synmarkid':'SynmarkController.get',
   'post /synmark/create':'SynmarkController.create',
   'post /synmark/save/:synmarkid':'SynmarkController.save',
-  'delete /synmark/delete/:synmarkid':'SynmarkController.delete'
+  'delete /synmark/delete/:synmarkid':'SynmarkController.delete',
+  'get /transcript/get/:lang/multimedia/:mmid/':'TranscriptController.getByMultimedia',
+  'get /transcript/get/all/multimedia/:mmid':'TranscriptController.getAllByMultimedia'
 };

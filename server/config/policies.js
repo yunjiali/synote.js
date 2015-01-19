@@ -77,6 +77,10 @@ module.exports.policies = {
 	PlaylistItemSynmarkController:{
 		addsynmark:['hasJsonWebToken','requirepliidParams','requiresynmarkidParams'], //permission
 		removesynmark:['hasJsonWebToken', 'requirepliidParams', 'requiresynmarkidParams'] //permission
+	},
+	TranscriptController:{
+		getByMultimedia:['requiremmidParams'],
+		getAllByMultimedia:[]
 	}
 
 };

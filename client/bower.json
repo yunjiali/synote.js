@@ -43,7 +43,8 @@
     "videogular-ima-ads":"^0.7.2",
     "videogular-poster":"^0.7.2",
     "videogular-youtube":"^2.0.0",
-    "videogular-cuepoints":"^1.0.1"
+    "videogular-cuepoints":"^1.0.1",
+    "videogular-flash":"^2.0.0"
 
   },
   "devDependencies": {

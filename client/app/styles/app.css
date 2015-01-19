@@ -238,3 +238,16 @@ videogular .vg-controls {
 .synmark-time {
   color:rgba(253, 96, 73, 1);
 }
+
+#transcripts_control_div{
+  margin-top: 5px;
+}
+
+.transcript-row{
+  cursor: pointer;
+
+}
+
+.transcript-row:hover, .transcript-row-highlighted{
+  background-color: #f1c40f;
+}

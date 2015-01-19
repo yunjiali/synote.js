@@ -38,7 +38,8 @@ var app = angular
     "com.2fdevs.videogular.plugins.overlayplay",
     "com.2fdevs.videogular.plugins.poster",
     "info.vietnamcode.nampnq.videogular.plugins.youtube",
-    "uk.ac.soton.ecs.videogular.plugins.cuepoints"
+    "uk.ac.soton.ecs.videogular.plugins.cuepoints",
+    "info.vietnamcode.nampnq.videogular.plugins.flash"//TODO:add flash fallback
     //leave ui-route for synoteplayer
   ]);
 //app config
@@ -195,7 +196,8 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     SAVE_SYNMARK_SUCCESS_TEXT:"Synmark has been updated.",
     DELETE_SYNMARK_SUCCESS_TEXT:"Synmark has been deleted",
     ADD_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT:'Synmark has been successfully added to the playlist',
-    REMOVE_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT:'Synmark has been successfully removed from the playlist'
+    REMOVE_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT:'Synmark has been successfully removed from the playlist',
+    NO_TRANSCRIPT_TEXT:'No subtitle available.'
   });
 
   $translateProvider.determinePreferredLanguage(function () {

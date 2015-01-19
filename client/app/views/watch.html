@@ -73,19 +73,37 @@
           </div>
         </tab>
         <tab heading="Transcript" id="transcript_tab">
-          Display transcript
+          <div class="row">
+            <div id="transcripts_control_div" class="col-md-2 col-sm-3 col-md-offset-10 col-sm-offset-9 pull-right">
+              <div class="btn-group" dropdown ng-if="transcripts && transcripts.length>0">
+                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+                  {{selectedTranscript.lang}}<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li ng-repeat="transcript in transcripts">
+                    <a href ng-click="">{{transcript.lang}}</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div ng-repeat="cue in selectedTranscript.cues | orderBy:'st':false">
+            <div class="row transcript-row" ng-click="playCue(cue)" ng-class="{'transcript-row-highlighted':shouldCueHighlighted(cue)}">
+              <div class="col-md-12 col-sm-12 synmark-time">
+                <span>{{secondsToHHMMSS(cue.st/1000)}}</span>
+                <span> to </span>
+                <span>{{secondsToHHMMSS(cue.et/1000)}}</span>
+              </div>
+              <div class="col-md-12 col-sm-12">
+                {{cue.content}}
+              </div>
+            </div>
+          </div>
+          <div ng-if="!transcripts || transcripts.length === 0">
+            {{'NO_TRANSCRIPT_TEXT' | translate}}
+          </div>
         </tab>
       </tabset>
-    </div>
-
-
-    <div id="video_controls_div">
-      <button class="btn btn-primary" ng-click="API.play()">Play</button>
-      <button class="btn btn-primary" ng-click="API.pause()">Pause</button>
-      <button class="btn btn-primary" ng-click="API.stop()">Stop</button>
-      <button class="btn btn-primary" ng-click="API.seekTime(30, false)">Move to second 30</button>
-      <button class="btn btn-primary" ng-click="changeSource(33)">bunny</button>
-      <button class="btn btn-primary" ng-click="showToaster('success','success','abc',3000)">caption</button>
     </div>
   </div>
   <div class="col-md-5 col-sm-4" id="right_div">
@@ -176,8 +194,8 @@
             <span>{{synmark.title}}</span>
             <span class="synmark-owner"> by {{synmark.owner.username}}</span>
             <div class="btn-group controls" role="group">
-              <button title="mark" ng-click="addSynmarkToPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canBeMarked(synmark)"><i class="fa fa-eye"></i></button>
-              <button title="mark" ng-click="removeSynmarkFromPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="!canBeMarked(synmark)"><i class="fa fa-eye-slash"></i></button>
+              <button title="mark" ng-click="addSynmarkToPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && canBeMarked(synmark)"><i class="fa fa-eye"></i></button>
+              <button title="mark" ng-click="removeSynmarkFromPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlsit && !canBeMarked(synmark)"><i class="fa fa-eye-slash"></i></button>
               <button title="edit synamrk" ng-click="editSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-edit"></i></button>
               <button title="delete synmark" ng-click="deleteSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-remove"></i></button>
             </div>

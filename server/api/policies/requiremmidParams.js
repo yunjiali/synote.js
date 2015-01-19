@@ -10,7 +10,7 @@ module.exports = function(req, res, next) {
 
     var mmid = req.params.mmid;
 
-    Multimedia.findOne().where({id:mmid}).populate('owner').populate('tags').exec(function(err, multimedia){
+    Multimedia.findOne().where({id:mmid}).populate('owner').populate('tags').populate('transcripts').exec(function(err, multimedia){
         if(err) return res.serverError(err);
         if(!multimedia) return res.badRequest(sails.__("Cannot find the multimedia resource."));
 

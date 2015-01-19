@@ -18,6 +18,7 @@ angular.module('synoteClient')
 
     $scope.getPromise = playlistService.get($scope.plid)
       .then(function(data){
+        console.log(data);
         $scope.playlist = data.playlist;
         $scope.items = data.items;
         if(authenticationService.isLoggedIn())

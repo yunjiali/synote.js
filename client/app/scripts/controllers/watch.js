@@ -36,6 +36,9 @@ angular.module('synoteClient')
       $scope.synmarkMfet = ""; //synmark endd time
       $scope.showEditingSynmarkForm = false //show synmark editing form or not
 
+      $scope.transcripts;
+      $scope.selectedTranscript;
+
       var watchAPICurrentTime = true; // a flag to stop watching watchAPICurrentTime
       var watchAPITimeLeft = true; // a flag to stop watching watchAPITimeLeft
 
@@ -125,7 +128,6 @@ angular.module('synoteClient')
 
         var nextItem = $scope.nextInPlaylist();
         if(nextItem){
-          console.log("nextitem");
           watchAPITimeLeft = false;
           $scope.watchPlaylistItem(nextItem.multimedia.id, nextItem.id);
         }
@@ -448,6 +450,25 @@ angular.module('synoteClient')
 
       /*synmark functions end*/
 
+      /*transcript functions start */
+      $scope.shouldCueHighlighted = function(cue){
+        var ct = $scope.API.currentTime.getTime(); //it's milliseconds in cue
+        if(cue.st<ct && cue.et>ct){
+          return true;
+        }
+        else{
+          return false;
+        }
+      }
+
+      $scope.playCue = function(cue){
+        var st = cue.st;
+        $scope.API.seekTime(st/1000,false);
+      }
+
+      /*transcript functions end */
+
+
       var updateCurrentPlaylist = function(plid){
         $scope.loadPlaylistPromise = playlistService.get(plid)
           .then(function (data) {
@@ -465,8 +486,12 @@ angular.module('synoteClient')
 
         $scope.loadPromise = multimediaService.getMultimedia(mmid, pliid)
           .then(function (data) {
+            //console.log(data);
             $scope.multimedia = data.multimedia;
             $scope.synmarks = data.synmarks;
+            $scope.transcripts = data.transcripts;
+            if($scope.transcripts)
+              $scope.selectedTranscript = $scope.transcripts[0];//default, change it later
 
             if(data.playlistItem){
               $scope.hidePlaylist = false;
@@ -610,7 +635,7 @@ angular.module('synoteClient')
                 $scope.multimediaInPlaylists[pl.id].count++;
               }
 
-              if(pl.id === playlist.playlist.id){ //refresh the current playlist because the video is added to the current playlist
+              if($scope.playlist && pl.id === $scope.playlist.playlist.id){ //refresh the current playlist because the video is added to the current playlist
                 updateCurrentPlaylist(pl.id);
               }
               $scope.showToaster("success","success",result.message, 3000);

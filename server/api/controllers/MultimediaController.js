@@ -426,12 +426,22 @@ module.exports = {
                 return res.serverError(err);
             });
 
+        var transcriptPromise = UtilsService.emptyPromise();
+        if(multimedia.transcripts.length > 0){
+            transcriptPromise = Transcript.find({annotates:multimedia.id}).populate('cues')
+                .then(function(transcripts){
+                    return transcripts
+                },function(err){
+                    return res.serverError(err);
+                })
+        }
         var multimediaPromises = [];
         multimediaPromises.push(synmarkPromise);
         multimediaPromises.push(playlistitemPromise);
+        multimediaPromises.push(transcriptPromise);
 
         Q.all(multimediaPromises)
-        .spread(function(synmarks,playlistItem){
+        .spread(function(synmarks,playlistItem,transcripts){
             var data = {};
             data.success = true;
             data.multimedia = multimedia;
@@ -439,6 +449,8 @@ module.exports = {
             if(typeof playlistItem !== 'undefined') {
                 data.playlistItem = playlistItem;
             }
+
+            data.transcripts = transcripts;
 
             return res.json(data);
         })
