@@ -197,7 +197,9 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     DELETE_SYNMARK_SUCCESS_TEXT:"Synmark has been deleted",
     ADD_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT:'Synmark has been successfully added to the playlist',
     REMOVE_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT:'Synmark has been successfully removed from the playlist',
-    NO_TRANSCRIPT_TEXT:'No subtitle available.'
+    NO_TRANSCRIPT_TEXT:'No subtitle available.',
+    SAVE_PLAYLIST_ORDER_TEXT:'Save Playlist',
+    UPDATE_PLAYLIST_SUCCESS_TEXT:'The playlist has been successfully updated.'
   });
 
   $translateProvider.determinePreferredLanguage(function () {

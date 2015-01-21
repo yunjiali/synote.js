@@ -9,7 +9,7 @@ var should = require('should');
 
 
 describe('PlaylistController', function() {
-    describe.only('POST /playlist/create, /playlist/:plid/add/:mmid', function(){
+    describe('POST /playlist/create, /playlist/:plid/add/:mmid', function(){
         var accessToken = "";
         var mmid= "";
         var plid= ""
@@ -280,6 +280,81 @@ describe('PlaylistController', function() {
             ],function(err, results){
                 done();
             });
+        });
+    });
+
+    describe.only('POST /playlist/:plid/save', function(){
+        var accessToken = "";
+        var plid1=""; //get all of them from bootstrap
+        var pliid1="";
+        var pliid2="";
+        var pliid3="";
+
+        before(function(done){
+            plid1= global.bootstrap.playlist.plid1;
+            pliid1= global.bootstrap.playlistitem.pliid1;
+            pliid2= global.bootstrap.playlistitem.pliid2;
+            pliid3= global.bootstrap.playlistitem.pliid3;
+            var agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback(null);
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null);
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
+
+        it('should edit playlist succefully, index should be changed and items should be removed', function(done) {
+            var agent = request.agent(sails.hooks.http.app);
+
+            agent
+                .post('/playlist/'+plid1+'/save?access_token=' + accessToken)
+                //according to bootstrap data, we do the following: move ind1 to ind2, ind3 to ind1 and remove ind2
+                .send([{id:pliid1, ind:2},{id:pliid3, ind:1}])
+                .expect(200)
+                .end(function (err, res) {
+                    var resObj = JSON.parse(res.text);
+                    res.statusCode.should.equal(200);
+
+                    async.waterfall([
+                        function(callback){
+                            PlaylistItem.findOne({id:pliid1}).exec(function (err, item) {
+                                item.ind.should.equal(2);
+                                callback(null);
+                            });
+                        }
+                        ,function(callback){
+                            PlaylistItem.findOne({id:pliid2}).exec(function (err, item) {
+                                should.not.exist(item);
+                                callback(null);
+                            });
+                        },function(callback){
+                            PlaylistItem.findOne({id:pliid3}).exec(function (err, item) {
+                                item.ind.should.equal(1);
+                                callback(null);
+                            });
+                        }], function(err){
+                        done();
+                    });
+                });
         });
     });
 });

@@ -70,7 +70,7 @@ module.exports.policies = {
 		list:['hasJsonWebToken'],
 		save:['hasJsonWebToken','requireplidParams','isPlaylistOwner'],
 		additem:['hasJsonWebToken','requiremmidParams', 'requireplidParams'],
-		saveitems:['hasJsonWebToken'],
+		saveitems:['hasJsonWebToken','requireplidParams'],
 		get:['optJsonWebToken', 'requireplidParams']
 
 	},

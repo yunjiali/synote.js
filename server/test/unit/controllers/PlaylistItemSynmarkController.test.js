@@ -12,7 +12,7 @@ describe('PlaylistItemSynmarkController', function() {
 
     //'post /playlistitemsynmark/:pliid/add/synmark/:synmarkid':'PlaylistItemSynmarkController.addsynmark'
     //'delete /playlistitemsynmark/:pliid/remove/synmark/:synmarkid':'PlaylistItemSynmarkController.removesynmark'
-    describe.only('POST /playlistitemsynmark/:pliid/add/synmark/:synmarkid', function(){
+    describe('POST /playlistitemsynmark/:pliid/add/synmark/:synmarkid', function(){
         var accessToken = "";
         var mmid1="";
         var pliid1="";
@@ -119,7 +119,7 @@ describe('PlaylistItemSynmarkController', function() {
         //TODO: shouldn't add synmark if the synmark doesn't annotate the multimedia resource
     });
 
-    describe.only('DELETE /playlistitemsynmark/:pliid/remove/synmark/:synmarkid', function(){
+    describe('DELETE /playlistitemsynmark/:pliid/remove/synmark/:synmarkid', function(){
         var accessToken = "";
         var mmid1="";
         var pliid1="";

@@ -185,7 +185,7 @@ angular.module('synoteClient')
       }
 
       $scope.watchPlaylistItem = function(mmid, pliid){
-        $location.path('/watch/'+mmid+"/"+pliid).search("marked",$scope.synmarkDisplay.marked).search("mine",$scope.synmarkDisplay.mine).search("chained",$scope.synmarkDisplay.chained);
+        $location.path('/watch/'+mmid+"/"+pliid).search("marked",$scope.synmarkDisplay.marked.toString()).search("mine",$scope.synmarkDisplay.mine.toString()).search("chained",$scope.synmarkDisplay.chained.toString());
         return;
       }
 
@@ -495,12 +495,15 @@ angular.module('synoteClient')
 
             if(data.playlistItem){
               $scope.hidePlaylist = false;
-              $scope.synmarkDisplay.marked = false;
+              //$scope.synmarkDisplay.marked = false;
 
               $scope.playlist = data.playlistItem.playlist;
             }
 
             $scope.refreshSynmarkDisplay();
+            if($scope.synmarkDisplay.chained){ //if the chained is selected when page load, we need to create the cuepoints and start playing from cuepoints
+              $scope.toggleChained();
+            }
 
             $scope.duration = data.multimedia.duration;
 

@@ -20,7 +20,6 @@ angular.module('synoteClient')
       $http.get(ENV.apiEndpoint + "/playlist/get/"+plid+accessTokenStr)
         .then(function (result) {
           if(result.status === 200) {
-            console.log(result.data);
             deferred.resolve(result.data);
           }
           else
@@ -110,11 +109,41 @@ angular.module('synoteClient')
       return deferred.promise;
     }
 
+    function savePlaylistItems(items,plid){
+      var deferred = $q.defer();
+
+      var accessToken = authenticationService.getUserInfo().accessToken;
+
+      var cleanedItems = items.map(function(item,index){
+        return {id:item.id, ind:item.ind, rsid:item.rsid}
+      });
+
+      $http.post(ENV.apiEndpoint + '/playlist/'+plid+'/save?access_token='+accessToken, cleanedItems)
+        .then(function (result) {
+
+          var data = result.data;
+          //if success
+          //console.log(data);
+          if(data.success === false){
+            deferred.reject(result.data);
+          }
+          else {
+            //$location.path('/login');
+            deferred.resolve(result.data);
+          }
+        }, function (err) {
+          deferred.reject(err);
+        });
+
+      return deferred.promise;
+    }
+
     return {
       get:get,
       list:list,
       create:create,
       getCurrentPlaylists: getCurrentPlaylists,
-      additem:additem
+      additem:additem,
+      savePlaylistItems:savePlaylistItems
     }
   }]);

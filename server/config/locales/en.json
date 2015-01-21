@@ -22,6 +22,8 @@
 	"My favourite list.":"My favourite list.",
 	"You have successfully registered.":"You have successfully registered.",
 	"Bad request.":"Bad request.",
-	"You are not permitted to perform this action.":"You are not permitted to perform this action."
+	"You are not permitted to perform this action.":"You are not permitted to perform this action.",
+	"Playlist items are not valid.":"Playlist items are not valid.",
+	"The playlist has been successfully updated.":"The playlist has been successfully updated."
 
 }

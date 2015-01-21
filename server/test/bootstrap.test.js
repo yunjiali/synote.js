@@ -385,7 +385,20 @@ before(function(done) {
                     .end(function(err,res){
                         var resObj = JSON.parse(res.text);
                         resObj.success.should.equal(true);
-                        pliid2 = resObj.pliid2;
+                        pliid2 = resObj.pliid;
+                        callback(null);
+                    })
+            },
+            //add multimedia3 to playlist
+            function(callback){
+                agent
+                    .post('/playlist/'+plid1+'/add/'+mmid3+'?access_token='+accessToken)
+                    .send()
+                    .expect(200)
+                    .end(function(err,res){
+                        var resObj = JSON.parse(res.text);
+                        resObj.success.should.equal(true);
+                        pliid3 = resObj.pliid;
                         callback(null);
                     })
             }

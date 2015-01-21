@@ -45,19 +45,32 @@
       {{"PLAYLIST_NOVIDEO_TEXT" | translate}}
     </div>
     <div ng-if="items.length >0">
-      <div class="row" ng-repeat="item in items">
+      <div class="row">
+        <div class="col-md-2">
+          <button type="button" class="btn btn-success" ng-click="savePlaylistItems()"><i class="fa fa-save"></i>&nbsp;{{'SAVE_PLAYLIST_ORDER_TEXT' | translate}}</button>
+        </div>
+      </div>
+      <br/>
+      <div class="row" ng-repeat="item in items | orderBy:'ind':false">
+        <div class="col-sm-1 col-md-1">
+          <select ng-model="item.ind" class="form-control input-sm" ng-change="updateIndex(item,$index+1)">
+            <option ng-repeat="num in range(1,items.length+1)">{{num}}</option>
+          </select>
+        </div>
         <div class="col-sm-2 col-md-3">
-          <a href="#" class="thumbnail">
+          <a href="#/watch/{{item.multimedia.id}}/{{item.id}}" class="thumbnail">
             <img ng-src="{{item.multimedia.thumbnail}}" alt="Thumbnail for {{item.multimedia.title}}">
           </a>
-          <p><a class="btn btn-warning" href="#/watch/{{item.multimedia.id}}/{{item.id}}"><i class="fa fa-play"></i>&nbsp;Watch</a></p>
+          <a class="btn btn-warning btn-sm" href="#/watch/{{item.multimedia.id}}/{{item.id}}"><i class="fa fa-play"></i>&nbsp;Watch</a>
+          <button type="button" class="btn btn-sm btn-danger" ng-click="removePlaylistItem(item)"><i class="fa fa-remove"></i>Remove</button>
         </div>
-        <div class="col-sm-10 col-md-9">
-          <h4 class="multimedia-title"><a href="#/watch/{{item.multimedia.id}}/{{item.id}}">{{item.multimedia.title | limitTo:128}}</a></h4>
+        <div class="col-sm-9 col-md-8">
+          <h4 class="multimedia-title"><a href="#/watch/{{item.multimedia.id}}/{{item.id}}">{{item.ind}} . {{item.multimedia.title | limitTo:128}}</a></h4>
           <p>
             {{item.multimedia.description+"..." | limitTo: 1024}}
           </p>
         </div>
+        <hr/>
       </div>
     </div>
   </div>

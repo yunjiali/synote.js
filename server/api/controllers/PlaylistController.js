@@ -10,6 +10,7 @@ var S = require('string');
 var validator = require('validator');
 var randomstring = require("randomstring");
 var Q = require('q');
+var _=require('lodash');
 
 module.exports = {
     /**
@@ -78,7 +79,7 @@ module.exports = {
 
     /**
      * @param items
-     * TODO: implement
+     * This function is mainly used to change the order of playlist items and remove any playlist item
      */
 
     saveitems:function(req,res){
@@ -86,7 +87,69 @@ module.exports = {
         //itemid, ind
         //if ind === -1, which means it has been removed
 
+        //receive a list and only change ind, if removed, remove it
+
         //check permission first
+        //console.log(req);
+
+        //TODO: check items array is valid
+        //for example [{id:1,ind:2},{id:1, ind:3}] shouldn't be valid
+
+        var items = req.body;
+        if(!items){
+            return res.badRequest(sails.__("Playlist items are not valid."));
+        }
+
+        var playlist = req.session.playlist;
+        //console.log(items);
+        var oldItemIDs = playlist.items.map(function(item){
+            return item.id;
+        });
+        var newItemIDs = items.map(function(item){
+            return item.id;
+        });
+
+        var deletedItemIDs = _.difference(oldItemIDs, newItemIDs);
+
+        for(var i=0;i<deletedItemIDs.length;i++){
+            items.push({id:deletedItemIDs[i],ind:-1});
+        }
+
+        //console.log(deletedItemIDs);
+        //console.log(newItemIDs);
+
+        async.eachSeries(items,function(item, itemCallback){
+            if(typeof item.id === "undefined"){ //new playlist item
+                //TODO: not yet implemented
+            }
+            else if(item.id){
+                if(item.ind === -1){//should be deleted
+                    PlaylistItem.destroy({id:item.id}).then(
+                        function(){
+                            itemCallback(null);
+                        },
+                        function(destroyErr){
+                            itemCallback(destroyErr);
+                        }
+                    )
+                }
+                else{ //should be updated
+                    PlaylistItem.update({id:item.id},{ind:item.ind}).then(
+                        function(newItems){
+                            itemCallback(null);
+                        },
+                        function(updateErr){
+                            itemCallback(updateErr);
+                        }
+                    )
+                }
+            }
+        }, function(err){
+            if(err){
+                return res.serverError(err);
+            }
+            return res.json({success:true, message:sails.__("The playlist has been successfully updated.")});
+        });
     },
 
     /**

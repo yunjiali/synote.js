@@ -5,6 +5,8 @@
 * @docs        :: http://sailsjs.org/#!documentation/models
 */
 
+var async=require('async');
+
 module.exports = {
 
   //just a synmark with an order in the list
@@ -30,6 +32,25 @@ module.exports = {
       collection:'PlaylistItemSynmark',
       via:'playlistItem'
     }
+  },
+
+  //TODO: afterDestroy, remove all PlaylistItemSynmark
+  afterDestroy: function(deleted_items, next){
+
+    //remove tags
+    async.eachSeries(deleted_items, function(item, itemCallback){
+
+      PlaylistItemSynmark.destroy({playlistitem:item.id}).exec(function(err){
+        if(err)
+          itemCallback(err);
+        itemCallback(null);
+      })
+    }, function(err){
+      if(err)
+        console.log(err);
+
+      next();
+    });
   }
 };
 
