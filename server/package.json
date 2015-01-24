@@ -42,7 +42,8 @@
   "scripts": {
     "start": "node app.js",
     "debug": "node debug app.js",
-    "test": "NODE_ENV=test mocha"
+    "test": "NODE_ENV=test mocha",
+    "prod":"sails lift --prod"
   },
   "main": "app.js",
   "repository": {
