@@ -116,7 +116,7 @@
           </div>
         </div>
         <ul ng-show="!hidePlaylist">
-          <li ng-class="{'watch-playlist-playing': isPlaylistItemPlaying(item.id)}" ng-repeat="item in playlist.items" ng-click="watchPlaylistItem(item.multimedia.id, item.id)">
+          <li ng-class="{'watch-playlist-playing': isPlaylistItemPlaying(item.id)}" ng-repeat="item in playlist.items | orderBy:'ind':false" ng-click="watchPlaylistItem(item.multimedia.id, item.id)">
             <div class="media" ng-if="item.multimedia">
               <a class="media-left" href>
                 <img width="64" class="img-rounded img-playlist hidden-sm" ng-src="{{item.multimedia.thumbnail}}"/>
