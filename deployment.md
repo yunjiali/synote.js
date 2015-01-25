@@ -13,6 +13,7 @@ This document explains how to deploy synote.js on ubuntu
 1. npm install -g sails (this is for synotejs server)
 1. npm install -g grunt (this is for synotejs client)
 1. npm install -g bower (this is for synotejs client)
+1. npm install -g forever (this is used for starting the sails server)
 
 #For sailsjs server
 1. goto /server directory and
