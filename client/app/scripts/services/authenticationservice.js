@@ -63,7 +63,7 @@ angular.module('synoteClient')
     }
 
     function getAccessToken() {
-      return accessToken;
+      return getUserInfo().accessToken;
     }
 
     function isLoggedIn() {

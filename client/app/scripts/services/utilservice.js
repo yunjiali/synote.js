@@ -13,7 +13,7 @@ angular.module('synoteClient')
     var extractErrorMsgs = function(message){
       var messages = [];
       if(typeof message === 'string'){ //we customised the error message
-        messages.push(data.message);
+        messages.push(message);
       }
       else if(typeof message === 'object'){
         for(var key in message.invalidAttributes){
