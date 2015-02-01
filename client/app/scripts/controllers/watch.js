@@ -8,8 +8,8 @@
  * Controller of the synoteClient
  */
 angular.module('synoteClient')
-  .controller('WatchCtrl',['$scope','$filter', '$routeParams','$location', '$sce', '$timeout', '$document','multimediaService', 'playlistService', 'synmarkService','utilService','authenticationService','toaster',
-    function ($scope,$filter, $routeParams,$location, $sce, $timeout,$document, multimediaService, playlistService, synmarkService, utilService, authenticationService, toaster) {
+  .controller('WatchCtrl',['$scope','$filter', '$routeParams','$location', '$sce', '$timeout', '$document','multimediaService', 'playlistService', 'synmarkService','utilService','authenticationService','toaster','ENV',
+    function ($scope,$filter, $routeParams,$location, $sce, $timeout,$document, multimediaService, playlistService, synmarkService, utilService, authenticationService, toaster,ENV) {
 
       var $translate = $filter('translate');
 
@@ -175,6 +175,13 @@ angular.module('synoteClient')
         return;
       }
 
+      $scope.calcCuepointVizLeft = function(cuepoint) {
+        if ($scope.API.totalTime === 0) return '-1000';
+
+        var videoLength = $scope.API.totalTime.getTime() / 1000;
+        return "left:"+(cuepoint.time * 100 / videoLength).toString()+"%";
+      };
+
       $scope.showToaster = function(type,title, msg, time){
         //toaster.pop(type,title,msg,time);
         toaster.pop({type: type, body:msg,timeout:time})
@@ -315,22 +322,26 @@ angular.module('synoteClient')
       $scope.toggleChained = function(){
         //play the video second after second or synmark after synmark
         if($scope.synmarkDisplay.chained){
-          //scan synmarks and changed
-          var chainedSynmarks = $scope.synmarks.filter(function(synmark){
-            return synmark.display === true;
-          });
-
-          var cuepoints = chainedSynmarks.map(function(synmark){
-            return {time:synmark.mfst, end:synmark.mfet};
-          });
-
-          $scope.cuepoints.points = cuepoints.sort(function(a,b){
-            return (a.time - b.time !== 0)?(a.time - b.time):(a.end- b.end);
-          });
+          $scope.refreshCuepoints();
         }
         else{ //clean all the chained cuepoints
           $scope.cuepoints.points = [];
         }
+      }
+
+      $scope.refreshCuepoints = function(){
+        //scan synmarks and changed
+        var chainedSynmarks = $scope.synmarks.filter(function(synmark){
+          return synmark.display === true;
+        });
+
+        var cuepoints = chainedSynmarks.map(function(synmark){
+          return {time:synmark.mfst, end:synmark.mfet};
+        });
+
+        $scope.cuepoints.points = cuepoints.sort(function(a,b){
+          return (a.time - b.time !== 0)?(a.time - b.time):(a.end- b.end);
+        });
       }
 
       $scope.refreshSynmarkDisplay = function(){ //refresh the displayed synmarks based on synmarkDisplay object
@@ -362,6 +373,10 @@ angular.module('synoteClient')
           else{
             $scope.synmarks[i].display = true;
           }
+        }
+
+        if($scope.synmarkDisplay.chained){
+          $scope.refreshCuepoints();
         }
       }
 
@@ -423,7 +438,18 @@ angular.module('synoteClient')
               //if synmarkDisplay.marked === true
               //also add this synmark to playlistitem
               if($scope.synmarkDisplay.marked === true){
-                result.synmark.marked = true;
+                //make another call to add it to playlist
+                var pliid = $routeParams.pliid;
+                $scope.synmarkPromise = synmarkService.addToPlaylistItem(result.synmark, pliid)
+                  .then(function (resultAddToPlaylist) {
+                    //remove it from $scope.synmarks
+                    result.synmark.marked = true;
+                    $scope.refreshSynmarkDisplay();
+                    $scope.showToaster("success","success",$translate('ADD_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT'), 3000);
+                  }, function (error) {
+                    $scope.showToaster("error","error",error, 3000);
+                    //do nothing
+                  });
               }
               else {
                 result.synmark.marked = false;
@@ -540,7 +566,7 @@ angular.module('synoteClient')
                 preload: "auto",
                 transclude: true,
                 sources:$scope.videos[0].sources,
-                theme: "bower_components/videogular-themes-default/videogular.css"
+                //theme: ENV.name==='development'?'bower_components/videogular-themes-default/videogular.css':'styles/vendor.css'
               };
 
               if(utilService.isYouTubeURL(data.multimedia.url, true) && $scope.config.autoPlay === true){
@@ -549,7 +575,6 @@ angular.module('synoteClient')
                 },2000);
               }
             }
-
             playlistService.list().then(
               function(playlists){
                 $scope.playlists = playlists; //could be undefined if not loggedin

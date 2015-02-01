@@ -12,6 +12,7 @@ angular.module('synoteClient')
     var currentPlaylists = [];
 
     function get(plid){
+
       var deferred = $q.defer();
 
       var accessToken = authenticationService.getUserInfo().accessToken;

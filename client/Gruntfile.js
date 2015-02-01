@@ -209,8 +209,8 @@ module.exports = function (grunt) {
         src: [
           '<%= yeoman.dist %>/scripts/{,*/}*.js',
           '<%= yeoman.dist %>/styles/{,*/}*.css',
-          '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
-          '<%= yeoman.dist %>/styles/fonts/*'
+          '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+          //'<%= yeoman.dist %>/styles/fonts/*' remove this as videogular won't find the fonts
         ]
       }
     },
@@ -225,8 +225,8 @@ module.exports = function (grunt) {
         flow: {
           html: {
             steps: {
-              js: ['concat', 'uglifyjs']
-              //css: ['cssmin']
+              js: ['concat', 'uglifyjs'],
+              css: ['cssmin']
             },
             post: {}
           }
@@ -247,24 +247,27 @@ module.exports = function (grunt) {
     // By default, your `index.html`'s <!-- Usemin block --> will take care of
     // minification. These next options are pre-configured if you do not wish
     // to use the Usemin blocks.
-    // cssmin: {
+    //cssmin: {
     //   dist: {
     //     files: {
     //       '<%= yeoman.dist %>/styles/main.css': [
     //         '.tmp/styles/{,*/}*.css'
+    //       ],
+    //       '<%= yeoman.dist %>/styles/vendor.css':[
+    //         'bower_components/**/*.css'
     //       ]
     //     }
     //   }
     // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
+    uglify: {
+       dist: {
+         files: {
+           '<%= yeoman.dist %>/scripts/scripts.js': [
+             '<%= yeoman.dist %>/scripts/scripts.js'
+           ]
+         }
+       }
+     },
     // concat: {
     //   dist: {}
     // },
@@ -340,12 +343,13 @@ module.exports = function (grunt) {
       },
       production: {
         options: {
-          dest: '<%= yeoman.dist %>/scripts/config.js'
+          //should be yeoman.app here instead of yeoman.dist, or the new config.js won't be written to scripts.js'
+          dest: '<%= yeoman.app %>/scripts/config.js'
         },
         constants: {
           ENV: {
             name:'production',
-            apiEndpoint:'http://synote.org'
+            apiEndpoint:'http://plus.synote.org'
           }
         }
       }
@@ -380,18 +384,40 @@ module.exports = function (grunt) {
           cwd: '.tmp/images',
           dest: '<%= yeoman.dist %>/images',
           src: ['generated/*']
-        }, {
+        },
+        //{
+        //  expand: true,
+        //  cwd: '.',
+        //  src: 'bower_components/bootstrap-sass-official/assets/fonts/bootstrap/*',
+        //  dest: '<%= yeoman.dist %>'
+        //},
+        {//for font-awesome
           expand: true,
-          cwd: '.',
-          src: 'bower_components/bootstrap-sass-official/assets/fonts/bootstrap/*',
+          dot: true,
+          cwd: 'bower_components/font-awesome',
+          src: ['fonts/*.*'],
           dest: '<%= yeoman.dist %>'
+        },
+        {//for flat-ui
+          expand: true,
+          dot: true,
+          cwd: 'bower_components/flat-ui',
+          src: ['fonts/{,*/}*.*'],
+          dest: '<%= yeoman.dist %>'
+        },
+        {//for videogular
+          expand: true,
+          dot: true,
+          cwd: 'bower_components/videogular-themes-default',
+          src: ['fonts/*.*'],
+          dest: '<%= yeoman.dist %>/styles'
         }]
       },
       styles: {
         expand: true,
         cwd: '<%= yeoman.app %>/styles',
         dest: '.tmp/styles/',
-        src: '{,*/}*.css'
+        src: ['{,*/}*.css']
       }
     },
 
@@ -460,7 +486,7 @@ module.exports = function (grunt) {
     'ngAnnotate',
     'copy:dist',
     'cdnify',
-    //'cssmin',
+    'cssmin',
     'uglify',
     'filerev',
     'usemin',

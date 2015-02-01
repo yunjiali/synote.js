@@ -22,7 +22,6 @@ angular.module('synoteClient')
     $scope.listMultimediaByOwner = function(skip,limit,sortby,order){
       $scope.listPromise = multimediaService.listMultimediaByOwner(skip,limit,sortby,order).then(
         function(result){
-          console.log(result);
           $scope.start = result.start;
           $scope.end = result.end;
           $scope.count = result.count;

@@ -4,7 +4,7 @@
     <span class="icon-bar"></span>
     <span class="icon-bar"></span>
   </div>
-  <div class="list-group" cg-busy="plsPromise">
+  <div class="list-group" cg-busy="plsPromise" ng-if="isLoggedIn()">
     <span class="list-group-item active">
         {{'PLAYLIST_TITLE_TEXT' | translate}}
       <div class="pull-right">
@@ -12,11 +12,17 @@
       </div>
     </span>
     <a href ng-click="displayPlaylist(playlist.id)" ng-if="playlists.length > 0" ng-repeat="playlist in playlists" class="list-group-item">
-      <i class="fa fa-list"></i> {{playlist.title | limitTo:24}}
+      <i class="fa fa-list"></i> {{playlist.title | limitTo:20}}
       <span class="badge" ng-class="{'alert-success':playlist.publicPermission === 'view', 'alert-danger':playlist.publicPermission === 'private'}">{{playlist.items.length}}</span>
     </a>
     <a href ng-if="playlists.length === 0" class="list-group-item">
       {{plsMsg}}
     </a>
+  </div>
+  <div class="list-group" ng-if="!isLoggedIn()">
+    <span class="list-group-item active">
+        {{'PLAYLIST_TITLE_TEXT' | translate}}
+    </span>
+    <a href class="list-group-item">{{'PLAYLIST_LOGIN_TEXT' | translate}}</a>
   </div>
 </div>

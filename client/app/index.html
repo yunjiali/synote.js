@@ -4,16 +4,23 @@
   <meta charset="utf-8"/>
   <title>Home Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="bower_components/flat-ui/dist/css/flat-ui.min.css" rel="stylesheet">
-  <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-  <link href="bower_components/angularjs-toaster/toaster.css" rel="stylesheet" />
-  <link rel="stylesheet" href="bower_components/angular-busy/dist/angular-busy.min.css"/>
-  <link rel="stylesheet" href="bower_components/angular-xeditable/dist/css/xeditable.css"/>
-  <link rel='stylesheet' href="bower_components/videogular-cuepoints/cuepoints.css"/>
-  <!-- build:css(.tmp) styles/main.css removed-->
+  <!-- build:css(.) styles/vendor.css -->
+  <!-- bower:css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css" />
+  <link rel="stylesheet" href="bower_components/videojs/dist/video-js/video-js.css" />
+  <link rel="stylesheet" href="bower_components/flat-ui/dist/css/flat-ui.css" />
+  <link rel="stylesheet" href="bower_components/angular-busy/dist/angular-busy.css" />
+  <link rel="stylesheet" href="bower_components/angular-xeditable/dist/css/xeditable.css" />
+  <link rel="stylesheet" href="bower_components/angularjs-toaster/toaster.css" />
+  <link rel="stylesheet" href="bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" />
+  <link rel="stylesheet" href="bower_components/videogular-themes-default/videogular.css" />
+  <!-- endbower -->
+  <!-- endbuild -->
+  <!-- build:css({.tmp,app}) styles/main.css-->
   <link rel="stylesheet" href="styles/app.css"/>
-  <link rel="shortcut icon" href="/images/synote_icon_16.ico"/>
+  <!-- endbuild -->
+  <link rel="shortcut icon" href="favicon.ico"/>
 </head>
 <body>
 <div class="container" ng-app="synoteClient">
@@ -22,7 +29,7 @@
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-01">
         <span class="sr-only">Toggle navigation</span>
       </button>
-      <a class="navbar-brand" href="#">Synote</a>
+      <a class="navbar-brand" href="#/">Synote</a>
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse-01">
       <ul class="nav navbar-nav navbar-left">
@@ -126,7 +133,6 @@
 <script src="bower_components/videogular-ima-ads/ima-ads.js"></script>
 <script src="bower_components/videogular-poster/poster.js"></script>
 <script src="bower_components/videogular-youtube/youtube.js"></script>
-<script src="bower_components/videogular-cuepoints/cuepoints.js"></script>
 <script src="bower_components/videogular-flash/flash.js"></script>
 <!-- endbower -->
 <!-- endbuild -->

@@ -51,7 +51,7 @@
         </div>
       </div>
       <br/>
-      <div class="row" ng-repeat="item in items | orderBy:'ind':false">
+      <div class="row playlist-row" ng-repeat="item in items | orderBy:'ind':false">
         <div class="col-sm-1 col-md-1">
           <select ng-model="item.ind" class="form-control input-sm" ng-change="updateIndex(item,$index+1)">
             <option ng-repeat="num in range(1,items.length+1)">{{num}}</option>
@@ -70,7 +70,6 @@
             {{item.multimedia.description+"..." | limitTo: 1024}}
           </p>
         </div>
-        <hr/>
       </div>
     </div>
   </div>

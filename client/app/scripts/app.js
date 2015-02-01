@@ -38,7 +38,6 @@ var app = angular
     "com.2fdevs.videogular.plugins.overlayplay",
     "com.2fdevs.videogular.plugins.poster",
     "info.vietnamcode.nampnq.videogular.plugins.youtube",
-    "uk.ac.soton.ecs.videogular.plugins.cuepoints",
     "info.vietnamcode.nampnq.videogular.plugins.flash"//TODO:add flash fallback
     //leave ui-route for synoteplayer
   ]);
@@ -48,17 +47,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
   $routeProvider
     .when('/', {
       templateUrl: 'views/home.html',
-      controller: 'HomeCtrl',
-      resolve: {
-        auth: function ($q, authenticationService) {
-          var userInfo = authenticationService.getUserInfo();
-          if (userInfo) {
-            return $q.when(userInfo);
-          } else {
-            return $q.reject({ authenticated: false });
-          }
-        }
-      }
+      controller: 'HomeCtrl'
     })
     .when('/503',{
       templateUrl: 'views/503.html',
@@ -199,7 +188,8 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     REMOVE_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT:'Synmark has been successfully removed from the playlist',
     NO_TRANSCRIPT_TEXT:'No subtitle available.',
     SAVE_PLAYLIST_ORDER_TEXT:'Save Playlist',
-    UPDATE_PLAYLIST_SUCCESS_TEXT:'The playlist has been successfully updated.'
+    UPDATE_PLAYLIST_SUCCESS_TEXT:'The playlist has been successfully updated.',
+    PLAYLIST_LOGIN_TEXT:'Please login to see your playlist'
   });
 
   $translateProvider.determinePreferredLanguage(function () {
