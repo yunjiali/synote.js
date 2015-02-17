@@ -146,7 +146,7 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     CANCEL_TEXT:'Cancel',
     TC_ERR:'You must agree on our terms and conditions.',
     PASSWORD_REG_NOTMATCH:"Password and confirmed password don't match.",
-    CREATE_NAV_LINK:"Create",
+    CREATE_NAV_LINK:"Link to Media",
     MY_UPLOADS_LINK:"My Uploads",
     PROFILE_NAV_LINK:"Profile",
     REG_NAV_LINK:"Register",

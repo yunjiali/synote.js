@@ -24,6 +24,15 @@
         <vg-buffering></vg-buffering>
       </videogular>
     </div>
+    <!-- display the current cue -->
+    <div id="subtitle_div" ng-if="transcripts && transcripts.length > 0">
+      <div class="subtitle-row">
+        <div class="col-md-12 col-sm-12">
+          {{currentCue.content}}
+        </div>
+      </div>
+    </div>
+    <!-- /display the current cue-->
     <h2 class="player-h2">{{multimedia.title}}</h2>
     <p>
       <i class="fa fa-user"></i> by {{multimedia.owner.username}}
@@ -91,13 +100,18 @@
           </div>
           <div ng-repeat="cue in selectedTranscript.cues | orderBy:'st':false">
             <div class="row transcript-row" ng-click="playCue(cue)" ng-class="{'transcript-row-highlighted':shouldCueHighlighted(cue)}">
-              <div class="col-md-12 col-sm-12 synmark-time">
-                <span>{{secondsToHHMMSS(cue.st/1000)}}</span>
-                <span> to </span>
-                <span>{{secondsToHHMMSS(cue.et/1000)}}</span>
-              </div>
-              <div class="col-md-12 col-sm-12">
-                {{cue.content}}
+              <div class="col-md-12 col-xs-12">
+                <div class="btn-group controls" role="group">
+                  <button title="bookmark" ng-click="bookmarkCue(cue, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canCreateSynmark()"><i class="fa fa-bookmark"></i></button>
+                </div>
+                <div class="col-md-12 col-sm-12 synmark-time">
+                  <span>{{secondsToHHMMSS(cue.st/1000)}}</span>
+                  <span> to </span>
+                  <span>{{secondsToHHMMSS(cue.et/1000)}}</span>
+                </div>
+                <div class="col-md-12 col-sm-12">
+                  {{cue.content}}
+                </div>
               </div>
             </div>
           </div>
@@ -112,7 +126,7 @@
     <div id="playlist_div" ng-if="playlist" cg-busy="loadPlaylistPromise" synote-resize="#video_div">
       <div class="watch-playlist" style="display:inline">
         <div class="watch-playlist-title">
-          <span><b>{{playlist.title | limitTo:48}}</b></span>
+          <span><b><a href ng-click="displayPlaylist(playlist.id)">{{playlist.title | limitTo:48}}</a></b></span>
           <div class="pull-right">
             <input bs-switch ng-model="hidePlaylist" type="checkbox" switch-on-text="Hide" switch-off-text="Show">
           </div>
@@ -179,7 +193,7 @@
           </div>
           <div class="form-group col-md-12 col-sm-12">
             <text-angular name="synmark_content" placeholder="Synmark Content..." rows="5"
-                  ta-toolbar="[['bold','italics','underline','ul', 'ol']]" ng-model="synmarkContent"></text-angular>
+                  ta-toolbar="[['bold','italics','underline','ul', 'ol'],['insertLink','insertImage']]" ng-model="synmarkContent"></text-angular>
           </div>
           <div class="col-md-6 col-sm-6">
             <button id="submit_btn" ng-disabled="!synmarkForm.$valid" ng-click="processSynmarkForm()" name="submit_btn" class="btn btn-lg btn-success btn-block">Submit</button>
@@ -197,7 +211,7 @@
             <span class="synmark-owner"> by {{synmark.owner.username}}</span>
             <div class="btn-group controls" role="group">
               <button title="mark" ng-click="addSynmarkToPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && canBeMarked(synmark)"><i class="fa fa-eye"></i></button>
-              <button title="mark" ng-click="removeSynmarkFromPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && !canBeMarked(synmark)"><i class="fa fa-eye-slash"></i></button>
+              <button title="unmark" ng-click="removeSynmarkFromPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && !canBeMarked(synmark)"><i class="fa fa-eye-slash"></i></button>
               <button title="edit synamrk" ng-click="editSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-edit"></i></button>
               <button title="delete synmark" ng-click="deleteSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-remove"></i></button>
             </div>

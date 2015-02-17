@@ -8,7 +8,7 @@
  * Controller of the synoteClient
  */
 angular.module('synoteClient')
-  .controller('BrowseCtrl',["$scope","$filter","$location","multimediaService", "utilService",'messageCenterService', function ($scope,$filter, $location, multimediaService,utilService,messageCenterService) {
+  .controller('BrowseCtrl',["$scope","$filter","$location",'$document',"multimediaService", "utilService",'messageCenterService', function ($scope,$filter, $location, $document, multimediaService,utilService,messageCenterService) {
     var $translate = $filter('translate');
     //$scope.start = 1; //start record number
     //$scope.end = 10; //end record number
@@ -27,6 +27,8 @@ angular.module('synoteClient')
           $scope.count = result.count;
           $scope.mms = result.mms;
           $scope.currentPage = Math.floor(skip/limit)+1;
+          var headerDiv= angular.element(document.getElementById('multimedia_browse_div'));
+          $document.scrollToElementAnimated(headerDiv);
         },
         function(error){
           messageCenterService.add('danger', error);

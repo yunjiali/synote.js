@@ -8,7 +8,7 @@
  * Controller of the synoteClient
  */
 angular.module('synoteClient')
-  .controller('UserMultimediaListCtrl',["$scope","$filter","$location", "multimediaService", "utilService",'messageCenterService','authenticationService', function ($scope,$filter, $location, multimediaService,utilService,messageCenterService,authenticationService) {
+  .controller('UserMultimediaListCtrl',["$scope","$filter","$location", '$document', "multimediaService", "utilService",'messageCenterService','authenticationService', function ($scope,$filter, $location,$document, multimediaService,utilService,messageCenterService,authenticationService) {
     var $translate = $filter('translate');
     //$scope.start = 1; //start record number
     //$scope.end = 10; //end record number
@@ -27,6 +27,8 @@ angular.module('synoteClient')
           $scope.count = result.count;
           $scope.mms = result.mms;
           $scope.currentPage = Math.floor(skip/limit)+1;
+          var headerH3= angular.element(document.getElementById('mymultimedia_list_header'));
+          $document.scrollToElementAnimated(headerH3);
         },
         function(error){
           messageCenterService.add('danger', error);

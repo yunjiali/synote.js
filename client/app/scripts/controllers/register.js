@@ -44,7 +44,7 @@ angular.module('synoteClient')
           }
           else {
             messageCenterService.add('success', $translate('REG_SUCCESS_TEXT'),{status: messageCenterService.status.next});
-            //$location.path('/login');
+            $location.path('/login');
           }
         }, function (err) {
           messageCenterService.add('danger',err);

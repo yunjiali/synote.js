@@ -161,13 +161,22 @@ videogular .vg-controls {
   color: #1abc9c;
 }
 
-.watch-playlist-title {
+.watch-playlist-title{
   position: relative;
   background: #1abc9c;
   background-size: 16px 16px;
   border-radius: 6px 6px 0 0;
   color: #34495e;
   padding: 19px 25px 20px;
+}
+
+.watch-playlist-title a{
+  color: #34495e;
+}
+
+.watch-playlist-title a:hover {
+  color: #34495e;
+  text-decoration: underline;
 }
 
 
@@ -249,7 +258,41 @@ videogular .vg-controls {
 
 .transcript-row{
   cursor: pointer;
+}
 
+.transcript-row hr {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.transcript-row .controls{
+  position: absolute;
+  top: 0;
+  right: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  display:none;
+}
+
+.transcript-row:hover .controls{
+  display:block !important;
+}
+.subtitle-row{
+  background-color: black;
+  min-height:60px;
+  color:yellow;
+}
+.subtitle-row .controls{
+  position: absolute;
+  top: 0;
+  right:0;
+  overflow: hidden;
+  white-space: nowrap;
+  display:none;
+}
+
+.subtitle-row:hover .controls{
+  display:block !important;
 }
 
 .transcript-row:hover, .transcript-row-highlighted{

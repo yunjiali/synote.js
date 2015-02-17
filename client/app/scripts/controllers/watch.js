@@ -38,6 +38,7 @@ angular.module('synoteClient')
 
       $scope.transcripts;
       $scope.selectedTranscript;
+      $scope.currentCue;//the current cue that need to be highlighted and displayed under the video.
 
       var watchAPICurrentTime = true; // a flag to stop watching watchAPICurrentTime
       var watchAPITimeLeft = true; // a flag to stop watching watchAPITimeLeft
@@ -208,7 +209,7 @@ angular.module('synoteClient')
         $event.stopPropagation(); //stop the synmark click event to propagate to the whole synmark div
         $scope.showEditingSynmarkForm = true;
         var synmarkFormDiv = angular.element(document.getElementById('synmarks_div'));
-        $document.scrollToElementAnimated(synmarkFormDiv);
+        $document.scrollToElementAnimated(synmarkFormDiv); //score to the correct page position
 
         //let currentEditingSynmark reference to the current synmark
         //Every change to the currentEditingSynmark will will also change the synmark in $scope.synmarks list
@@ -477,20 +478,36 @@ angular.module('synoteClient')
       /*synmark functions end*/
 
       /*transcript functions start */
+
+      //get whether the cue should be highlighted, if yes, set the $scope.currentCue
       $scope.shouldCueHighlighted = function(cue){
         var ct = $scope.API.currentTime.getTime(); //it's milliseconds in cue
         if(cue.st<ct && cue.et>ct){
+          $scope.currentCue = cue;
           return true;
         }
         else{
           return false;
         }
-      }
+      };
 
       $scope.playCue = function(cue){
         var st = cue.st;
         $scope.API.seekTime(st/1000,false);
-      }
+      };
+
+      $scope.bookmarkCue = function(cue, $event){
+        if($scope.showEditingSynmarkForm === false) {
+          $scope.cancelSynmarkEditing();
+        }
+
+        var synmark = {};
+        synmark.mfst = cue.st/1000;
+        synmark.mfet = cue.et/1000;
+        synmark.content = cue.content;
+        synmark.tags = [];
+        $scope.editSynmark(synmark,$event);
+      };
 
       /*transcript functions end */
 
@@ -565,7 +582,7 @@ angular.module('synoteClient')
                 loop: false,
                 preload: "auto",
                 transclude: true,
-                sources:$scope.videos[0].sources,
+                sources:$scope.videos[0].sources
                 //theme: ENV.name==='development'?'bower_components/videogular-themes-default/videogular.css':'styles/vendor.css'
               };
 

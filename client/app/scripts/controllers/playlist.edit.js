@@ -23,7 +23,7 @@ angular.module('synoteClient')
         if(authenticationService.isLoggedIn())
           $scope.isOwner = ($scope.playlist.owner.id===authenticationService.getUserInfo().id)?true:false;
       },function(error){
-        messageServiceCenter.add('danger',error);
+        messageCenterService.add('danger',error);
       })
 
     $scope.timeAgo = function(time){
@@ -33,7 +33,7 @@ angular.module('synoteClient')
     $scope.updateIndex = function(item,oldInd){
 
       //the bind option is a string, so we need to parse it to int
-      item.ind = parseInt(item.ind);
+      //item.ind = parseInt(item.ind);
       var newInd = item.ind;
 
       if(item.ind === oldInd) return;

@@ -34,10 +34,13 @@
           </div>
         </div>
       </div>
+      <div class="form-group">
+        <input type="text" name="regcode" id="regcode" class="form-control input-lg" placeholder="Registration code" ng-model="formdata.regcode" tabindex="7" required ng-pattern="/Asb8N0nz9OIdr2Iow/">
+      </div>
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
           <label class="checkbox" for="t_c">
-            <input type="checkbox" ng-model="t_c" id="t_c_input" name="t_c" ng-model="t_c">
+            <input type="checkbox" ng-model="t_c" id="t_c_input" name="t_c" ng-model="t_c" tabindex="8" ng-required="!t_c">
             I agree to the <a href="#/termsandconditions">Terms and Conditions </a>set out by Synote, including our Cookie Use.
           </label>
         </div>
@@ -45,9 +48,9 @@
       <hr class="colorgraph">
       <div class="row">
         <div class="col-xs-12 col-md-6">
-          <input type="submit" value="Register" ng-disabled="!registrationForm.$valid" class="btn btn-primary btn-block btn-lg" tabindex="7" translate="REG_SUBMIT_BTN">
+          <input type="submit" value="Register" ng-disabled="!registrationForm.$valid" class="btn btn-primary btn-block btn-lg" tabindex="9" translate="REG_SUBMIT_BTN">
         </div>
-        <div class="col-xs-12 col-md-6"><input type="Reset" value="Reset" class="btn btn-danger btn-block btn-lg" tabindex="8" translate="REG_RESET_BTN"></div>
+        <div class="col-xs-12 col-md-6"><input type="Reset" value="Reset" class="btn btn-danger btn-block btn-lg" tabindex="10" translate="REG_RESET_BTN"></div>
       </div>
     </form>
   </div>
