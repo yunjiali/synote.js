@@ -24,11 +24,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="SynmarkController.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SynmarkController.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/api/controllers/SynmarkController.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="4311" max-vertical-offset="5055">
-              <caret line="303" column="36" selection-start-line="303" selection-start-column="34" selection-end-line="303" selection-end-column="36" />
+            <state vertical-scroll-proportion="0.736" vertical-offset="4250" max-vertical-offset="5055">
+              <caret line="314" column="44" selection-start-line="314" selection-start-column="44" selection-end-line="314" selection-end-column="44" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MultimediaController.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/api/controllers/MultimediaController.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="39.423077" vertical-offset="6395" max-vertical-offset="7020">
+              <caret line="358" column="40" selection-start-line="358" selection-start-column="40" selection-end-line="358" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -64,11 +74,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Multimedia.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Multimedia.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/api/models/Multimedia.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.9769585" vertical-offset="1584" max-vertical-offset="2535">
-              <caret line="148" column="18" selection-start-line="148" selection-start-column="18" selection-end-line="148" selection-end-column="18" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="1584" max-vertical-offset="2535">
+              <caret line="122" column="0" selection-start-line="122" selection-start-column="0" selection-end-line="122" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -112,16 +122,6 @@
               <folding>
                 <element signature="e#0#39#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SynmarkController.test.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/test/unit/controllers/SynmarkController.test.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="5435" max-vertical-offset="6210">
-              <caret line="395" column="28" selection-start-line="395" selection-start-column="28" selection-end-line="395" selection-end-column="28" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -598,6 +598,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="645">
           <caret line="17" column="29" selection-start-line="17" selection-start-column="29" selection-end-line="17" selection-end-column="29" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -776,14 +777,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/controllers/MultimediaController.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.076923" vertical-offset="5930" max-vertical-offset="7020">
-          <caret line="418" column="32" selection-start-line="418" selection-start-column="27" selection-end-line="418" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/test/unit/controllers/PlaylistController.test.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-6.269231" vertical-offset="4067" max-vertical-offset="5505">
@@ -872,14 +865,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api/controllers/SynmarkController.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4311" max-vertical-offset="5055">
-          <caret line="303" column="36" selection-start-line="303" selection-start-column="34" selection-end-line="303" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/api/models/Synmark.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1614" max-vertical-offset="2910">
@@ -898,8 +883,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/api/models/Multimedia.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.9769585" vertical-offset="1584" max-vertical-offset="2535">
-          <caret line="148" column="18" selection-start-line="148" selection-start-column="18" selection-end-line="148" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1584" max-vertical-offset="2535">
+          <caret line="122" column="0" selection-start-line="122" selection-start-column="0" selection-end-line="122" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/controllers/MultimediaController.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="39.423077" vertical-offset="6395" max-vertical-offset="7020">
+          <caret line="358" column="40" selection-start-line="358" selection-start-column="40" selection-end-line="358" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api/controllers/SynmarkController.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.736" vertical-offset="4250" max-vertical-offset="5055">
+          <caret line="314" column="44" selection-start-line="314" selection-start-column="44" selection-end-line="314" selection-end-column="44" />
           <folding />
         </state>
       </provider>

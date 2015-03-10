@@ -359,7 +359,7 @@ module.exports = {
         var criteria = {owner:owner.id};
         Multimedia.count(criteria).then(function(mmCount){
             Multimedia.find({where:criteria, skip:skip,limit:limit,sort:sort}).populate('tags').populate('synmarks').then(function(mms){
-                return res.json({success:true,count:mmCount, start:skip+1,end: skip+limit, mms:mms});
+                return res.json({success:true,count:mmCount, start:skip+1,end: ((skip + limit)>mmCount)?mmCount: (skip+limit), mms:mms});
             },function(err){
                 return res.serverError(err);
             });

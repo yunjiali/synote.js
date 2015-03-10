@@ -280,7 +280,7 @@ module.exports = {
                         success: true,
                         count: synCount,
                         start: skip + 1,
-                        end: skip + limit,
+                        end: ((skip + limit)>synCount)?synCount:(skip+limit),
                         synmarks: synmarks
                     });
                 }, function (err) {
@@ -314,7 +314,7 @@ module.exports = {
                             success: true,
                             count: tagCount,
                             start: skip + 1,
-                            end: skip + limit,
+                            end: ((skip + limit)>tagCount)?tagCount:(skip+limit),
                             synmarks: _.sortBy(synmarks,'createdAt')
                         });
                     })
