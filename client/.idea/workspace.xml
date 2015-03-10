@@ -24,11 +24,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="watch.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="watch.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/scripts/controllers/watch.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.14683153" vertical-offset="9265" max-vertical-offset="12975">
+            <state vertical-scroll-proportion="-3.6538463" vertical-offset="9265" max-vertical-offset="12975">
               <caret line="624" column="60" selection-start-line="624" selection-start-column="60" selection-end-line="624" selection-end-column="60" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Gruntfile.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.32095096" vertical-offset="4764" max-vertical-offset="7635">
+              <caret line="332" column="20" selection-start-line="332" selection-start-column="20" selection-end-line="332" selection-end-column="20" />
               <folding />
             </state>
           </provider>
@@ -49,16 +59,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="-14.5" vertical-offset="463" max-vertical-offset="1110">
               <caret line="56" column="37" selection-start-line="56" selection-start-column="35" selection-end-line="56" selection-end-column="37" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="user.synmark.list.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/scripts/controllers/user.synmark.list.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="62" max-vertical-offset="975">
-              <caret line="17" column="62" selection-start-line="15" selection-start-column="4" selection-end-line="17" selection-end-column="62" />
               <folding />
             </state>
           </provider>
@@ -698,13 +698,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4659" max-vertical-offset="7635">
-          <caret line="351" column="30" selection-start-line="351" selection-start-column="30" selection-end-line="351" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/browse.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-10.0" vertical-offset="0" max-vertical-offset="720">
@@ -821,6 +814,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.23728813" vertical-offset="131" max-vertical-offset="1035">
           <caret line="19" column="16" selection-start-line="19" selection-start-column="16" selection-end-line="19" selection-end-column="16" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -902,8 +896,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/scripts/controllers/watch.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.14683153" vertical-offset="9265" max-vertical-offset="12975">
+        <state vertical-scroll-proportion="-3.6538463" vertical-offset="9265" max-vertical-offset="12975">
           <caret line="624" column="60" selection-start-line="624" selection-start-column="60" selection-end-line="624" selection-end-column="60" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gruntfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.32095096" vertical-offset="4764" max-vertical-offset="7635">
+          <caret line="332" column="20" selection-start-line="332" selection-start-column="20" selection-end-line="332" selection-end-column="20" />
           <folding />
         </state>
       </provider>
