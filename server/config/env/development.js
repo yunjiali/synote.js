@@ -20,5 +20,8 @@ module.exports = {
   models: {
       connection: 'devMysqlServer',
       migrate:'safe'
-  }
+  },
+    index:{
+        enabled:true
+    }
 };

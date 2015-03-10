@@ -37,7 +37,8 @@
     "srt":"git+https://git@github.com/yunjiali/srt-parser.git",
     "q":"~1.1.2",
     "lodash":"~2.4.1",
-    "fluent-ffmpeg":"~2.0.0-rc3"
+    "fluent-ffmpeg":"~2.0.0-rc3",
+    "search-index":"0.4.15"
   },
   "scripts": {
     "start": "node app.js",

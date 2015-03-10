@@ -283,7 +283,7 @@ describe('PlaylistController', function() {
         });
     });
 
-    describe.only('POST /playlist/:plid/save', function(){
+    describe('POST /playlist/:plid/save', function(){
         var accessToken = "";
         var plid1=""; //get all of them from bootstrap
         var pliid1="";

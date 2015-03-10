@@ -59,9 +59,14 @@ module.exports.routes = {
   'post /playlistitemsynmark/:pliid/add/synmark/:synmarkid':'PlaylistItemSynmarkController.addsynmark',
   'delete /playlistitemsynmark/:pliid/remove/synmark/:synmarkid':'PlaylistItemSynmarkController.removesynmark',
   'get /synmark/get/:synmarkid':'SynmarkController.get',
+  'get /synmark/list/owner':'SynmarkController.listByOwner',
   'post /synmark/create':'SynmarkController.create',
   'post /synmark/save/:synmarkid':'SynmarkController.save',
   'delete /synmark/delete/:synmarkid':'SynmarkController.delete',
   'get /transcript/get/:lang/multimedia/:mmid/':'TranscriptController.getByMultimedia',
-  'get /transcript/get/all/multimedia/:mmid':'TranscriptController.getAllByMultimedia'
+  'get /transcript/get/all/multimedia/:mmid':'TranscriptController.getAllByMultimedia',
+  'get /tag/list':'TagController.list', //list all tags
+  'get /tag/list/jqcloud': 'TagController.listJQCloud', //list all tags in jqcloud format
+  'get /tag/list/synmark/jqcloud': 'TagController.listSynmarkTagJQCloud',//list only synmark tags in jqcloud format
+  'get /search':'SearchController.do'
 };

@@ -6,6 +6,7 @@
 */
 
 var async = require('async');
+var si=require('search-index');
 
 module.exports = {
 
@@ -84,16 +85,69 @@ module.exports = {
     belongsToPlaylistItems:{
       collection:'PlaylistItemSynmark',
       via:'synmark'
+    },
+    getIndexObj:function(){
+      return {
+        title: this.title,
+        content: this.content,
+        id: this.rsid,
+        publicPermission:this.publicPermission,
+        tags: this.tags.map(function (tag) {
+          return tag.content;
+        })
+      };
     }
   },
   getMediaFragmentString:function(){ // return a valid media fragment string
 
   },
 
+  afterCreate:function(createdSyn, cb){
+    if(sails.config.index.enabled) {
+      Synmark.findOne({id: createdSyn.id}).populate('tags').then(
+          function (newsynmark) {
+            var synmarkIndex = newsynmark.getIndexObj();
+            si.add({'batchName': 'synmark', 'filters': ['title', 'content', 'tags','publicPermission']}, [synmarkIndex], function (err) {
+              cb();
+            });
+          },
+          function (err) {
+            cb();
+          }
+      );
+    }
+    else {
+      cb();
+    }
+  },
+
+  afterUpdate:function(updatedSyn, cb){
+
+    if(sails.config.index.enabled) {
+      Synmark.findOne({id: updatedSyn.id}).populate('tags').then(
+          function (newsynmark) {
+            var synmarkIndex = newsynmark.getIndexObj();
+            si.add({'batchName': 'synmark', 'filters': ['title', 'content', 'tags']}, [synmarkIndex], function (err) {
+              //if(!err) console.log('indexed!');
+              cb();
+            });
+          },
+          function (err) {
+            cb();
+          }
+      );
+    }
+    else {
+      cb();
+    }
+  },
+
+
   //TODO: implement customised validator for synmark: one of the title, content, tags must present
   //TODO: implement validation that mfet must bigger than mfst
   //TODO: delete synmark also delete the synmark in any playlist
   afterDestroy: function(deleted_synmarks, next){
+    //remove index
 
     //remove tags
     async.eachSeries(deleted_synmarks, function(synmark, tagCallback){
@@ -118,7 +172,15 @@ module.exports = {
       }, function(err){
         if(err)
           console.log(err);
-        next();
+
+        if(sails.config.index.enabled) {
+          si.del(deleted_synmarks.rsid, function (err) {
+            next();
+          });
+        }
+        else {
+          next();
+        }
       });
     });
   }

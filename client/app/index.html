@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="bower_components/angular-busy/dist/angular-busy.css" />
   <link rel="stylesheet" href="bower_components/angular-xeditable/dist/css/xeditable.css" />
   <link rel="stylesheet" href="bower_components/angularjs-toaster/toaster.css" />
+  <link rel="stylesheet" href="bower_components/jqcloud2/dist/jqcloud.css" />
   <link rel="stylesheet" href="bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" />
   <link rel="stylesheet" href="bower_components/videogular-themes-default/videogular.css" />
   <!-- endbower -->
@@ -46,6 +47,7 @@
           <ul class="dropdown-menu">
             <li><a href="#/multimedia.create">{{'CREATE_NAV_LINK' | translate}}</a></li>
             <li><a href="#/user/{{getUserInfo().id}}/multimedia/list">{{'MY_UPLOADS_LINK' | translate}}</a></li>
+            <li><a href="#/user/{{getUserInfo().id}}/synmark/list">{{'MY_SYNMARKS_LINK' | translate}}</a></li>
             <li><a href="#/user/{{getUserInfo().id}}">{{'PROFILE_NAV_LINK' | translate}}</a></li>
             <li class="divider"></li>
             <li><a href ng-click="logout()">{{'LOGOUT_NAV_LINK' | translate}}</a></li>
@@ -119,10 +121,13 @@
 <script src="bower_components/angular-moment/angular-moment.js"></script>
 <script src="bower_components/textAngular/dist/textAngular.min.js"></script>
 <script src="bower_components/angular-scroll/angular-scroll.js"></script>
+<script src="bower_components/ngScrollSpy/dist/ngScrollSpy.js"></script>
 <script src="bower_components/angular-ui-utils/ui-utils.js"></script>
 <script src="bower_components/lodash/dist/lodash.compat.js"></script>
 <script src="bower_components/angular-lodash/angular-lodash.js"></script>
 <script src="bower_components/angularjs-dropdown-multiselect/src/angularjs-dropdown-multiselect.js"></script>
+<script src="bower_components/jqcloud2/dist/jqcloud.js"></script>
+<script src="bower_components/angular-jqcloud/angular-jqcloud.js"></script>
 <script src="bower_components/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
 <script src="bower_components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js"></script>
 <script src="bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.js"></script>
@@ -163,6 +168,10 @@
 <script src="scripts/controllers/503.js"></script>
 <script src="scripts/directives/synoteresize.js"></script>
 <script src="scripts/services/synmarkservice.js"></script>
+<script src="scripts/services/cue.js"></script>
+<script src="scripts/services/transcript.js"></script>
+<script src="scripts/services/tagservice.js"></script>
+<script src="scripts/controllers/user.synmark.list.js"></script>
 <!-- endbuild -->
 </body>
 </html>

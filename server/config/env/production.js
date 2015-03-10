@@ -34,6 +34,9 @@ module.exports = {
 
   log: {
      level: "silent"
-  }
+  },
+    index:{
+        enabled:true
+    }
 
 };

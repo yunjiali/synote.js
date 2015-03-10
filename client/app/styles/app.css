@@ -8,6 +8,11 @@ h2
   font-size:1.67em;
 }
 
+.player-h2{
+  font-size:1.2em;
+  margin-top: 0;
+}
+
 h3
 {
   font-size:1.25em;
@@ -195,6 +200,10 @@ videogular .vg-controls {
   margin: 1px 0 3px;
 }
 
+#info_div{
+  margin-top:20px;
+}
+
 #playlist_div {
   overflow-y:scroll;
 }
@@ -248,7 +257,7 @@ videogular .vg-controls {
   text-decoration: underline;
 }
 
-.synmark-time {
+.synmark-time, .cue-time {
   color:rgba(253, 96, 73, 1);
 }
 
@@ -272,6 +281,10 @@ videogular .vg-controls {
   overflow: hidden;
   white-space: nowrap;
   display:none;
+}
+
+.transcript-row .controls button{
+  z-index:3;
 }
 
 .transcript-row:hover .controls{
@@ -317,3 +330,4 @@ videogular .cuepoints .cuepoint {
 
   background-color: red;
 }
+

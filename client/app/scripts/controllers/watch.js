@@ -8,8 +8,8 @@
  * Controller of the synoteClient
  */
 angular.module('synoteClient')
-  .controller('WatchCtrl',['$scope','$filter', '$routeParams','$location', '$sce', '$timeout', '$document','multimediaService', 'playlistService', 'synmarkService','utilService','authenticationService','toaster','ENV',
-    function ($scope,$filter, $routeParams,$location, $sce, $timeout,$document, multimediaService, playlistService, synmarkService, utilService, authenticationService, toaster,ENV) {
+  .controller('WatchCtrl',['$scope','$filter', '$routeParams','$location', '$sce', '$timeout', '$document','multimediaService', 'playlistService', 'synmarkService','Transcript','Cue','utilService','authenticationService','toaster','ENV',
+    function ($scope,$filter, $routeParams,$location, $sce, $timeout,$document, multimediaService, playlistService, synmarkService, Transcript, Cue, utilService, authenticationService, toaster,ENV) {
 
       var $translate = $filter('translate');
 
@@ -24,11 +24,19 @@ angular.module('synoteClient')
       $scope.cuepoints.current = null; //the current index of chained synmarks
       $scope.cuepoints.points = [];
 
+      $scope.st; //starttime
+      $scope.stPlayed = true; //indicate weather the video has started playing from st yet, if no, we will jump to st when we monitor API.currentTime
+      if(typeof $location.search().st === 'string' && !isNaN(parseInt($location.search().st))) {
+        $scope.st = parseInt($location.search().st);
+        $scope.stPlayed = false;
+      }
+
       $scope.synmarks=[];
       $scope.synmarkDisplay = {}; //synmark display configuration object
       $scope.synmarkDisplay.marked = $location.search().marked === "true"?true:false; //display just the synmarks in the playlist
       $scope.synmarkDisplay.mine = $location.search().mine === "true"?true:false;//display anyone's synmarks or just my synmarks
       $scope.synmarkDisplay.chained = $location.search().chained === "true"?true:false;
+      $scope.synmarkDisplay.tabactive = true; // whether the synmark tab is active
       $scope.currentEditingSynmark = null; //the current synmark under editing
       $scope.synmarkContent = ""; //rich text synmark content
       $scope.synmarkTagsStr = ""; //synmark tags string
@@ -39,6 +47,10 @@ angular.module('synoteClient')
       $scope.transcripts;
       $scope.selectedTranscript;
       $scope.currentCue;//the current cue that need to be highlighted and displayed under the video.
+      $scope.currentEditingCue; //the cue that is editing
+      $scope.showEditingTranscriptForm = false //show transcript editing form or not
+      $scope.showEditingCueForm = false //show cue editing form or not
+      $scope.transcriptObj={}; //the ng-model for creating new transcript
 
       var watchAPICurrentTime = true; // a flag to stop watching watchAPICurrentTime
       var watchAPITimeLeft = true; // a flag to stop watching watchAPITimeLeft
@@ -107,6 +119,11 @@ angular.module('synoteClient')
               }
             }
           }
+        }
+        //if no chain or marked synmark to be played, we will look at whether there is an initial start time (st)
+        else if(!$scope.stPlayed){ //if the video hasn't been started playing from the $scope.st, start playing
+          $scope.API.seekTime($scope.st);
+          $scope.stPlayed = true;
         }
       });
 
@@ -199,10 +216,19 @@ angular.module('synoteClient')
 
       /*synmark functions*/
       $scope.showSynmarkForm = function(){
-        if(!$scope.showEditingSynmarkForm){
+        if(!$scope.showEditingSynmarkForm){ //if not shown at the moment, it's not editing synmark, so we need to create a new synmark
           $scope.showEditingSynmarkForm = true;
           $scope.currentEditingSynmark = {}
         }
+
+        $scope.setSynmarkMfst();
+        $scope.setSynmarkMfet();
+        $scope.API.pause();
+      }
+
+      $scope.showSynmarkFormFromOutside = function(){ //click create synmark button from outside of synmark tab
+        $scope.synmarkDisplay.tabactive = true;
+        $scope.showSynmarkForm();
       }
 
       $scope.editSynmark = function(synmark,$event){
@@ -277,6 +303,8 @@ angular.module('synoteClient')
       $scope.playSynmark = function(synmark){
         var st = synmark.mfst;
         $scope.API.seekTime(st,false);
+        var videoDiv = angular.element(document.getElementById('video_div'));
+        $document.scrollToElementAnimated(videoDiv);
       }
 
       $scope.cancelSynmarkEditing = function(){
@@ -463,7 +491,7 @@ angular.module('synoteClient')
               //do nothing
             });
         }
-      }
+      };
 
       $scope.shouldSynmarkHighlighted = function(synmark){
         var ct = $scope.API.currentTime.getTime()/1000;
@@ -473,11 +501,27 @@ angular.module('synoteClient')
         else{
           return false;
         }
-      }
+      };
 
       /*synmark functions end*/
 
       /*transcript functions start */
+      $scope.canCreateTranscript = function(){ //whether this user can create transcript or not
+        return true;
+      };
+
+      $scope.canCreateCue = function(){ //whether this user can create cue or not
+        return (typeof $scope.selectedTranscript !== "undefined");
+      };
+
+      $scope.canEditCue = function(cue){
+        return true; //currently, everyone can edit
+      }
+
+      $scope.changeSelectedTranscript = function(transcript){ //change selected language
+        $scope.selectedTranscript = transcript;
+        return;
+      };
 
       //get whether the cue should be highlighted, if yes, set the $scope.currentCue
       $scope.shouldCueHighlighted = function(cue){
@@ -487,6 +531,7 @@ angular.module('synoteClient')
           return true;
         }
         else{
+          $scope.currentCue = null;
           return false;
         }
       };
@@ -494,20 +539,131 @@ angular.module('synoteClient')
       $scope.playCue = function(cue){
         var st = cue.st;
         $scope.API.seekTime(st/1000,false);
+        var videoDiv = angular.element(document.getElementById('video_div'));
+        $document.scrollToElementAnimated(videoDiv);
+        return;
       };
 
-      $scope.bookmarkCue = function(cue, $event){
-        if($scope.showEditingSynmarkForm === false) {
-          $scope.cancelSynmarkEditing();
+      $scope.editCue = function(cue,$event){
+        $event.stopPropagation(); //stop the cue click event to propagate to the whole cue div
+        $scope.showEditingCueForm = true;
+        var transcriptFormDiv = angular.element(document.getElementById('transcripts_div'));
+        $document.scrollToElementAnimated(transcriptFormDiv); //score to the correct page position
+
+        //let currentEditingSynmark reference to the current synmark
+        //Every change to the currentEditingSynmark will will also change the synmark in $scope.synmarks list
+        $scope.currentEditingCue = cue;
+        $scope.currentEditingCue.ststr = $scope.secondsToHHMMSS(cue.st/1000);
+        $scope.currentEditingCue.etstr = $scope.secondsToHHMMSS(cue.et/1000);
+      }
+
+      $scope.showTranscriptForm = function(){
+        if(!$scope.showEditingTranscriptForm){ //if not shown at the moment, it's not editing synmark, so we need to create a new synmark
+          $scope.showEditingTranscriptForm = true;
+        }
+        $scope.transcriptObj.lang="";
+      };
+
+      $scope.cancelTranscriptEditing = function(){
+        $scope.showEditingTranscriptForm = false;
+        $scope.transcriptObj.lang = "";
+      };
+
+      $scope.processTranscriptForm = function(){
+        var newTranscript = new Transcript();
+        newTranscript.lang = $scope.transcriptObj.lang;
+        //TODO: check whether the language has been created yet
+        newTranscript.annotates = $scope.multimedia.id;
+        newTranscript.owner = $scope.multimedia.owner.id;
+        newTranscript.rsid = Math.random().toString(36).slice(2); //generate random string
+
+        $scope.transcriptPromise = Transcript.save(newTranscript).$promise
+          .then(function (newtrans) {
+            $scope.transcriptObj.lang = "";
+            if(typeof $scope.transcripts === "undefined"){
+              $scope.transcripts = [];
+            }
+            $scope.transcripts.push(newtrans);
+            $scope.selectedTranscript=newtrans;
+            $scope.showToaster("success","success",$translate('CREATE_TRANSCRIPT_SUCCESS_TEXT'), 3000);
+            $scope.showEditingTranscriptForm = false;
+
+          }, function (error) {
+            $scope.showToaster("error","error",error, 3000);
+          });
+      }
+
+      $scope.showCueForm = function(){
+        if(!$scope.showEditingCueForm){ //if not shown at the moment, it's not editing synmark, so we need to create a new synmark
+          $scope.showEditingCueForm = true;
+          $scope.currentEditingCue = {}
         }
 
-        var synmark = {};
-        synmark.mfst = cue.st/1000;
-        synmark.mfet = cue.et/1000;
-        synmark.content = cue.content;
-        synmark.tags = [];
-        $scope.editSynmark(synmark,$event);
+        $scope.currentEditingCue.ststr = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
+        $scope.currentEditingCue.etstr = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
+        $scope.API.pause();
       };
+
+      $scope.cancelCueEditing = function(){
+        $scope.showEditingCueForm = false;
+        $scope.currentEditingCue=null;
+      };
+
+      $scope.setCueSt = function(){
+        $scope.currentEditingCue.ststr = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
+      };
+
+      $scope.setCueEt = function(){
+        $scope.currentEditingCue.etstr = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
+      };
+
+      $scope.processCueForm = function(){
+        var st = utilService.HHMMSSToSeconds($scope.currentEditingCue.ststr);
+        if(isNaN(st)){
+          $scope.showToaster("error","error",$translate('CUE_ST_ERROR'), 3000);
+        }
+        var et = utilService.HHMMSSToSeconds($scope.currentEditingCue.etstr);
+        if(isNaN(et)){
+          $scope.showToaster("error","error",$translate('CUE_ET_ERROR'), 3000);
+        }
+
+        var submittedCue = new Cue();
+        submittedCue.belongsTo = $scope.selectedTranscript.id;
+        submittedCue.st = st*1000;
+        submittedCue.et = et*1000;
+        submittedCue.content = $scope.currentEditingCue.content;
+        submittedCue.rsid = $scope.currentEditingCue.rsid?$scope.currentEditingCue.rsid:Math.random().toString(36).slice(2); //generate random string if doesn't exists
+        submittedCue.owner = authenticationService.getUserInfo().id;
+
+        if($scope.currentEditingCue.id){ //edit
+          submittedCue.id = $scope.currentEditingCue.id;
+          $scope.cuePromise = Cue.update(submittedCue).$promise
+            .then(function (newCue) {
+              $scope.currentEditingCue = newCue;
+              $scope.currentEditingCue.ststr = utilService.secondsToHHMMSS(newCue.st/1000);
+              $scope.currentEditingCue.etstr = utilService.secondsToHHMMSS(newCue.et/1000);
+              $scope.showToaster("success","success",$translate('SAVE_CUE_SUCCESS_TEXT'), 3000);
+              $scope.cancelCueEditing();
+            }, function (error) {
+              $scope.showToaster("error","error",error, 3000);
+              //do nothing
+            });
+        }
+        else{//create new one
+          $scope.cuePromise = Cue.save(submittedCue).$promise
+            .then(function (newCue) {
+              if(!$scope.selectedTranscript.cues)
+                $scope.selectedTranscript.cues = [];
+              $scope.selectedTranscript.cues.push(newCue);
+              $scope.showToaster("success","success",$translate('SAVE_CUE_SUCCESS_TEXT'), 3000);
+              $scope.cancelCueEditing();
+
+            }, function (error) {
+              $scope.showToaster("error","error",error, 3000);
+              //do nothing
+            });
+        }
+      }
 
       /*transcript functions end */
 
@@ -524,8 +680,10 @@ angular.module('synoteClient')
       var init = function() {
         var mmid = $routeParams.mmid;
         var pliid = $routeParams.pliid;
-
-        $('.tagsinput').tagsinput();
+        setTimeout(function(){
+          var tagsinput = angular.element(document.getElementsByClassName("tagsinput"));
+          tagsinput.tagsinput();
+        },2000);
 
         $scope.loadPromise = multimediaService.getMultimedia(mmid, pliid)
           .then(function (data) {

@@ -507,7 +507,7 @@ describe('MultimediaController', function() {
         it("should list owner's multimedia successfully", function(done){
 
             agent
-                .get('/multimedia/list?access_token='+accessToken)
+                .get('/multimedia/listByOwner?access_token='+accessToken)
                 .expect(200)
                 .end(function(err,res){
                     res.statusCode.should.equal(200);
@@ -522,7 +522,7 @@ describe('MultimediaController', function() {
 
         it("should list owner's multimedia with skip and limit", function(done){
             agent
-                .get('/multimedia/list?access_token='+accessToken+'&skip=1&limit=2')
+                .get('/multimedia/listByOwner?access_token='+accessToken+'&skip=1&limit=2')
                 .expect(200)
                 .end(function(err,res){
                     res.statusCode.should.equal(200);

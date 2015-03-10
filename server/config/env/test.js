@@ -23,5 +23,8 @@ module.exports = {
     },
     log: {
        level: "warn"
+    },
+    index:{
+        enabled:false //disable index in test
     }
 };

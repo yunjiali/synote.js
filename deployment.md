@@ -33,7 +33,8 @@ to check if the server has been started
 #For angularjs client
 1. jsHint is disabled in Gruntfile.js due to that there are too many warnings
 1. the default bower for bootstrap switch has been overridded in the root bower.json as "dist/js/bootstrap-switch.js". We use flat-ui css instead of the bootstrap-switch one.
-1. check the ngconstant section of Guntfile.js and change the server url for production: ws.synote.org:1337
+1. check the ngconstant section of Guntfile.js and change the server url (apiEndpoint) for production as plus.synote.org (remember to change the url everytime you pack it for other websites)
+1. check the ngconstant section of Guntfile.js and change the hostURL for production as ws.synote.org (remember to change the url everytime you pack it for other websites)
 1. remove the dist folder if exists
 1. I have removed the cssmin step in Gruntfile.js
 1. run:

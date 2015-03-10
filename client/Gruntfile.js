@@ -337,7 +337,8 @@ module.exports = function (grunt) {
         constants: {
           ENV: {
             name: 'development',
-            apiEndpoint: 'http://localhost:1337'
+            apiEndpoint: 'http://localhost:1337',
+            hostURL:'http://localhost:9000'
           }
         }
       },
@@ -349,7 +350,8 @@ module.exports = function (grunt) {
         constants: {
           ENV: {
             name:'production',
-            apiEndpoint:'http://plus.synote.org'
+            apiEndpoint:'http://plus.synote.org',
+            hostURL:'http://ws.synote.org'
           }
         }
       }

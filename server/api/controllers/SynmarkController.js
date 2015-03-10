@@ -6,7 +6,10 @@
  */
 
 var S = require('string');
+var si = require('search-index');
 var randomstring = require("randomstring");
+var async= require('async');
+var _=require('underscore');
 
 module.exports = {
     /**
@@ -119,7 +122,7 @@ module.exports = {
         var synmarkid = req.params.synmarkid;
         Synmark.findOne({id:synmarkid}).then(function(synmark){
             return res.json(synmark);
-        })
+        });
     },
 
     save:function(req,res){
@@ -237,6 +240,92 @@ module.exports = {
 
             return res.json({success:true, message:sails.__("%s has been successfully deleted", "Synmark")})
         })
+    },
+    listByOwner:function(req,res){
+        var owner = req.session.user;
+
+        var skip = 0;
+        if(typeof req.query.skip !== "undefined" && !isNaN(parseInt(req.query.skip))){
+            skip = parseInt(req.query.skip);
+        }
+
+        var limit = 10;
+        if(typeof req.query.limit !== "undefined" && !isNaN(parseInt(req.query.limit))){
+            limit = parseInt(req.query.limit);
+        }
+
+        var sortby = "createdAt";
+        if(typeof req.query.sortby !== "undefined"){
+            sortby = req.query.sortby;
+        }
+
+        var order = "DESC";
+        if(req.query.order === "ASC"){
+            order="ASC";
+        }
+
+        var sort = sortby + " "+order;
+
+        //do the count first...
+        if(typeof req.query.q ==="undefined" || S(req.query.q).trim().s.length === 0) {
+            var criteria = {owner:owner.id};
+            Synmark.count(criteria).then(function (synCount) {
+                Synmark.find({
+                    where: criteria,
+                    skip: skip,
+                    limit: limit,
+                    sort: sort
+                }).populate('tags').populate('owner').then(function (synmarks) {
+                    return res.json({
+                        success: true,
+                        count: synCount,
+                        start: skip + 1,
+                        end: skip + limit,
+                        synmarks: synmarks
+                    });
+                }, function (err) {
+                    return res.serverError(err);
+                });
+            });
+        }
+        else{ //get tags first
+            var q = S(req.query.q).trim().s
+            var criteria = {owner:owner.id,ownersynmark:{'!':null}, text:q};
+            var synmarks=[];
+            Tag.count(criteria).then(function(tagCount){
+                Tag.find({
+                    where: criteria,
+                    skip:skip,
+                    limit: limit,
+                    sort:sort
+                }).then(function(tags){
+                    async.each(tags, function(tag, tagCallback){
+                        Synmark.findOne({id:tag.ownersynmark}).populate('tags').then(
+                            function(synmark){
+                                synmarks.push(synmark);
+                                tagCallback();
+                            }
+                        )
+                    },function(err){
+                        if(err)
+                            return res.serverError(err);
+
+                        return res.json({
+                            success: true,
+                            count: tagCount,
+                            start: skip + 1,
+                            end: skip + limit,
+                            synmarks: _.sortBy(synmarks,'createdAt')
+                        });
+                    })
+                },function(tagsErr){
+                    return res.serverError(tagsErr);
+                });
+            }, function(countErr){
+                return res.serverError(countErr);
+            });
+        }
+
     }
 };
 

@@ -1,0 +1,54 @@
+<div mc-messages></div>
+<div class="row">
+  <div ng-include="'views/templates/sidebar.html'"></div>
+  <div class="col-sm-8 col-md-9">
+    <h3 id="mysynmark_list_header">{{'MY_SYNMARKS_TITLE_TEXT' | translate}}</h3>
+    <div class="row">
+      <div class="col-md-6 col-sm-6 col-xs-12 pull-left inline-search-input">
+        <div class="input-group custom-search-form">
+          <input type="text" class="form-control" placeholder="Filter by tag..." ng-model="query">
+              <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-click="searchSynmark()">
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+             </span>
+        </div><!-- /input-group -->
+      </div>
+      <div class="col-md-6 col-sm-6 col-xs-12 pull-right" style="text-align:right">
+        <span ng-if='query !== undefined'>
+          {{'SYNMARK_SEARCH_RESULTS_TEXT' | translate}}
+        </span>
+        <span ng-if="query !== undefined && synmarks.length >0">,</span>
+        <span ng-if="synmarks.length >0">
+          {{start | number: fractionSize}} - {{end | number: fractionSize }} out of {{count | number: fractionSize}} results
+        </span>
+      </div>
+    </div>
+    <hr class="colorgraph"/>
+    <div class="row" ng-repeat="synmark in synmarks" cg-busy="listPromise" ng-if="synmarks.length >0">
+      <div class="col-sm-12 col-md-12 col-xs-12">
+        <h4 class="multimedia-title"><a href="#/watch/{{synmark.annotates}}?st={{synmark.mfst}}">{{synmark.title | limitTo:128}}</a></h4>
+        <div ng-bind-html="synmark.content"></div>
+        <p>
+          <i class="fa fa-user"></i> by {{synmark.owner.username}}
+          | <i class="fa fa-calendar"></i>&nbsp;<span am-time-ago="synmark.createdAt"></span>
+          | <i class="fa fa-clock-o"></i> {{secondsToHHMMSS(synmark.mfst)}} to {{secondsToHHMMSS(synmark.mfet)}}
+        </p>
+        <p>
+          <i class="fa fa-tags"></i> Tags :
+          <span class="label label-info label-tag" ng-repeat="tag in synmark.tags" ng-if="synmark.tags.length>0">
+            {{tag.text}}
+          </span>
+          <span  ng-if="synmark.tags.length === 0">
+            {{'NO_TAGS_TEXT' | translate}}
+          </span>
+        </p>
+        <br/>
+      </div>
+    </div>
+    <pagination ng-if="synmarks.length >0" boundary-links="true" items-per-page="limit" total-items="count" ng-model="currentPage" ng-change="pageChanged()" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+    <div ng-if="synmarks.length == 0">
+      {{'NO_SYNMARK_FOUND_TEXT' | translate }}
+    </div>
+  </div>
+</div>

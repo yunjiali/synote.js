@@ -137,11 +137,75 @@ angular.module('synoteClient')
       return deferred.promise;
     }
 
+    function listSynmarkByOwner(query,skip,limit,sortby,order ){
+      var deferred = $q.defer();
+
+      var accessToken = authenticationService.getUserInfo().accessToken;
+
+      var queryStr = "?access_token="+accessToken+"&";
+      //use != undefined to cover both "undefined" and "null"
+      if(query !== undefined){
+        queryStr += "q="+encodeURIComponent(query);
+        queryStr+="&";
+      }
+
+      if(skip != undefined){
+        queryStr += "skip="+skip;
+      }
+      else{
+        queryStr +="skip=0";
+      }
+
+      queryStr+="&";
+      if(limit != undefined){
+        queryStr += "limit="+limit;
+      }
+      else{
+        queryStr += "limit=10";
+      }
+
+      queryStr+="&";
+      if(sortby != undefined) {
+        queryStr += "sortby=" + sortby;
+      }
+      else{
+        queryStr += "sortby=createdAt";
+      }
+
+      queryStr+="&";
+      if(order === "ASC"){
+        queryStr+="order=ASC";
+      }
+      else{
+        queryStr+="order=DESC";
+      }
+
+      $http.get(ENV.apiEndpoint + '/synmark/list/owner'+queryStr)
+        .then(function (result) {
+
+          var data = result.data;
+          //if success
+          //console.log(data);
+          if(data.success === false){
+            deferred.reject(result.data);
+          }
+          else {
+            //$location.path('/login');
+            deferred.resolve(result.data);
+          }
+        }, function (err) {
+          deferred.reject(err);
+        });
+
+      return deferred.promise;
+    }
+
     return {
       createSynmark:createSynmark,
       deleteSynmark:deleteSynmark,
       saveSynmark:saveSynmark,
       addToPlaylistItem:addToPlaylistItem,
-      removeFromPlaylistItem:removeFromPlaylistItem
+      removeFromPlaylistItem:removeFromPlaylistItem,
+      listSynmarkByOwner:listSynmarkByOwner
     }
   }]);

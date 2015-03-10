@@ -63,7 +63,8 @@ module.exports.policies = {
 	SynmarkController:{
 		create:['hasJsonWebToken','requiremfstBody','requiremmidBody'],
 		save:['hasJsonWebToken','requiresynmarkidParams','isSynmarkOwner'],
-		delete:['hasJsonWebToken','requiresynmarkidParams','isSynmarkOwner']
+		delete:['hasJsonWebToken','requiresynmarkidParams','isSynmarkOwner'],
+		listByOwner:['hasJsonWebToken']
 	},
 	PlaylistController:{
 		create:['hasJsonWebToken','requiretitleBody'],
@@ -81,6 +82,14 @@ module.exports.policies = {
 	TranscriptController:{
 		getByMultimedia:['requiremmidParams'],
 		getAllByMultimedia:[]
+	},
+	TagController:{
+		list:['hasJsonWebToken'],
+		listJQCloud:['hasJsonWebToken'],
+		listSynmarkTagJQCloud:['hasJsonWebToken']
+	},
+	SearchController:{
+		do:['requirequeryQuery']
 	}
 
 };

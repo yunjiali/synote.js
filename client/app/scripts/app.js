@@ -26,6 +26,7 @@ var app = angular
     'ui.bootstrap',
     'ui.mask',
     'angularMoment',
+    'ngScrollSpy',
     'angularjs-dropdown-multiselect',
     'angular-lodash',
     'xeditable',
@@ -33,6 +34,7 @@ var app = angular
     'textAngular',
     'duScroll',
     'MessageCenterModule',
+    'angular-jqcloud',
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",
     "com.2fdevs.videogular.plugins.overlayplay",
@@ -78,6 +80,15 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     .when('/user/:userId/multimedia/list',{
       templateUrl:'views/user.multimedia.list.html',
       controller:'UserMultimediaListCtrl',
+      resolve:{
+        isSameUser: function(policyService, $route){
+          return policyService.isSameUser($route.current.params.userId);
+        }
+      }
+    })
+    .when('/user/:userId/synmark/list',{
+      templateUrl:'views/user.synmark.list.html',
+      controller:'UserSynmarkListCtrl',
       resolve:{
         isSameUser: function(policyService, $route){
           return policyService.isSameUser($route.current.params.userId);
@@ -186,10 +197,19 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     DELETE_SYNMARK_SUCCESS_TEXT:"Synmark has been deleted",
     ADD_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT:'Synmark has been successfully added to the playlist',
     REMOVE_SYNMARK_TO_PLAYLIST_SUCCESS_TEXT:'Synmark has been successfully removed from the playlist',
-    NO_TRANSCRIPT_TEXT:'No subtitle available.',
+    NO_TRANSCRIPT_TEXT:'No transcript available.',
+    TRANSCRIPT_NO_CONTENT_TEXT:'No content in this transcript',
     SAVE_PLAYLIST_ORDER_TEXT:'Save Playlist',
     UPDATE_PLAYLIST_SUCCESS_TEXT:'The playlist has been successfully updated.',
-    PLAYLIST_LOGIN_TEXT:'Please login to see your playlist'
+    PLAYLIST_LOGIN_TEXT:'Please login to see your playlist',
+    MY_SYNMARKS_TITLE_TEXT:'My Synmarks',
+    MY_SYNMARKS_LINK:'My Bookmarks',
+    SYNMARK_SEARCH_RESULTS_TEXT:'Search results ',
+    NO_SYNMARK_FOUND_TEXT:'No synmark is found',
+    CREATE_TRANSCRIPT_SUCCESS_TEXT:'Successfully created new transcript',
+    CUE_ST_ERROR:'The format of cue start time is not valid.',
+    CUE_ET_ERROR:'The format of cue end time is not valid.',
+    SAVE_CUE_SUCCESS_TEXT:'Successfully save transcript cue'
   });
 
   $translateProvider.determinePreferredLanguage(function () {

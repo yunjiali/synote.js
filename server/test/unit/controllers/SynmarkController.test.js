@@ -330,5 +330,79 @@ describe('SynmarkController', function() {
         //TODO: can't edit other people's synmark
     });
 
+    describe.only('GET /synmark/list/owner', function(){
+        var agent,accessToken;
+        before(function(done){
+            agent = request.agent(sails.hooks.http.app);
+            async.waterfall([
+                function(callback){
+                    agent
+                        .post('/auth/login')
+                        .send({email: 'teststatic@synote.com', password: 'hellowaterlock'})
+                        .expect(200)
+                        .end(function(err, res){
+                            callback();
+                        })
+                },
+                function(callback){
+                    agent
+                        .get('/user/jwt')
+                        .expect(200)
+                        .end(function(err, res){
+                            var resObj = JSON.parse(res.text);
+                            resObj.should.have.property("token");
+                            accessToken=resObj.token;
+                            callback(null, resObj.token);
+                        });
+                }
+            ],function(err, results){
+                done();
+            });
+        });
+
+
+        it("should list owner's synmarks successfully", function(done){
+
+            agent
+                .get('/synmark/listByOwner?access_token='+accessToken)
+                .expect(200)
+                .end(function(err,res){
+                    res.statusCode.should.equal(200);
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    resObj.count.should.greaterThan(0);
+                    resObj.synmarks.length.should.greaterThan(0);
+                    done();
+                });
+
+        });
+
+        it("should list owner's synmarks with skip and limit", function(done){
+            agent
+                .get('/synmark/list/owner?access_token='+accessToken+'&skip=1&limit=2')
+                .expect(200)
+                .end(function(err,res){
+                    res.statusCode.should.equal(200);
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    resObj.synmarks.length.should.greaterThan(0);
+                    done();
+                });
+        });
+
+        it("should list owner's synmark with query string", function(done){
+            agent
+                .get('/synmark/list/owner?q=test&access_token='+accessToken)
+                .expect(200)
+                .end(function(err,res){
+                    res.statusCode.should.equal(200);
+                    var resObj = JSON.parse(res.text);
+                    resObj.success.should.equal(true);
+                    resObj.synmarks.length.should.greaterThan(3);
+                    done();
+                });
+        });
+    });
+
 });
 

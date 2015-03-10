@@ -5,6 +5,7 @@
 * @docs        :: http://sailsjs.org/#!documentation/models
 */
 
+var si=require('search-index');
 
 module.exports = {
   types:{
@@ -81,9 +82,82 @@ module.exports = {
     playlists:{
       collection:'playlistItem',
       via:'multimedia'
+    },
+    getIndexObj:function(){
+      return {
+        title: this.title,
+        description: this.description,
+        id: this.rsid,
+        publicPermission: this.publicPermission,
+        tags: this.tags.map(function (tag) {
+          return tag.content;
+        })
+      }
     }
-  }
+  },
   //TODO: delete multimedia then also delete PlaylistItem
   //TODO: delete multimedia then also delete synmarks, transcripts and slides
+  afterCreate:function(createdmm, cb){
+
+    if(sails.config.index.enabled) {
+
+      Multimedia.findOne({id: createdmm.id}).populate('tags').then(
+          function (newmm) {
+            var mmIndex = newmm.getIndexObj();
+            si.add({'batchName': 'multimedia', 'filters': ['title', 'description', 'tags','publicPermission']}, [mmIndex], function (err) {
+              //if(!err) console.log('indexed!');
+              cb();
+            });
+          },
+          function (err) {
+            cb();
+          }
+      );
+    }
+    else {
+      cb();
+    }
+  },
+
+  afterUpdate:function(updatedmm, cb){
+
+    if(sails.config.index.enabled) {
+      Multimedia.findOne({id: updatedmm.id}).populate('tags').then(
+          function (newmm) {
+            var mmIndex = newmm.getIndexObj();
+
+            si.add({'batchName': 'multimedia', 'filters': ['title', 'description', 'tags']}, [mmIndex], function (err) {
+              //if(!err) console.log('indexed!');
+              cb();
+            });
+          },
+          function (err) {
+            cb();
+          }
+      );
+    }
+    else {
+      cb();
+    }
+  },
+
+
+  //TODO: implement customised validator for synmark: one of the title, content, tags must present
+  //TODO: implement validation that mfet must bigger than mfst
+  //TODO: delete synmark also delete the synmark in any playlist
+  afterDestroy: function(deleted_mm, next){
+    //remove index
+    if(sails.config.index.enabled) {
+      si.del(deleted_mm.rsid, function (err) {
+        //do nothing
+        next();
+      });
+    }
+    else{
+      next();
+    }
+
+
+  }
 };
 
