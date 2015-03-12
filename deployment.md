@@ -28,7 +28,9 @@ This document explains how to deploy synote.js on ubuntu
 ```forever list```
 to check if the server has been started
 1. NOTE: the production server port is still 1337 and we are not planning to proxy it through nginx at the moment, because there is only one server running. If we want to cluster, we may need to proxy it through nginx.
-1. goto ws.synote.org:1337 to see if the server is running
+1. goto ws.synote.org to see if the server is running
+1. check this article for more details about using nginx with sails.js
+https://www.digitalocean.com/community/tutorials/how-to-create-an-node-js-app-using-sails-js-on-an-ubuntu-vps
 
 #For angularjs client
 1. jsHint is disabled in Gruntfile.js due to that there are too many warnings
@@ -49,3 +51,16 @@ https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-virtual-hos
 ```sudo cp -R ~/synote.js/client/dist/* .```
 
 1. textAngular Error: An Editor with name "synmark_content" already exists <text-angular name="synmark_content" placeholder="Synmark Content..." rows="5" ta-toolbar="[['bold','italics','underline','ul', 'ol']]" ng-model="synmarkContent" class="ng-pristine ng-untouched ng-valid ng-isolate-scope ta-root">
+
+#Prepare a clean database
+1. delete all playlistitemsynmark
+1. delete all playlistitem
+1. delete all playlistit
+1. delete all tags
+1. delete all synmarks
+1. delete all cues
+1. delete all synmarks
+1. delete all multimedia
+
+#something to notice
+1. If the html document has error, for example <textarea> is self closed, the rest of the page will display differently after grunt serve. So if you find any function doesn't show well after packaging think about this possibility first.

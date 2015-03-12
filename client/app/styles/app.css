@@ -243,8 +243,13 @@ videogular .vg-controls {
   display:block !important;
 }
 
+.synmark-row-hide {
+  display:none;
+}
+
 .synmark-row:hover, .synmark-row-highlighted{
   background-color: #f1c40f;
+  display: block !important;
 }
 
 .synmark-form-group{

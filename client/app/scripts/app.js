@@ -34,6 +34,7 @@ var app = angular
     'textAngular',
     'duScroll',
     'MessageCenterModule',
+    'matchmedia-ng',
     'angular-jqcloud',
     "com.2fdevs.videogular",
     "com.2fdevs.videogular.plugins.controls",

@@ -266,6 +266,7 @@ module.exports = {
 
         var sort = sortby + " "+order;
 
+
         //do the count first...
         if(typeof req.query.q ==="undefined" || S(req.query.q).trim().s.length === 0) {
             var criteria = {owner:owner.id};

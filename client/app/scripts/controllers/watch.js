@@ -8,10 +8,15 @@
  * Controller of the synoteClient
  */
 angular.module('synoteClient')
-  .controller('WatchCtrl',['$scope','$filter', '$routeParams','$location', '$sce', '$timeout', '$document','multimediaService', 'playlistService', 'synmarkService','Transcript','Cue','utilService','authenticationService','toaster','ENV',
-    function ($scope,$filter, $routeParams,$location, $sce, $timeout,$document, multimediaService, playlistService, synmarkService, Transcript, Cue, utilService, authenticationService, toaster,ENV) {
+  .controller('WatchCtrl',['$scope','$filter', '$routeParams','$location', '$sce', '$timeout', '$document','matchmedia','multimediaService', 'playlistService', 'synmarkService','Transcript','Cue','utilService','authenticationService','toaster','ENV',
+    function ($scope,$filter, $routeParams,$location, $sce, $timeout,$document, matchmedia, multimediaService, playlistService, synmarkService, Transcript, Cue, utilService, authenticationService, toaster,ENV) {
 
       var $translate = $filter('translate');
+
+      //get the device first
+      $scope.isTablet = matchmedia.isTablet();
+      $scope.isPhone = matchmedia.isPhone();
+      $scope.isDesktop = matchmedia.isDesktop();
 
       $scope.videoError = false;
       $scope.multimedia = {};
@@ -23,6 +28,15 @@ angular.module('synoteClient')
       $scope.cuepoints = {}; //the play sequence object based on chained synmarks
       $scope.cuepoints.current = null; //the current index of chained synmarks
       $scope.cuepoints.points = [];
+      $scope.showMMDescription =  false;
+      $scope.toggleShowMMDescriptionText = "More..."
+      $scope.showAddToPlaylist=false;
+      $scope.displaySettings = {};
+      $scope.displaySettings.showSynmarks = true; //show synmark by default
+      $scope.displaySettings.showPlaylist = true; //show playlist by default
+      $scope.displaySettings.showTranscripts = true; //show transcripts by default
+      $scope.displaySettings.showMMInfo = true; //show multimedia information by default
+
 
       $scope.st; //starttime
       $scope.stPlayed = true; //indicate weather the video has started playing from st yet, if no, we will jump to st when we monitor API.currentTime
@@ -37,12 +51,14 @@ angular.module('synoteClient')
       $scope.synmarkDisplay.mine = $location.search().mine === "true"?true:false;//display anyone's synmarks or just my synmarks
       $scope.synmarkDisplay.chained = $location.search().chained === "true"?true:false;
       $scope.synmarkDisplay.tabactive = true; // whether the synmark tab is active
+      $scope.synmarkDisplay.focusView = false; //display only synmarks related to the current time
       $scope.currentEditingSynmark = null; //the current synmark under editing
       $scope.synmarkContent = ""; //rich text synmark content
       $scope.synmarkTagsStr = ""; //synmark tags string
       $scope.synmarkMfst = ""; //synmark start time
       $scope.synmarkMfet = ""; //synmark endd time
       $scope.showEditingSynmarkForm = false //show synmark editing form or not
+
 
       $scope.transcripts;
       $scope.selectedTranscript;
@@ -214,6 +230,35 @@ angular.module('synoteClient')
         return;
       }
 
+      /* responsive design methods */
+      matchmedia.onDesktop(function(mediaQueryList){
+        $scope.isDesktop = mediaQueryList.matches;
+        //show everything
+        $scope.displaySettings.showSynmarks = true;
+        $scope.displaySettings.showPlaylist = true;
+        $scope.displaySettings.showTranscripts = true;
+        $scope.displaySettings.showMMInfo = true;
+
+      });
+
+      $scope.toggleShowMMDescription = function(){
+        if(!$scope.showMMDescription){
+          $scope.toggleShowMMDescriptionText = "Less..."
+        }
+        else{
+          $scope.toggleShowMMDescriptionText = "More..."
+        }
+
+        $scope.showMMDescription =!$scope.showMMDescription;
+        return;
+      };
+
+      $scope.toggleShowAddToPlaylist = function(){
+        $scope.showAddToPlaylist =!$scope.showAddToPlaylist;
+      };
+
+      /* /responsive design methods */
+
       /*synmark functions*/
       $scope.showSynmarkForm = function(){
         if(!$scope.showEditingSynmarkForm){ //if not shown at the moment, it's not editing synmark, so we need to create a new synmark
@@ -345,7 +390,11 @@ angular.module('synoteClient')
       //click the "mine" button in button-group
       $scope.toggleMine = function(){
         $scope.refreshSynmarkDisplay();
-      }
+      };
+
+      $scope.focusViewEnabled = function(){
+        return $scope.synmarkDisplay.focusView;
+      };
 
       //click the "chain" button in button-group
       $scope.toggleChained = function(){
@@ -531,7 +580,7 @@ angular.module('synoteClient')
           return true;
         }
         else{
-          $scope.currentCue = null;
+          //$scope.currentCue = null;
           return false;
         }
       };
@@ -547,8 +596,9 @@ angular.module('synoteClient')
       $scope.editCue = function(cue,$event){
         $event.stopPropagation(); //stop the cue click event to propagate to the whole cue div
         $scope.showEditingCueForm = true;
-        var transcriptFormDiv = angular.element(document.getElementById('transcripts_div'));
-        $document.scrollToElementAnimated(transcriptFormDiv); //score to the correct page position
+        $scope.API.pause();//stop the video
+        var videoDiv = angular.element(document.getElementById('video_div'));
+        $document.scrollToElementAnimated(videoDiv); //score to the correct page position
 
         //let currentEditingSynmark reference to the current synmark
         //Every change to the currentEditingSynmark will will also change the synmark in $scope.synmarks list

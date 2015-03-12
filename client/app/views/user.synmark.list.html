@@ -46,7 +46,8 @@
         <br/>
       </div>
     </div>
-    <pagination ng-if="synmarks.length >0" boundary-links="true" items-per-page="limit" total-items="count" ng-model="currentPage" ng-change="pageChanged()" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+    <!-- can't add ng-if here the pagination will mysteriously doesn't work then-->
+    <pagination boundary-links="true" items-per-page="limit" total-items="count" ng-model="currentPage" ng-change="pageChanged()" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
     <div ng-if="synmarks.length == 0">
       {{'NO_SYNMARK_FOUND_TEXT' | translate }}
     </div>

@@ -1,7 +1,66 @@
 <toaster-container></toaster-container>
 <div mc-messages></div>
 <div class="row" cg-busy="loadPromise">
-  <div class="col-md-7 col-sm-7 col-xs-12" id="left_div">
+  <div class="col-md-7 col-sm-12 col-xs-12" id="left_div">
+    <!-- title div-->
+    <div id="title_div">
+      <h2 class="player-h2">{{multimedia.title}}</h2>
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <i class="fa fa-user"></i> by {{multimedia.owner.username}}
+          | <i class="fa fa-calendar"></i>&nbsp;Published <span am-time-ago="multimedia.createdAt"></span>
+          | <i class="fa fa-tags"></i> Tags :
+            <span class="label label-info label-tag" ng-repeat="tag in multimedia.tags" ng-if="multimedia.tags.length>0">
+              {{tag.text}}
+            </span>
+            <span  ng-if="multimedia.tags.length === 0">
+              {{'NO_TAGS_TEXT' | translate}}
+            </span>
+          | <button ng-click="toggleShowAddToPlaylist()" class="btn btn-xs btn-info" ng-if="playlists"><i class="fa fa-plus"></i>Add to</button>
+        </div>
+      </div>
+      <div class="row" cg-busy="addToPlaylistPromise" ng-if="showAddToPlaylist">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <span>
+            <b>{{'PLAYLIST_TITLE_TEXT' | translate}}</b>
+          </span>
+          <ul class="list-group">
+            <li ng-if="playlists.length > 0" ng-repeat="playlist in playlists" class="list-group-item">
+              <i class="fa fa-list"></i><a href ng-click="displayPlaylist(playlist.id)">&nbsp;{{playlist.title | limitTo:35}}</a>
+              <div class="pull-right"><button ng-click="addToPlaylist(playlist)" class="btn btn-xs btn-primary">Add</button></div>
+            </li>
+            <li ng-if="playlists.length === 0" class="list-group-item">
+              {{'NO_PLAYLIST_TEXT' | translate}}
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <span>
+            <b>{{'IN_PLAYLIST_TEXT' | translate}}</b>
+          </span>
+          <ul class="list-group">
+            <li ng-if="!isEmptyObject(multimediaInPlaylists)" ng-repeat="(id, playlist) in multimediaInPlaylists" class="list-group-item">
+              <i class="fa fa-list"></i><a href ng-click="displayPlaylist(id)">&nbsp;{{playlist.title | limitTo:35}}</a>
+              <span class="badge">{{playlist.count}}</span>
+            </li>
+            <li href ng-if="isEmptyObject(multimediaInPlaylists)" class="list-group-item">
+              {{'NOTINANY_PLAYLIST_TEXT' | translate}}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12" ng-if="!showMMDescription">
+          {{multimedia.description | limitTo: 128}}
+          <a href ng-click="toggleShowMMDescription()">{{toggleShowMMDescriptionText}}</a>
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12" ng-if="showMMDescription">
+          {{multimedia.description}}
+          <a href ng-click="toggleShowMMDescription()">{{toggleShowMMDescriptionText}}</a>
+        </div>
+      </div>
+    </div>
+    <!-- /title div-->
     <div class="videogular-container" id="video_div" ng-if="videoError == false">
       <videogular class="vg-controls" vg-player-ready="onPlayerReady" vg-complete="onCompleteVideo" vg-theme="config.theme" vg-autoplay="config.autoPlay">
         <vg-video vg-src="config.sources" vg-youtube="rel=1;showinfo=1"></vg-video>
@@ -29,34 +88,118 @@
       <div class="subtitle-row">
         <div class="col-md-12 col-sm-12">
           {{currentCue.content}}
+          <button ng-if="currentCue" title="edit cue" ng-click="editCue(currentCue, $event)" type="button" class="btn btn-default btn-xs" ng-if="canEditCue(cue)"><i class="fa fa-edit"></i></button>
         </div>
       </div>
     </div>
-    <br/>
-    <!-- /display the current cue-->
-    <!-- title div-->
-    <div id="title_div">
-      <h2 class="player-h2">{{multimedia.title}}</h2>
-      <p>
-        <i class="fa fa-user"></i> by {{multimedia.owner.username}}
-        | <i class="fa fa-calendar"></i>&nbsp;Published <span am-time-ago="multimedia.createdAt"></span>
-        | <i class="fa fa-tags"></i> Tags :
-          <span class="label label-info label-tag" ng-repeat="tag in multimedia.tags" ng-if="multimedia.tags.length>0">
-            {{tag.text}}
-          </span>
-          <span  ng-if="multimedia.tags.length === 0">
-            {{'NO_TAGS_TEXT' | translate}}
-          </span>
-        | <button class="btn btn-warning btn-xs" ng-click="showSynmarkFormFromOutside()" ng-if="canCreateSynmark()"><i class="fa fa-bookmark"></i></button>
-      </p>
-      <p class="hidden-xs hidden-sm">
-        {{multimedia.description}}
-      </p>
+    <!-- setting div -->
+    <div id="settings_div" class="visible-xs visible-sm">
+      <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="btn-group pull-right">
+            <label class="btn btn-info btn-sm" ng-model="displaySettings.showPlaylist" ng-class="{disabled: !playlist}" btn-checkbox>Playlist</label>
+            <label class="btn btn-info btn-sm" ng-model="displaySettings.showSynmarks" btn-checkbox>Synmarks</label>
+            <label class="btn btn-info btn-sm" ng-model="displaySettings.showTranscripts" btn-checkbox>Transcrips</label>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- /title div-->
+    <!-- /setting div -->
+    <!-- /display the current cue-->
+    <div id="transcripts_div" class="well" ng-if="displaySettings.showTranscripts">
+      <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-3">
+          <h2 class="player-h2">Transcript</h2>
+        </div>
+        <div id="transcripts_control_div" class="col-md-6 col-sm-6 col-xs-9">
+          <div class="pull-right">
+            <button class="btn btn-warning btn-sm" ng-click="showCueForm()" ng-if="canCreateCue()"><i class="fa fa-plus"></i>&nbsp;Add Cue</button>
+            <button class="btn btn-info btn-sm" ng-click="showTranscriptForm()" ng-if="canCreateTranscript()"><i class="fa fa-language">&nbsp;New</i></button>
+            <div class="btn-group" dropdown ng-if="transcripts && transcripts.length>0">
+              <button type="button" class="btn btn-sm btn-primary dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+                {{selectedTranscript.lang}}<span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="transcript in transcripts">
+                  <a href ng-click="changeSelectedTranscript(transcript)">{{transcript.lang}}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" id="transcript_edit_div" ng-show="showEditingTranscriptForm" cg-busy="transcriptPromise">
+        <form name="transcriptForm" id="transcript_form">
+          <div class="form-group col-md-12 col-sm-12 synmark-form-group">
+            <input type="text" name="lang" ng-model="transcriptObj.lang" class="form-control" ng-required="true" placeholder="Language of the transcript..."/>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button id="transcript_submit_btn" ng-disabled="!transcriptForm.$valid" ng-click="processTranscriptForm()" name="submit_btn" class="btn btn-lg btn-success btn-block">Create</button>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button id="transcript_reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block" ng-click="cancelTranscriptEditing()">Cancel</button>
+          </div>
+        </form>
+      </div>
+      <div class="row" id="cue_edit_div" ng-show="showEditingCueForm" cg-busy="cuePromise">
+        <form name="cueForm" id="cue_form">
+          <br/>
+          <input type="hidden" ng-model="currentEditingCue.id" name="cue_id"/>
+          <div class="col-md-6 col-sm-6">
+            <div class="input-group">
+              <input name="cue_mfst" ng-model="currentEditingCue.ststr" placeholder="{{'START_TIME_PLACEHOLDER' | translate}}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
+                      <span class="input-group-btn">
+                        <button class="btn btn-info" type="button" ng-click="setCueSt()"><i class="fa fa-clock-o"></i></button>
+                      </span>
+            </div>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <div class="input-group">
+              <input name="cue_mfet" ng-model="currentEditingCue.etstr" placeholder="{{'END_TIME_PLACEHOLDER' | translate }}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
+                      <span class="input-group-btn">
+                        <button class="btn btn-info" type="button" ng-click="setCueEt()"><i class="fa fa-clock-o"></i></button>
+                      </span>
+            </div>
+          </div>
+          <div class="col-md-12 col-sm-12">
+            <textarea rows="5" class="form-control" ng-required="true" name="cue_content" ng-model="currentEditingCue.content"></textarea>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button id="cue_submit_btn" ng-disabled="!cueForm.$valid" ng-click="processCueForm()" name="submit_btn" class="btn btn-lg btn-success btn-block">Submit</button>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button id="cue_reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block" ng-click="cancelCueEditing()">Cancel</button>
+          </div>
+        </form>
+      </div>
+      <br/>
+      <div ng-repeat="cue in selectedTranscript.cues | orderBy:'st':false">
+        <div class="row transcript-row" ng-click="playCue(cue)" ng-class="{'transcript-row-highlighted':shouldCueHighlighted(cue)}">
+          <div class="col-md-12 col-sm-12">
+            <div class="btn-group controls" role="group">
+              <button title="edit cue" ng-click="editCue(cue, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditCue(cue)"><i class="fa fa-edit"></i></button>
+            </div>
+          </div>
+          <div class="col-md-12 col-sm-12 cue-time">
+            <span>{{secondsToHHMMSS(cue.st/1000)}}</span>
+            <span> to </span>
+            <span>{{secondsToHHMMSS(cue.et/1000)}}</span>
+          </div>
+          <div class="col-md-12 col-sm-12">
+            {{cue.content}}
+          </div>
+        </div>
+      </div>
+      <div ng-if="!transcripts || transcripts.length === 0">
+        {{'NO_TRANSCRIPT_TEXT' | translate}}
+      </div>
+      <div ng-if="selectedTranscript && (selectedTranscript.cues === undefined || selectedTranscript.cues.length ===0)">
+        {{'TRANSCRIPT_NO_CONTENT_TEXT' | translate}}
+      </div>
+    </div>
   </div>
   <div class="col-md-5 col-sm-12 col-xs-12" id="right_div">
-    <div id="playlist_div" ng-if="playlist" cg-busy="loadPlaylistPromise">
+    <div id="playlist_div" ng-if="playlist && displaySettings.showPlaylist" cg-busy="loadPlaylistPromise">
       <div class="watch-playlist" style="display:inline">
         <div class="watch-playlist-title">
           <span><b><a href ng-click="displayPlaylist(playlist.id)">{{playlist.title | limitTo:48}}</a></b></span>
@@ -87,209 +230,88 @@
         </ul>
       </div>
     </div>
-    <div id="annotation_div" class="well">
-      <tabset>
-        <tab heading="Synmark" id="synmark_tab" active="synmarkDisplay.tabactive">
-          <div id="synmarks_div">
-            <div class="row">
-              <div id="synmarks_control_div" class="col-md-8 col-sm-9 pull-right">
-                <button class="btn btn-warning btn-sm" ng-click="showSynmarkForm()" ng-if="canCreateSynmark()"><i class="fa fa-bookmark"></i></button>
-                <div class="btn-group">
-                  <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.marked" ng-change="toggleMarked()" btn-checkbox ng-class="{disabled: !playlist}">Marked</label>
-                  <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.mine" ng-change="toggleMine()" btn-checkbox>Mine</label>
-                  <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.chained" ng-change="toggleChained()" btn-checkbox>Chained</label>
-                </div>
-              </div>
+    <div id="synmarks_div" class="well" ng-if="displaySettings.showSynmarks">
+      <div class="row">
+        <div class="col-md-3 col-sm-3 col-xs-12">
+          <h2 class="player-h2">Synmarks</h2>
+        </div>
+        <div id="synmarks_control_div" class="col-md-9 col-sm-9 col-xs-12 pull-right">
+          <button class="btn btn-warning btn-sm" ng-click="showSynmarkForm()" ng-if="canCreateSynmark()"><i class="fa fa-bookmark"></i></button>
+          <div class="btn-group">
+            <label title="toggle focus view" class="btn btn-info btn-sm" ng-model="synmarkDisplay.focusView" btn-checkbox><i class="fa fa-filter"></i></label>
+            <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.marked" ng-change="toggleMarked()" btn-checkbox ng-class="{disabled: !playlist}">Marked</label>
+            <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.mine" ng-change="toggleMine()" btn-checkbox>Mine</label>
+            <label class="btn btn-info btn-sm" ng-model="synmarkDisplay.chained" ng-change="toggleChained()" btn-checkbox>Chained</label>
+          </div>
+        </div>
+      </div>
+      <div id="synmark_edit_div" class="row" ng-show="showEditingSynmarkForm" cg-busy="synmarkPromise">
+        <form name="synmarkForm">
+          <input type="hidden" ng-model="currentEditingSynmark.id" name="synmark_id"/>
+          <div class="form-group col-md-12 col-sm-12 synmark-form-group">
+            <input name="synmark_title" placeholder="Title" class="form-control" ng-model="currentEditingSynmark.title" ng-required="true"/>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <div class="input-group">
+              <input name="synmark_mfst" ng-model="synmarkMfst" placeholder="{{'START_TIME_PLACEHOLDER' | translate}}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
+              <span class="input-group-btn">
+                <button class="btn btn-info" type="button" ng-click="setSynmarkMfst()"><i class="fa fa-clock-o"></i></button>
+              </span>
             </div>
-            <div id="synmark_edit_div" class="row" ng-show="showEditingSynmarkForm" cg-busy="synmarkPromise">
-              <form name="synmarkForm">
-                <input type="hidden" ng-model="currentEditingSynmark.id" name="synmark_id"/>
-                <div class="form-group col-md-12 col-sm-12 synmark-form-group">
-                  <input name="synmark_title" placeholder="Title" class="form-control" ng-model="currentEditingSynmark.title" ng-required="true"/>
-                </div>
-                <div class="col-md-6 col-sm-6">
-                  <div class="input-group">
-                    <input name="synmark_mfst" ng-model="synmarkMfst" placeholder="{{'START_TIME_PLACEHOLDER' | translate}}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
-                    <span class="input-group-btn">
-                      <button class="btn btn-info" type="button" ng-click="setSynmarkMfst()"><i class="fa fa-clock-o"></i></button>
-                    </span>
-                  </div>
-                </div>
-                <div class="col-md-6 col-sm-6">
-                  <div class="input-group">
-                    <input name="synmark_mfet" ng-model="synmarkMfet" placeholder="{{'END_TIME_PLACEHOLDER' | translate }}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
-                    <span class="input-group-btn">
-                      <button class="btn btn-info" type="button" ng-click="setSynmarkMfet()"><i class="fa fa-clock-o"></i></button>
-                    </span>
-                  </div>
-                </div>
-                <div class="form-group col-md-12 col-sm-12 synmark-form-group">
-                  <input style="width:100%" name="synmark_tags" placeholder="Tags" class="tagsinput form-control" data-role="tagsinput" ng-model="synmarkTagsStr"/>
-                </div>
-                <div class="form-group col-md-12 col-sm-12">
-                  <text-angular name="synmark_content" placeholder="Synmark Content..." rows="5"
-                                ta-toolbar="[['bold','italics','underline','ul', 'ol'],['insertLink','insertImage']]" ng-model="synmarkContent"></text-angular>
-                </div>
-                <div class="col-md-6 col-sm-6">
-                  <button id="synmark_submit_btn" ng-disabled="!synmarkForm.$valid" ng-click="processSynmarkForm()" name="submit_btn" class="btn btn-lg btn-success btn-block">Submit</button>
-                </div>
-                <div class="col-md-6 col-sm-6">
-                  <button id="synmark_reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block" ng-click="cancelSynmarkEditing()">Cancel</button>
-                </div>
-              </form>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <div class="input-group">
+              <input name="synmark_mfet" ng-model="synmarkMfet" placeholder="{{'END_TIME_PLACEHOLDER' | translate }}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
+              <span class="input-group-btn">
+                <button class="btn btn-info" type="button" ng-click="setSynmarkMfet()"><i class="fa fa-clock-o"></i></button>
+              </span>
             </div>
-            <div ng-repeat="synmark in synmarks | orderBy:'mfst':false" ng-if="synmarks.length>0">
-              <div class="row synmark-row" ng-if="synmark.display" ng-click="playSynmark(synmark)" ng-class="{'synmark-row-highlighted':shouldSynmarkHighlighted(synmark)}">
-                <hr/>
-                <div class="col-md-12 col-sm-12">
-                  <span>{{synmark.title}}</span>
-                  <span class="synmark-owner"> by {{synmark.owner.username}}</span>
-                  <div class="btn-group controls" role="group">
-                    <button title="mark" ng-click="addSynmarkToPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && canBeMarked(synmark)"><i class="fa fa-eye"></i></button>
-                    <button title="unmark" ng-click="removeSynmarkFromPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && !canBeMarked(synmark)"><i class="fa fa-eye-slash"></i></button>
-                    <button title="edit synamrk" ng-click="editSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-edit"></i></button>
-                    <button title="delete synmark" ng-click="deleteSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-remove"></i></button>
-                  </div>
-                </div>
-                <div class="col-md-12 col-sm-12 synmark-time">
-                  <span>{{secondsToHHMMSS(synmark.mfst)}}</span>
-                  <span> to </span>
-                  <span>{{secondsToHHMMSS(synmark.mfet)}}</span>
-                </div>
-                <div class="col-md-12 col-sm-12" ng-if="synmark.tags.length > 0">
+          </div>
+          <div class="form-group col-md-12 col-sm-12 synmark-form-group">
+            <input style="width:100%" name="synmark_tags" placeholder="Tags" class="tagsinput form-control" data-role="tagsinput" ng-model="synmarkTagsStr"/>
+          </div>
+          <div class="form-group col-md-12 col-sm-12">
+            <text-angular name="synmark_content" placeholder="Synmark Content..." rows="5"
+                          ta-toolbar="[['bold','italics','underline','ul', 'ol'],['insertLink','insertImage']]" ng-model="synmarkContent"></text-angular>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button id="synmark_submit_btn" ng-disabled="!synmarkForm.$valid" ng-click="processSynmarkForm()" name="submit_btn" class="btn btn-lg btn-success btn-block">Submit</button>
+          </div>
+          <div class="col-md-6 col-sm-6">
+            <button id="synmark_reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block" ng-click="cancelSynmarkEditing()">Cancel</button>
+          </div>
+        </form>
+      </div>
+      <div ng-repeat="synmark in synmarks | orderBy:'mfst':false" ng-if="synmarks.length>0">
+        <div class="row synmark-row" ng-if="synmark.display" ng-click="playSynmark(synmark)" ng-class="{'synmark-row-highlighted':shouldSynmarkHighlighted(synmark),'synmark-row-hide':focusViewEnabled()}">
+          <hr/>
+          <div class="col-md-12 col-sm-12">
+            <span>{{synmark.title}}</span>
+            <span class="synmark-owner"> by {{synmark.owner.username}}</span>
+            <div class="btn-group controls" role="group">
+              <button title="mark" ng-click="addSynmarkToPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && canBeMarked(synmark)"><i class="fa fa-eye"></i></button>
+              <button title="unmark" ng-click="removeSynmarkFromPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && !canBeMarked(synmark)"><i class="fa fa-eye-slash"></i></button>
+              <button title="edit synamrk" ng-click="editSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-edit"></i></button>
+              <button title="delete synmark" ng-click="deleteSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-remove"></i></button>
+            </div>
+          </div>
+          <div class="col-md-12 col-sm-12 synmark-time">
+            <span>{{secondsToHHMMSS(synmark.mfst)}}</span>
+            <span> to </span>
+            <span>{{secondsToHHMMSS(synmark.mfet)}}</span>
+          </div>
+          <div class="col-md-12 col-sm-12" ng-if="synmark.tags.length > 0">
             <span class="label label-info label-tag" ng-repeat="tag in synmark.tags" ng-if="synmark.tags.length>0">
               {{tag.text}}
             </span>
-                </div>
-                <div class="col-md-12 col-sm-12" ng-bind-html="synmark.content">
-                </div>
-              </div>
-            </div>
-            <div ng-if="synmarks.length === 0">
-              {{'NO_SYNMARK_TEXT' | translate}}
-            </div>
           </div>
-        </tab>
-        <tab heading="Transcript" id="transcript_tab">
-          <div class="row" id="transcripts_div">
-            <div id="transcripts_control_div" class="col-md-12 col-sm-12 col-xs-12">
-              <button class="btn btn-warning btn-sm pull-left" ng-click="showCueForm()" ng-if="canCreateCue()"><i class="fa fa-plus"></i>&nbsp;Add Cue</button>
-              <div class="btn-group pull-right" dropdown ng-if="transcripts && transcripts.length>0">
-                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" dropdown-toggle ng-disabled="disabled">
-                  {{selectedTranscript.lang}}<span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                  <li ng-repeat="transcript in transcripts">
-                    <a href ng-click="changeSelectedTranscript(transcript)">{{transcript.lang}}</a>
-                  </li>
-                </ul>
-              </div>
-              <button class="btn btn-info btn-sm pull-right" ng-click="showTranscriptForm()" ng-if="canCreateTranscript()"><i class="fa fa-language">&nbsp;New</i></button>
-            </div>
+          <div class="col-md-12 col-sm-12" ng-bind-html="synmark.content">
           </div>
-          <div class="row" id="transcript_edit_div" ng-show="showEditingTranscriptForm" cg-busy="transcriptPromise">
-            <form name="transcriptForm" id="transcript_form">
-              <div class="form-group col-md-12 col-sm-12 synmark-form-group">
-                <input type="text" name="lang" ng-model="transcriptObj.lang" class="form-control" ng-required="true" placeholder="Language of the transcript..."/>
-              </div>
-              <div class="col-md-6 col-sm-6">
-                <button id="transcript_submit_btn" ng-disabled="!transcriptForm.$valid" ng-click="processTranscriptForm()" name="submit_btn" class="btn btn-lg btn-success btn-block">Create</button>
-              </div>
-              <div class="col-md-6 col-sm-6">
-                <button id="transcript_reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block" ng-click="cancelTranscriptEditing()">Cancel</button>
-              </div>
-            </form>
-          </div>
-          <div class="row" id="cue_edit_div" ng-show="showEditingCueForm" cg-busy="cuePromise">
-            <form name="cueForm" id="cue_form">
-              <br/>
-              <input type="hidden" ng-model="currentEditingCue.id" name="cue_id"/>
-              <div class="col-md-6 col-sm-6">
-                <div class="input-group">
-                  <input name="cue_mfst" ng-model="currentEditingCue.ststr" placeholder="{{'START_TIME_PLACEHOLDER' | translate}}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
-                    <span class="input-group-btn">
-                      <button class="btn btn-info" type="button" ng-click="setCueSt()"><i class="fa fa-clock-o"></i></button>
-                    </span>
-                </div>
-              </div>
-              <div class="col-md-6 col-sm-6">
-                <div class="input-group">
-                  <input name="cue_mfet" ng-model="currentEditingCue.etstr" placeholder="{{'END_TIME_PLACEHOLDER' | translate }}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
-                    <span class="input-group-btn">
-                      <button class="btn btn-info" type="button" ng-click="setCueEt()"><i class="fa fa-clock-o"></i></button>
-                    </span>
-                </div>
-              </div>
-              <div class="col-md-12 col-sm-12">
-                <textarea rows="5" class="form-control" ng-required="true" name="cue_content" ng-model="currentEditingCue.content"/>
-              </div>
-              <div class="col-md-6 col-sm-6">
-                <button id="cue_submit_btn" ng-disabled="!cueForm.$valid" ng-click="processCueForm()" name="submit_btn" class="btn btn-lg btn-success btn-block">Submit</button>
-              </div>
-              <div class="col-md-6 col-sm-6">
-                <button id="cue_reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block" ng-click="cancelCueEditing()">Cancel</button>
-              </div>
-            </form>
-          </div>
-          <br/>
-          <div ng-repeat="cue in selectedTranscript.cues | orderBy:'st':false">
-            <div class="row transcript-row" ng-click="playCue(cue)" ng-class="{'transcript-row-highlighted':shouldCueHighlighted(cue)}">
-              <div class="col-md-12 col-sm-12">
-                <div class="btn-group controls" role="group">
-                  <button title="edit cue" ng-click="editCue(cue, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditCue(cue)"><i class="fa fa-edit"></i></button>
-                </div>
-              </div>
-              <div class="col-md-12 col-sm-12 cue-time">
-                <span>{{secondsToHHMMSS(cue.st/1000)}}</span>
-                <span> to </span>
-                <span>{{secondsToHHMMSS(cue.et/1000)}}</span>
-              </div>
-              <div class="col-md-12 col-sm-12">
-                {{cue.content}}
-              </div>
-            </div>
-          </div>
-          <div ng-if="!transcripts || transcripts.length === 0">
-            {{'NO_TRANSCRIPT_TEXT' | translate}}
-          </div>
-          <div ng-if="selectedTranscript && (selectedTranscript.cues === undefined || selectedTranscript.cues.length ===0)">
-            {{'TRANSCRIPT_NO_CONTENT_TEXT' | translate}}
-          </div>
-        </tab>
-        <tab heading="Add to" id="playlist_tab" ng-if="playlists">
-          <br/>
-          <div class="row" cg-busy="addToPlaylistPromise">
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <span>
-                  <b>{{'PLAYLIST_TITLE_TEXT' | translate}}</b>
-                </span>
-              <ul class="list-group">
-                <li ng-if="playlists.length > 0" ng-repeat="playlist in playlists" class="list-group-item">
-                  <i class="fa fa-list"></i><a href ng-click="displayPlaylist(playlist.id)">&nbsp;{{playlist.title | limitTo:35}}</a>
-                  <div class="pull-right"><button ng-click="addToPlaylist(playlist)" class="btn btn-xs btn-primary">Add</button></div>
-                </li>
-                <li ng-if="playlists.length === 0" class="list-group-item">
-                  {{'NO_PLAYLIST_TEXT' | translate}}
-                </li>
-              </ul>
-            </div>
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <span>
-                  <b>{{'IN_PLAYLIST_TEXT' | translate}}</b>
-                </span>
-              <ul class="list-group">
-                <li ng-if="!isEmptyObject(multimediaInPlaylists)" ng-repeat="(id, playlist) in multimediaInPlaylists" class="list-group-item">
-                  <i class="fa fa-list"></i><a href ng-click="displayPlaylist(id)">&nbsp;{{playlist.title | limitTo:35}}</a>
-                  <span class="badge">{{playlist.count}}</span>
-                </li>
-                <li href ng-if="isEmptyObject(multimediaInPlaylists)" class="list-group-item">
-                  {{'NOTINANY_PLAYLIST_TEXT' | translate}}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </tab>
-      </tabset>
+        </div>
+      </div>
+      <div ng-if="synmarks.length === 0">
+        {{'NO_SYNMARK_TEXT' | translate}}
+      </div>
     </div>
   </div>
 </div>
