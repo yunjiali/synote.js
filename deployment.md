@@ -24,6 +24,13 @@ This document explains how to deploy synote.js on ubuntu
 1. mysql -u root -p synotejs_prod < server/db/backup-xx.sql (choose the correct backup)
 1. exit mysql and use forever to start the server:
 ```forever start app.js --prod```
+
+To start sandbox, use:
+```NODE_ENV=sandbox forever start app.js```
+
+To start arabic version, use:
+```NODE_ENV=arabic forever start app.js```
+
 1. you can then type:
 ```forever list```
 to check if the server has been started
