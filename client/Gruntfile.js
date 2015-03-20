@@ -354,6 +354,32 @@ module.exports = function (grunt) {
             hostURL:'http://ws.synote.org'
           }
         }
+      },
+      sandbox: {
+        options: {
+          //should be yeoman.app here instead of yeoman.dist, or the new config.js won't be written to scripts.js'
+          dest: '<%= yeoman.app %>/scripts/config.js'
+        },
+        constants: {
+          ENV: {
+            name:'sandbox',
+            apiEndpoint:'http://server.sandbox.synote.org',
+            hostURL:'http://client.sandbox.synote.org'
+          }
+        }
+      },
+      arabic: {
+        options: {
+          //should be yeoman.app here instead of yeoman.dist, or the new config.js won't be written to scripts.js'
+          dest: '<%= yeoman.app %>/scripts/config.js'
+        },
+        constants: {
+          ENV: {
+            name:'arabic',
+            apiEndpoint:'http://server.arabic.synote.org',
+            hostURL:'http://client.arabic.synote.org'
+          }
+        }
       }
     },
 
@@ -480,6 +506,42 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean:dist',
     'ngconstant:production', // ADD THIS
+    'wiredep',
+    'useminPrepare',
+    'concurrent:dist',
+    'autoprefixer',
+    'concat',
+    'ngAnnotate',
+    'copy:dist',
+    'cdnify',
+    'cssmin',
+    'uglify',
+    'filerev',
+    'usemin',
+    'htmlmin'
+  ]);
+
+  grunt.registerTask('build-sandbox', [
+    'clean:dist',
+    'ngconstant:sandbox', // ADD THIS
+    'wiredep',
+    'useminPrepare',
+    'concurrent:dist',
+    'autoprefixer',
+    'concat',
+    'ngAnnotate',
+    'copy:dist',
+    'cdnify',
+    'cssmin',
+    'uglify',
+    'filerev',
+    'usemin',
+    'htmlmin'
+  ]);
+
+  grunt.registerTask('build-arabic', [
+    'clean:dist',
+    'ngconstant:arabic', // ADD THIS
     'wiredep',
     'useminPrepare',
     'concurrent:dist',
