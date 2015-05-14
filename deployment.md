@@ -48,6 +48,11 @@ https://www.digitalocean.com/community/tutorials/how-to-create-an-node-js-app-us
 1. I have removed the cssmin step in Gruntfile.js
 1. run:
 ```grunt build```
+or
+```grunt build:production```
+or
+```grunt build:sandbox```
+depending on the actual website you want to update
 1. I follow this tutorial to create nginx website for the client side:
 https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-virtual-hosts-server-blocks-on-ubuntu-12-04-lts--3
 1. on the deployment server, also remove the dist folder under synote.js/client in case the old files are not overwritten:
@@ -56,6 +61,10 @@ https://www.digitalocean.com/community/tutorials/how-to-set-up-nginx-virtual-hos
 ```sudo rm -R *```
 1. copy the generated dist folder to the target deployment directory in nginx
 ```sudo cp -R ~/synote.js/client/dist/* .```
+At the root folder of synote.js/client, I have created files like ```deploy-sandbox.sh```. You can deploy the sandbox website by:
+
+```sh deploy-sandbox.sh```
+and input the required passwords
 
 1. textAngular Error: An Editor with name "synmark_content" already exists <text-angular name="synmark_content" placeholder="Synmark Content..." rows="5" ta-toolbar="[['bold','italics','underline','ul', 'ol']]" ng-model="synmarkContent" class="ng-pristine ng-untouched ng-valid ng-isolate-scope ta-root">
 

@@ -156,6 +156,11 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     EDIT_TEXT:'Edit',
     SAVE_TEXT:'Save',
     CANCEL_TEXT:'Cancel',
+    PLAY_PLAYLIST_TEXT:'Play this list',
+    BTN_CREATE_TEXT:'Create',
+    BTN_RESET_TEXT:'Reset',
+    BTN_CANCEL_TEXT:'Cancel',
+    BTN_UPDATE_TEXT:'Update',
     TC_ERR:'You must agree on our terms and conditions.',
     PASSWORD_REG_NOTMATCH:"Password and confirmed password don't match.",
     CREATE_NAV_LINK:"Link to Media",
@@ -210,7 +215,11 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     CREATE_TRANSCRIPT_SUCCESS_TEXT:'Successfully created new transcript',
     CUE_ST_ERROR:'The format of cue start time is not valid.',
     CUE_ET_ERROR:'The format of cue end time is not valid.',
-    SAVE_CUE_SUCCESS_TEXT:'Successfully save transcript cue'
+    SAVE_CUE_SUCCESS_TEXT:'Successfully save transcript cue',
+    CREATE_MULTIMEDIA_EXPLAIN_TEXT:'Please put the URL of the video in the following text field, or',
+    UPLOAD_VIDEO_EXPLAIN_TEXT:'upload a video to our server',
+    CREATE_MULTIMEDIA_VIDEO_UPLOADING_FAILED:'No video uploading failed. Please check your network connection.',
+    CREATE_MULTIMEDIA_VIDEO_UPLOADING_SUCCESSFUL:'Video has been successfully uploaded.'
   });
 
   $translateProvider.determinePreferredLanguage(function () {

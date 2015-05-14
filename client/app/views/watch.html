@@ -253,7 +253,7 @@
           </div>
           <div class="col-md-6 col-sm-6">
             <div class="input-group">
-              <input name="synmark_mfst" ng-model="synmarkMfst" placeholder="{{'START_TIME_PLACEHOLDER' | translate}}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
+              <input name="synmark_mfst" ng-model="currentEditingSynmark.synmarkMfst" placeholder="{{'START_TIME_PLACEHOLDER' | translate}}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
               <span class="input-group-btn">
                 <button class="btn btn-info" type="button" ng-click="setSynmarkMfst()"><i class="fa fa-clock-o"></i></button>
               </span>
@@ -261,18 +261,18 @@
           </div>
           <div class="col-md-6 col-sm-6">
             <div class="input-group">
-              <input name="synmark_mfet" ng-model="synmarkMfet" placeholder="{{'END_TIME_PLACEHOLDER' | translate }}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
+              <input name="synmark_mfet" ng-model="currentEditingSynmark.synmarkMfet" placeholder="{{'END_TIME_PLACEHOLDER' | translate }}" type="text" class="form-control" ng-required="true" ng-pattern="/^[0-9][0-9]:[0-5][0-9]:[0-5][0-9]/"/>
               <span class="input-group-btn">
                 <button class="btn btn-info" type="button" ng-click="setSynmarkMfet()"><i class="fa fa-clock-o"></i></button>
               </span>
             </div>
           </div>
           <div class="form-group col-md-12 col-sm-12 synmark-form-group">
-            <input style="width:100%" name="synmark_tags" placeholder="Tags" class="tagsinput form-control" data-role="tagsinput" ng-model="synmarkTagsStr"/>
+            <input style="width:100%" name="synmark_tags" placeholder="Tags" class="tagsinput form-control" data-role="tagsinput" ng-model="currentEditingSynmark.synmarkTagsStr"/>
           </div>
           <div class="form-group col-md-12 col-sm-12">
             <text-angular name="synmark_content" placeholder="Synmark Content..." rows="5"
-                          ta-toolbar="[['bold','italics','underline','ul', 'ol'],['insertLink','insertImage']]" ng-model="synmarkContent"></text-angular>
+                          ta-toolbar="[['bold','italics','underline','ul', 'ol'],['insertLink','insertImage']]" ng-model="currentEditingSynmark.synmarkContent"></text-angular>
           </div>
           <div class="col-md-6 col-sm-6">
             <button id="synmark_submit_btn" ng-disabled="!synmarkForm.$valid" ng-click="processSynmarkForm()" name="submit_btn" class="btn btn-lg btn-success btn-block">Submit</button>
@@ -289,8 +289,8 @@
             <span>{{synmark.title}}</span>
             <span class="synmark-owner"> by {{synmark.owner.username}}</span>
             <div class="btn-group controls" role="group">
-              <button title="mark" ng-click="addSynmarkToPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && canBeMarked(synmark)"><i class="fa fa-eye"></i></button>
-              <button title="unmark" ng-click="removeSynmarkFromPlaylistItem(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && !canBeMarked(synmark)"><i class="fa fa-eye-slash"></i></button>
+              <button title="mark" ng-click="addSynmarkToPlaylistItem(synmark, $event)" title="Add synmark to this playlist" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && canBeMarked(synmark)"><i class="fa fa-user-plus"></i></button>
+              <button title="unmark" ng-click="removeSynmarkFromPlaylistItem(synmark, $event)" title="Remove this synmark from the playlist" type="button" class="btn btn-inverse btn-sm" ng-if="playlist && !canBeMarked(synmark)"><i class="fa fa-user-times"></i></button>
               <button title="edit synamrk" ng-click="editSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-edit"></i></button>
               <button title="delete synmark" ng-click="deleteSynmark(synmark, $event)" type="button" class="btn btn-inverse btn-sm" ng-if="canEditSynmark(synmark)"><i class="fa fa-remove"></i></button>
             </div>

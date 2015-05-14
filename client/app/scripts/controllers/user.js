@@ -21,8 +21,6 @@ angular.module('synoteClient')
 
               $scope.words[i].link = "/#/user/"+$scope.userInfo.id+"/synmark/list?q="+encodeURIComponent(data.words[i].text);
             }
-
-            console.log($scope.words);
           },
           function(err){
             //do nothing

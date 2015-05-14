@@ -39,7 +39,7 @@ angular.module('synoteClient')
 
 
       $scope.st; //starttime
-      $scope.stPlayed = true; //indicate weather the video has started playing from st yet, if no, we will jump to st when we monitor API.currentTime
+      $scope.stPlayed = true; //indicate whether the video has started playing from st yet, if no, we will jump to st when we monitor API.currentTime
       if(typeof $location.search().st === 'string' && !isNaN(parseInt($location.search().st))) {
         $scope.st = parseInt($location.search().st);
         $scope.stPlayed = false;
@@ -52,12 +52,12 @@ angular.module('synoteClient')
       $scope.synmarkDisplay.chained = $location.search().chained === "true"?true:false;
       $scope.synmarkDisplay.tabactive = true; // whether the synmark tab is active
       $scope.synmarkDisplay.focusView = false; //display only synmarks related to the current time
-      $scope.currentEditingSynmark = null; //the current synmark under editing
-      $scope.synmarkContent = ""; //rich text synmark content
-      $scope.synmarkTagsStr = ""; //synmark tags string
-      $scope.synmarkMfst = ""; //synmark start time
-      $scope.synmarkMfet = ""; //synmark endd time
       $scope.showEditingSynmarkForm = false //show synmark editing form or not
+      $scope.currentEditingSynmark = {}; //the current synmark under editing
+      $scope.currentEditingSynmark.synmarkContent = ""; //rich text synmark content
+      $scope.currentEditingSynmark.synmarkTagsStr = ""; //synmark tags string
+      $scope.currentEditingSynmark.synmarkMfst = ""; //synmark start time
+      $scope.currentEditingSynmark.synmarkMfet = ""; //synmark end time
 
 
       $scope.transcripts;
@@ -196,7 +196,7 @@ angular.module('synoteClient')
 
       $scope.secondsToHHMMSS = function(seconds){
         if(!seconds)
-          return "";
+          return "00:00:00";
         return utilService.secondsToHHMMSS(seconds);
       }
 
@@ -260,10 +260,15 @@ angular.module('synoteClient')
       /* /responsive design methods */
 
       /*synmark functions*/
+
+      //create a new synmark
       $scope.showSynmarkForm = function(){
         if(!$scope.showEditingSynmarkForm){ //if not shown at the moment, it's not editing synmark, so we need to create a new synmark
           $scope.showEditingSynmarkForm = true;
           $scope.currentEditingSynmark = {}
+          $scope.currentEditingSynmark.synmarkContent = "";
+          $scope.currentEditingSynmark.synmarkTagsStr = "";
+          $('.tagsinput').tagsinput('removeAll');
         }
 
         $scope.setSynmarkMfst();
@@ -276,6 +281,7 @@ angular.module('synoteClient')
         $scope.showSynmarkForm();
       }
 
+      //edit a synmark and show form
       $scope.editSynmark = function(synmark,$event){
         $event.stopPropagation(); //stop the synmark click event to propagate to the whole synmark div
         $scope.showEditingSynmarkForm = true;
@@ -285,10 +291,10 @@ angular.module('synoteClient')
         //let currentEditingSynmark reference to the current synmark
         //Every change to the currentEditingSynmark will will also change the synmark in $scope.synmarks list
         $scope.currentEditingSynmark = synmark;
-        $scope.synmarkMfst = $scope.secondsToHHMMSS(synmark.mfst);
-        $scope.synmarkMfet = $scope.secondsToHHMMSS(synmark.mfet);
-        $scope.synmarkContent = synmark.content;
-        $scope.synmarkTagsStr = synmark.tags.map(function(tag){ //TODO: it's better to use a specific id instead of class
+        $scope.currentEditingSynmark.synmarkMfst = $scope.secondsToHHMMSS(synmark.mfst);
+        $scope.currentEditingSynmark.synmarkMfet = $scope.secondsToHHMMSS(synmark.mfet);
+        $scope.currentEditingSynmark.synmarkContent = synmark.content;
+        $scope.currentEditingSynmark.synmarkTagsStr = synmark.tags.map(function(tag){ //TODO: it's better to use a specific id instead of class
           $('.tagsinput').tagsinput('add',tag.text);
           return tag.text;
         }).toString();
@@ -354,17 +360,19 @@ angular.module('synoteClient')
 
       $scope.cancelSynmarkEditing = function(){
         $scope.showEditingSynmarkForm = false;
-        $scope.synmarkContent = ""; //rich text synmark content
-        $scope.synmarkTagsStr = ""; //synmark tags string
-        $scope.currentEditingSynmark = null;
+        $scope.currentEditingSynmark = {};
+        $scope.currentEditingSynmark.synmarkContent = ""; //rich text synmark content
+        $scope.currentEditingSynmark.synmarkTagsStr = ""; //synmark tags string
+        $('.tagsinput').tagsinput('removeAll');
+        //??Do we also need to reset synmarkMfst and synmarkMfet?
       }
 
       $scope.setSynmarkMfst = function(){
-        $scope.synmarkMfst = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
+        $scope.currentEditingSynmark.synmarkMfst = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
       }
 
       $scope.setSynmarkMfet = function(){
-        $scope.synmarkMfet = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
+        $scope.currentEditingSynmark.synmarkMfet = $scope.secondsToHHMMSS($scope.API.currentTime.getTime()/1000);
       }
 
       $scope.canCreateSynmark = function(){
@@ -459,37 +467,39 @@ angular.module('synoteClient')
       }
 
       $scope.processSynmarkForm = function(){
-        var mfst = utilService.HHMMSSToSeconds($scope.synmarkMfst);
+        var mfst = utilService.HHMMSSToSeconds($scope.currentEditingSynmark.synmarkMfst);
         if(isNaN(mfst)){
           $scope.showToaster("error","error",$translate('SYNMARK_ST_ERROR'), 3000);
+          return false;
         }
-        var mfet = utilService.HHMMSSToSeconds($scope.synmarkMfet);
+        var mfet = utilService.HHMMSSToSeconds($scope.currentEditingSynmark.synmarkMfet);
         if(isNaN(mfet)){
           $scope.showToaster("error","error",$translate('SYNMARK_ET_ERROR'), 3000);
+          return false;
         }
 
         var newSynmark = {};
         newSynmark.id = $scope.currentEditingSynmark.id;
         newSynmark.title = $scope.currentEditingSynmark.title;
-        newSynmark.owner = $scope.currentEditingSynmark.owner?$scope.currentEditingSynmark.owner.id:authenticationService.getUserInfo.id;
-        newSynmark.tags = $scope.synmarkTagsStr;
+        newSynmark.owner = $scope.currentEditingSynmark.owner?$scope.currentEditingSynmark.owner.id:authenticationService.getUserInfo().id;
+        newSynmark.tags = $scope.currentEditingSynmark.synmarkTagsStr;
         newSynmark.mfst = mfst;
         newSynmark.mfet = mfet;
-        newSynmark.content = $scope.synmarkContent;
+        newSynmark.content = $scope.currentEditingSynmark.synmarkContent;
         newSynmark.annotates = $scope.multimedia.id;
         newSynmark.mmid = $scope.multimedia.id;
-        //console.log($scope.synmarkContent);
+        console.log(newSynmark);
         //TODO: add more about xywh
         if(newSynmark.id){ //edit
 
           $scope.synmarkPromise = synmarkService.saveSynmark(newSynmark)
             .then(function (result) {
-              $scope.currentEditingSynmark.tags = $scope.synmarkTagsStr.split(',').map(function (tagText) {
+              $scope.currentEditingSynmark.tags = $scope.currentEditingSynmark.synmarkTagsStr.split(',').map(function (tagText) {
                  return {text: tagText}
               });
               $scope.currentEditingSynmark.mfst = mfst;
               $scope.currentEditingSynmark.mfet = mfet;
-              $scope.currentEditingSynmark.content = $scope.synmarkContent;
+              $scope.currentEditingSynmark.content = $scope.currentEditingSynmark.synmarkContent;
 
               $scope.showToaster("success","success",$translate('SAVE_SYNMARK_SUCCESS_TEXT'), 3000);
               $scope.cancelSynmarkEditing();
@@ -504,8 +514,8 @@ angular.module('synoteClient')
             .then(function (result) {
               //push the new synmark into synmarklist
               result.synmark.owner = authenticationService.getUserInfo();
-              if($scope.synmarkTagsStr.length>0)
-                result.synmark.tags = $scope.synmarkTagsStr.split(',').map(function(tagText){
+              if($scope.currentEditingSynmark.synmarkTagsStr.length>0)
+                result.synmark.tags = $scope.currentEditingSynmark.synmarkTagsStr.split(',').map(function(tagText){
                   return {text:tagText}
                 });
 
@@ -777,10 +787,23 @@ angular.module('synoteClient')
                   return;
                 }
 
+                var videoSources = [];
+
+                if(data.multimedia.url.indexOf("//res.cloudinary.com/")!== -1){//the video is from cloudinary, which has 3 different formats
+                  //TODO: add a programme to auto select video if we have more formats for different devices
+                  videoSources = utilService.getCloudinaryCompitableVideoSource(data.multimedia.url);
+                }
+                else{
+                  videoSources.push({url:data.multimedia.url, type:type});
+                }
+
+                var videogularSources = videoSources.map(function(source){
+                  return {src: $sce.trustAsResourceUrl(source.url), type:source.type};
+                });
+
+                console.log(videogularSources);
                 $scope.videos = [{
-                  sources: [
-                    {src: $sce.trustAsResourceUrl(data.multimedia.url), type: type}
-                  ]
+                  sources: videogularSources
                 }];
               }
 

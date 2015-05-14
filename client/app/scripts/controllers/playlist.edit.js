@@ -8,7 +8,7 @@
  * Controller of the synoteClient
  */
 angular.module('synoteClient')
-  .controller('PlaylistEditCtrl', ['$scope', '$routeParams','$filter', 'messageCenterService','authenticationService','playlistService',  function ($scope, $routeParams, $filter, messageCenterService, authenticationService, playlistService){
+  .controller('PlaylistEditCtrl', ['$scope', '$routeParams','$filter', '$location','messageCenterService','authenticationService','playlistService',  function ($scope, $routeParams, $filter, $location, messageCenterService, authenticationService, playlistService){
 
     var $translate = $filter('translate');
     $scope.plid = $routeParams.playlistId;
@@ -56,7 +56,7 @@ angular.module('synoteClient')
           afterItems[i].ind++;
         }
       }
-    }
+    };
 
     $scope.removePlaylistItem = function(item){
       var indexes = $scope.items.map(function(i,index){
@@ -76,7 +76,8 @@ angular.module('synoteClient')
 
       $scope.items.splice(indexes[0],1);
       //item.ind = -1;
-    }
+    };
+
     $scope.savePlaylistItems = function(){
       $scope.getPromise = playlistService.savePlaylistItems($scope.items, $scope.plid)
         .then(function(data){
@@ -84,5 +85,11 @@ angular.module('synoteClient')
         }, function(error){
           messageCenterService.add('error', error,{timeout:3000});
         });
+    };
+
+    $scope.playPlaylist = function(){
+      if($scope.items.length>0){
+        $location.path('watch/'+$scope.items[0].multimedia.id+'/'+$scope.items[0].id);
+      }
     }
   }]);

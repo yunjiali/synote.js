@@ -338,7 +338,9 @@ module.exports = function (grunt) {
           ENV: {
             name: 'development',
             apiEndpoint: 'http://localhost:1337',
-            hostURL:'http://localhost:9000'
+            hostURL:'http://localhost:9000',
+            registerToken:'false', //whether we need a token to register,
+            defaultLang:'en'
           }
         }
       },
@@ -351,7 +353,9 @@ module.exports = function (grunt) {
           ENV: {
             name:'production',
             apiEndpoint:'http://plus.synote.org',
-            hostURL:'http://ws.synote.org'
+            hostURL:'http://ws.synote.org',
+            registerToken:'true', //whether we need a token to register,
+            defaultLang:'en'
           }
         }
       },
@@ -364,7 +368,9 @@ module.exports = function (grunt) {
           ENV: {
             name:'sandbox',
             apiEndpoint:'http://server.sandbox.synote.org',
-            hostURL:'http://client.sandbox.synote.org'
+            hostURL:'http://client.sandbox.synote.org',
+            registerToken:'false', //whether we need a token to register,
+            defaultLang:'en'
           }
         }
       },
@@ -377,7 +383,9 @@ module.exports = function (grunt) {
           ENV: {
             name:'arabic',
             apiEndpoint:'http://server.arabic.synote.org',
-            hostURL:'http://client.arabic.synote.org'
+            hostURL:'http://client.arabic.synote.org',
+            registerToken:'false', //whether we need a token to register,
+            defaultLang:'ar'
           }
         }
       }
@@ -503,59 +511,29 @@ module.exports = function (grunt) {
     'karma'
   ]);
 
-  grunt.registerTask('build', [
-    'clean:dist',
-    'ngconstant:production', // ADD THIS
-    'wiredep',
-    'useminPrepare',
-    'concurrent:dist',
-    'autoprefixer',
-    'concat',
-    'ngAnnotate',
-    'copy:dist',
-    'cdnify',
-    'cssmin',
-    'uglify',
-    'filerev',
-    'usemin',
-    'htmlmin'
-  ]);
+  grunt.registerTask('build', 'Build the app for a specific server', function(target){
+    if(!target){
+      target = "production"
+    }
 
-  grunt.registerTask('build-sandbox', [
-    'clean:dist',
-    'ngconstant:sandbox', // ADD THIS
-    'wiredep',
-    'useminPrepare',
-    'concurrent:dist',
-    'autoprefixer',
-    'concat',
-    'ngAnnotate',
-    'copy:dist',
-    'cdnify',
-    'cssmin',
-    'uglify',
-    'filerev',
-    'usemin',
-    'htmlmin'
-  ]);
-
-  grunt.registerTask('build-arabic', [
-    'clean:dist',
-    'ngconstant:arabic', // ADD THIS
-    'wiredep',
-    'useminPrepare',
-    'concurrent:dist',
-    'autoprefixer',
-    'concat',
-    'ngAnnotate',
-    'copy:dist',
-    'cdnify',
-    'cssmin',
-    'uglify',
-    'filerev',
-    'usemin',
-    'htmlmin'
-  ]);
+    grunt.task.run([
+      'clean:dist',
+      'ngconstant:'+target, // ADD THIS
+      'wiredep',
+      'useminPrepare',
+      'concurrent:dist',
+      'autoprefixer',
+      'concat',
+      'ngAnnotate',
+      'copy:dist',
+      'cdnify',
+      'cssmin',
+      'uglify',
+      'filerev',
+      'usemin',
+      'htmlmin'
+    ])
+  });
 
   grunt.registerTask('default', [
     //'newer:jshint',

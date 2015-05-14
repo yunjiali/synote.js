@@ -6,6 +6,11 @@
     <hr class="colorgraph">
     <div id="multimedia_create_div" cg-busy="inspectPromise">
       <div>
+        {{'CREATE_MULTIMEDIA_EXPLAIN_TEXT' | translate}}
+        <a href id="upload_widget_opener" ng-click="openCloudinary()">{{ 'UPLOAD_VIDEO_EXPLAIN_TEXT' | translate}}</a>
+      </div>
+      <br/>
+      <div>
         <form name='createForm' class="form-horizontal" role="form">
           <div class="form-group">
             <div class="controls">
@@ -28,7 +33,7 @@
     </div>
     <hr/>
 
-    <div ng-show="metadata" id="metadata_div" class="col-sm-8 col-md-9">
+    <div ng-show="showCreationForm" id="metadata_div" class="col-sm-8 col-md-9">
       <form name="createForm" class="form-horizontal" role="form" ng-submit="processForm()" novalidate>
         <fieldset>
           <!-- Text input-->
@@ -92,10 +97,10 @@
           <br/>
           <div class="row">
             <div class="col-xs-offset-4 col-md-offset-2 col-xs-4 col-sm-4 col-md-4">
-              <button id="submit_btn" ng-disabled="!createForm.$valid" name="submit_btn" class="btn btn-lg btn-success btn-block">Create</button>
+              <button id="submit_btn" ng-disabled="!createForm.$valid" name="submit_btn" class="btn btn-lg btn-success btn-block">{{'BTN_CREATE_TEXT' | translate}}</button>
             </div>
             <div class="col-xs-4 col-sm-4 col-md-4">
-              <button id="reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block">Cancel</button>
+              <button id="reset_btn" name="reset_btn" class="btn btn-lg btn-danger btn-block">{{'BTN_CANCEL_TEXT' | translate}}</button>
             </div>
           </div>
         </fieldset>
@@ -103,3 +108,4 @@
     </div>
   </div>
 </div>
+

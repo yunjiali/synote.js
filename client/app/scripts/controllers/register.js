@@ -8,11 +8,12 @@
  * Controller of the synoteClient
  */
 angular.module('synoteClient')
-  .controller('RegisterCtrl', ['$scope', '$http','$filter', '$location', 'ENV', 'messageCenterService','utilService',
-      function ($scope,$http,$filter, $location, ENV, messageCenterService, utilService) {
+  .controller('RegisterCtrl', ['$scope', '$http','$filter', '$location', 'ENV', 'messageCenterService','utilService',  function ($scope,$http,$filter, $location, ENV, messageCenterService, utilService) {
     $scope.t_c = false;
     $scope.confirmpassword;
     $scope.formdata = {};
+    $scope.registerToken = ENV.registerToken === "true"?true:false;
+    console.log($scope.registerToken);
     var $translate = $filter('translate');
 
     $scope.processForm = function () {

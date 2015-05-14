@@ -28,6 +28,10 @@
             <i class="fa fa-edit"></i>
             {{'EDIT_TEXT' | translate}}
           </button>
+          <button ng-if="items.length > 0" type="button" class="btn btn-warning" ng-click="playPlaylist()">
+            <i class="fa fa-play"></i>
+            {{'PLAY_PLAYLIST_TEXT' | translate}}
+          </button>
           <!-- buttons to submit / cancel form -->
           <span ng-show="playlistForm.$visible">
             <button type="submit" class="btn btn-primary" ng-disabled="playlistForm.$waiting">

@@ -39,7 +39,7 @@ angular.module('synoteClient')
       var a = hms.split(':'); // split it at the colons
 
       if(a.length !== 3)
-        return NaN
+        return NaN;
       // minutes are worth 60 seconds. Hours are worth 60 minutes.
       var seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]);
       return seconds;
@@ -80,12 +80,25 @@ angular.module('synoteClient')
       else return Object.keys(obj).length ===0
     }
 
+    var getCloudinaryCompitableVideoSource = function(url){
+      var mp4URL = url.substr(0, url.lastIndexOf(".")) + ".mp4";
+      var oggURL = url.substr(0, url.lastIndexOf(".")) + ".ogg";
+      var webmURL = url.substr(0, url.lastIndexOf(".")) + ".webm";
+
+      return [
+        {url: mp4URL, type:"video/mp4"},
+        {url: oggURL, type:"video/ogg"},
+        {url: webmURL, type:"video/webm"}
+      ];
+    }
+
     return {
       extractErrorMsgs:extractErrorMsgs,
       secondsToHHMMSS:secondsToHHMMSS,
       HHMMSSToSeconds:HHMMSSToSeconds,
       isYouTubeURL: isYouTubeURL,
       getVideoMIMEType:getVideoMIMEType,
-      isEmptyObject:isEmptyObject
+      isEmptyObject:isEmptyObject,
+      getCloudinaryCompitableVideoSource:getCloudinaryCompitableVideoSource
     }
   });
