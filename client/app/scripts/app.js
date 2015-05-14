@@ -217,9 +217,13 @@ app.config(['$routeProvider', 'localStorageServiceProvider', '$httpProvider', '$
     CUE_ET_ERROR:'The format of cue end time is not valid.',
     SAVE_CUE_SUCCESS_TEXT:'Successfully save transcript cue',
     CREATE_MULTIMEDIA_EXPLAIN_TEXT:'Please put the URL of the video in the following text field, or',
-    UPLOAD_VIDEO_EXPLAIN_TEXT:'upload a video to our server',
+    UPLOAD_VIDEO_EXPLAIN_TEXT:'upload a video to our server (40MB maximum)',
     CREATE_MULTIMEDIA_VIDEO_UPLOADING_FAILED:'No video uploading failed. Please check your network connection.',
-    CREATE_MULTIMEDIA_VIDEO_UPLOADING_SUCCESSFUL:'Video has been successfully uploaded.'
+    CREATE_MULTIMEDIA_VIDEO_UPLOADING_SUCCESSFUL:'Video has been successfully uploaded.',
+    CLOUDINARY_WIDGET_VIDEO_UPLOAD_BTN:'Select a video file',
+    CLOUDINARY_WIDGET_SUBTITLE_UPLOAD_BTN:'Select a subtitle file',
+    ADD_SUBTITLE_BTN_TEXT:'Add a subtitle',
+    ADD_SUBTITLE_INPUT_TEXT:'Subtitle language'
   });
 
   $translateProvider.determinePreferredLanguage(function () {

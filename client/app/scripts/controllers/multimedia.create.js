@@ -20,6 +20,8 @@ angular.module('synoteClient')
     $scope.durationStr = "";
     $scope.tagsStr = "";
     $scope.subtitles = [];
+    $scope.currentSubtitle = {};
+    $scope.currentSubtitle.lang ="";
 
     $scope.getMetadata = function(){
       messageCenterService.reset();
@@ -73,11 +75,38 @@ angular.module('synoteClient')
         });
     }
 
-    $scope.openCloudinary = function(){
-      cloudinary.openUploadWidget({ cloud_name: 'symbolnettest', upload_preset: 'o0rvn2al', theme:'white',max_file_size:40000000, multiple:false, max_files:1},
+    $scope.showAddSubtitleBtn = function(){
+
+      //TODO: can't be the same language, need to check before hand
+      return $scope.currentSubtitle.lang.length>0;
+    }
+
+    $scope.openSubtitleWidget = function(){
+      cloudinary.openUploadWidget({ cloud_name: 'symbolnettest', upload_preset: 'o0rvn2al',
+          button_caption:$translate('CLOUDINARY_WIDGET_SUBTITLE_UPLOAD_BTN'), theme:'white',max_file_size:100000,
+          multiple:false, max_files:1,client_allowed_formats:['srt'], sources:['local','url']},
         function(error, results) {
           if(error){
             messageCenterService.add('danger', error);
+          }
+          else if(results.length === 0){
+            messageCenterService.add('danger', $translate('CREATE_MULTIMEDIA_VIDEO_UPLOADING_FAILED'));
+          }
+          else{
+            console.log(results)
+            $scope.subtitles.push({language:$scope.currentSubtitle.lang, url:results[0].url, selected:true});
+            console.log($scope.subtitles);
+            $scope.currentSubtitle= {};
+            $scope.currentSubtitle.lang = "";
+          }
+        });
+    }
+
+    $scope.openVideoWidget = function(){
+      cloudinary.openUploadWidget({ cloud_name: 'symbolnettest', upload_preset: 'o0rvn2al', button_caption:$translate('CLOUDINARY_WIDGET_VIDEO_UPLOAD_BTN'), theme:'white',max_file_size:40000000, multiple:false, max_files:1},
+        function(error, results) {
+          if(error){
+            //messageCenterService.add('danger', error);
           }
           else if(results.length === 0){
             messageCenterService.add('danger', $translate('CREATE_MULTIMEDIA_VIDEO_UPLOADING_FAILED'));
@@ -108,7 +137,6 @@ angular.module('synoteClient')
              video: Object
              width: 560
              */
-            console.log(results);
             //the poster url
             //
             messageCenterService.add('success', $translate('CREATE_MULTIMEDIA_VIDEO_UPLOADING_SUCCESSFUL'));

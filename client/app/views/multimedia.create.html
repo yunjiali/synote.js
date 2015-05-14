@@ -7,7 +7,7 @@
     <div id="multimedia_create_div" cg-busy="inspectPromise">
       <div>
         {{'CREATE_MULTIMEDIA_EXPLAIN_TEXT' | translate}}
-        <a href id="upload_widget_opener" ng-click="openCloudinary()">{{ 'UPLOAD_VIDEO_EXPLAIN_TEXT' | translate}}</a>
+        <a href id="upload_widget_opener" ng-click="openVideoWidget()">{{ 'UPLOAD_VIDEO_EXPLAIN_TEXT' | translate}}</a>
       </div>
       <br/>
       <div>
@@ -80,15 +80,22 @@
           <div class="form-group">
             <label class="col-md-2 col-xs-3 control-label" for="subtitles">Subtitiles</label>
             <div class="col-md-8 col-xs-8">
-              <div class="checkbox" ng-if="subtitles" ng-repeat="subtitle in subtitles">
+              <div class="checkbox" ng-if="subtitles.length>0" ng-repeat="subtitle in subtitles">
                 <label for="subtitles_{{subtitle.language}}" >
                   <input type="checkbox" name="subtitles[]" ng-model="subtitle.selected" id="subtitles_{{subtitle.language}}" value="{{subtitle.url}}"/>
                   {{subtitle.language}}
                 </label>
               </div>
-              <div class="checkbox" ng-if="subtitles.length === 0">
+
+              <div ng-if="subtitles.length === 0">
                 <p>{{'NOSUBTITLE_TEXT' | translate}}</p>
               </div>
+              <!--
+              <div>
+                <input type="text" class="form-control input-sm" maxlength="10" name="currentSubtitleLang" ng-model="currentSubtitle.lang" placeholder="{{'ADD_SUBTITLE_INPUT_TEXT' | translate}}">
+                <button class="btn btn-info btn-sm" ng-if="showAddSubtitleBtn()" ng-click="openSubtitleWidget()">{{'ADD_SUBTITLE_BTN_TEXT' | translate}}</button>
+              </div>
+              -->
             </div>
           </div>
           <input type="hidden" name="isVideo" ng-model="metadata.isVideo"/>
