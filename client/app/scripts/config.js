@@ -2,6 +2,6 @@
 
 angular.module('config', [])
 
-.constant('ENV', {name:'sandbox',apiEndpoint:'http://server.sandbox.synote.org',hostURL:'http://client.sandbox.synote.org',registerToken:'false',defaultLang:'en'})
+.constant('ENV', {name:'development',apiEndpoint:'http://localhost:1337',hostURL:'http://localhost:9000',registerToken:'false',defaultLang:'en'})
 
 ;

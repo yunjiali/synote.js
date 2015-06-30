@@ -8,8 +8,11 @@ module.exports = {
     //get metadata of any file
     getMetadata:function(url,callback){
         ffmpeg.ffprobe(url, function(err, metadata){
-            if(err)
+            if(err) {
+                console.log("ffprobe:error");
+                console.log(err);
                 return callback(err);
+            }
 
             //transform to new metadata standard
             var newObj = {};
